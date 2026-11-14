@@ -22,7 +22,7 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.2.2';
+const versionLabel = '1.2.3';
 late final Future<void> mptServicesReady;
 
 Future<void> main() async {
@@ -200,6 +200,8 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
           'It is time for ${prayerNames['en']![prayer.index]}.',
           tz.TZDateTime.from(instant, tz.local), details,
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
           payload: prayerNames['en']![prayer.index],
         );
       }
@@ -598,7 +600,7 @@ class SettingsPage extends StatelessWidget {
           }
         }, icon: const Icon(Icons.notifications_active_outlined), label: Text(tr(language, 'alerts'))),
       const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
-      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v1.2.2', style: TextStyle(color: muted, fontSize: 12))),
+      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v1.2.3', style: TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 }
