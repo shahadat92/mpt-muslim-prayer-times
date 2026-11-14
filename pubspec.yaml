@@ -1,7 +1,7 @@
 name: korea_prayer_times
 description: MPT Muslim Prayer Times
 publish_to: 'none'
-version: 1.2.0+12
+version: 1.2.1+13
 
 environment:
   sdk: '>=3.4.0 <4.0.0'

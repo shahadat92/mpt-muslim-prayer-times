@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'dart:math' as math;
 
 import 'package:adhan/adhan.dart';
@@ -21,14 +22,14 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.2.0';
+const versionLabel = '1.2.1';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
   try {
     final zone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(zone.identifier));
+    tz.setLocalLocation(tz.getLocation(zone));
   } catch (_) {
     // Device-local fallback remains available.
   }
@@ -175,7 +176,6 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
           'It is time for ${prayerNames['en']![prayer.index]}.',
           tz.TZDateTime.from(instant, tz.local), details,
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           payload: prayerNames['en']![prayer.index],
         );
       }
@@ -574,7 +574,7 @@ class SettingsPage extends StatelessWidget {
           }
         }, icon: const Icon(Icons.notifications_active_outlined), label: Text(tr(language, 'alerts'))),
       const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
-      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v1.2.0', style: TextStyle(color: muted, fontSize: 12))),
+      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v1.2.1', style: TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 }
@@ -637,7 +637,7 @@ class _DuaPageState extends State<DuaPage> {
   ];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18), const Text('Daily Dua & Tasbih', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
-    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), Text(duas[selected][1], textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
+    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), Text(duas[selected][1], textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
     const SizedBox(height: 20), _GoldCard(child: Column(children: [const Text('Tasbih Counter', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)), const Icon(Icons.grain, color: emerald, size: 46), Text('$count', style: const TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: emerald)), Row(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: () => setState(() => count = 0), icon: const Icon(Icons.restart_alt)), const SizedBox(width: 22), FilledButton(onPressed: () => setState(() => count++), child: const Icon(Icons.add))])])),
   ])));
 }
