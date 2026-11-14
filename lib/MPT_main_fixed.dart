@@ -23,23 +23,42 @@ const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
 const versionLabel = '1.2.1';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  tzdata.initializeTimeZones();
-  try {
-    final zone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(zone));
-  } catch (_) {
-    // Device-local fallback remains available.
-  }
-  await notifications.initialize(const InitializationSettings(
-    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    iOS: DarwinInitializationSettings(),
-  ));
+
+  // Show the app immediately.
   runApp(const MuslimPrayerTimesApp());
+
+  // Initialize background services separately.
+  unawaited(initializeMptServices());
 }
 
+Future<void> initializeMptServices() async {
+  try {
+    tzdata.initializeTimeZones();
+
+    try {
+      final zone = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(zone));
+    } catch (error) {
+      debugPrint('MPT timezone error: $error');
+    }
+
+    await notifications.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings(
+          '@mipmap/ic_launcher',
+        ),
+        iOS: DarwinInitializationSettings(),
+      ),
+    );
+
+    debugPrint('MPT services initialized successfully');
+  } catch (error, stackTrace) {
+    debugPrint('MPT initialization error: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
+}
 class PrayerCity {
   final String name;
   final String country;
