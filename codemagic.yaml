@@ -1,0 +1,40 @@
+workflows:
+  mpt_android_debug:
+    name: MPT Android Debug APK
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      java: 17
+    scripts:
+      - name: Generate Android project
+        script: |
+          flutter create --platforms=android --project-name korea_prayer_times --org com.koreaprayertimes .
+      - name: Set Android app label and permissions
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          s=p.read_text().replace('android:label="korea_prayer_times"','android:label="MPT"')
+          s=s.replace('<application', '<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <application',1)
+          p.write_text(s)
+          PY
+      - name: Enable desugaring
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle.kts')
+          if p.exists():
+              s=p.read_text()
+              s=s.replace('android {','android {\n    compileOptions {\n        isCoreLibraryDesugaringEnabled = true\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }',1)
+              s=s.replace('dependencies {','dependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',1) if 'dependencies {' in s else s+'\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+              p.write_text(s)
+          PY
+      - name: Install dependencies
+        script: flutter pub get
+      - name: Generate launcher icon
+        script: dart run flutter_launcher_icons
+      - name: Build debug APK
+        script: flutter build apk --debug
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
