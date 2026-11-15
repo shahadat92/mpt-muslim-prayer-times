@@ -1,0 +1,23 @@
+MPT v1.4.0 — আপডেট নোট
+
+যা সংশোধন করা হয়েছে:
+- Android exact alarm অনুমতি ও exactAllowWhileIdle scheduling চেষ্টা; অনুমতি না থাকলে inexact fallback।
+- Codemagic-generated AndroidManifest-এ SCHEDULE_EXACT_ALARM অনুমতি।
+- Notification service startup race সংশোধন।
+- GPS অবস্থান নির্বাচনের সময় device timezone পড়া।
+- Light theme-এর Soft Sage background #E4EBE5।
+- Version 1.4.0+15।
+
+যা এখনও নিশ্চিত নয়:
+- ফোনে বা Codemagic-এ Flutter build পরীক্ষা এখানে করা যায়নি।
+- ফোনের Battery optimization, exact alarm permission এবং OS scheduling-এর কারণে বিলম্ব হতে পারে।
+- Full/Short Adhan অ্যাপের ভিতরে preview হয়; scheduled notification-এ পূর্ণ আজান বাজানো এখনও implement করা হয়নি।
+- চার ভাষার কিছু screen label এখনও ইংরেজিতে আছে; পুরো অনুবাদ শেষ হয়নি।
+- AdMob integration হয়নি; শুধু placeholder আছে।
+
+ইনস্টল/টেস্ট:
+1. ZIP-এর ফাইলগুলো GitHub repository-তে আপলোড/প্রতিস্থাপন করুন।
+2. Codemagic থেকে mpt_android_debug workflow চালান।
+3. APK ইনস্টল করে Settings > Prayer notifications > Save & Schedule Alerts চাপুন।
+4. Android system permission-এ Notifications এবং Alarms & reminders অনুমতি দিন।
+5. 10-second test চালান।
