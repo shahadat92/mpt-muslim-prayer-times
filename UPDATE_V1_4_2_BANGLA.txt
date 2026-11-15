@@ -1,0 +1,19 @@
+MPT v1.4.2 — সংশোধিত সোর্স কোড
+
+সংশোধন:
+১. Settings-এ সঠিক v1.4.2 ভার্সন দেখায়।
+২. বাংলা, কোরিয়ান ও আরবি ক্যালেন্ডারের সপ্তাহের দিন দেখায়।
+৩. দোয়ার অর্থ নির্বাচিত ভাষায় দেখায়।
+৪. Settings থেকে নামাজের অ্যালার্ট চালু করলে প্রতিটি ওয়াক্তের সংরক্ষিত On/Off মান অনুসরণ করে।
+৫. Android-এ exact alarm অনুমতি থাকলে exactAllowWhileIdle, না থাকলে inexact fallback ব্যবহার করে।
+৬. চারটি MP3 আজানের Preview এবং Full/Short/Fajr সেটিংস অপরিবর্তিত।
+
+সীমাবদ্ধতা:
+এই সংস্করণে অ্যাপ বন্ধ থাকলে পূর্ণ MP3 আজান স্বয়ংক্রিয়ভাবে বাজবে না; এটি এখনো Android native background playback integration দাবি করে।
+Android ও Samsung-এর battery policy-র কারণে ২–৪ সেকেন্ডের ডেলিভারি গ্যারান্টি নেই।
+এই পরিবেশে Flutter SDK/Android APK build করা সম্ভব হয়নি; Codemagic-এ Build দিয়ে যাচাই করুন।
+
+ব্যবহার:
+ZIP Extract করে ভেতরের ফাইলগুলো GitHub repository root-এ আপলোড করুন।
+Codemagic-এ নতুন Debug APK Build করুন।
+ইনস্টলের পর Settings এবং Prayer notifications পরীক্ষা করুন।
