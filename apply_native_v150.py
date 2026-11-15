@@ -15,7 +15,13 @@ manifest.write_text(s)
 package_dir=android/'kotlin/com/koreaprayertimes/korea_prayer_times'
 package_dir.mkdir(parents=True,exist_ok=True)
 for name in ['MainActivity.kt','AdhanReceiver.kt','AdhanService.kt']:
- shutil.copy2(root/'native_templates'/name,package_dir/name)
+ 
+ source = root/'native_templates'/name
+ if not source.exists():
+  source = root/name
+ if not source.exists():
+  raise FileNotFoundError(f'Missing {name}: upload it to repository root or native_templates/')
+ shutil.copy2(source,package_dir/name)
 raw=android/'res/raw';raw.mkdir(parents=True,exist_ok=True)
 for name in ['fajr_full','fajr_short','regular_full','regular_short']:
  shutil.copy2(root/'assets/audio'/f'{name}.mp3',raw/f'{name}.mp3')
