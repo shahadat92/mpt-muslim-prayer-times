@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
+import 'adhan_audio.dart';
 
 import 'package:adhan/adhan.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.3.1';
+const versionLabel = '1.3.2';
 late final Future<void> mptServicesReady;
 
 Future<void> main() async {
@@ -745,11 +746,62 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   List<bool> enabled = List.filled(5, true);
   bool sound = true;
-  @override void initState() { super.initState(); _load(); }
+  final adhanAudio = AdhanAudioService();
+  bool adhanReady = false;
+  @override void initState() { super.initState(); _load(); _loadAdhan(); }
+  Future<void> _loadAdhan() async {
+    await adhanAudio.load();
+    if (mounted) setState(() => adhanReady = true);
+  }
+  @override void dispose() {
+    adhanAudio.dispose();
+    super.dispose();
+  }
   Future<void> _load() async { final prefs = await SharedPreferences.getInstance(); if (mounted) setState(() { enabled = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true); sound = prefs.getBool('sound') ?? true; }); }
   @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(tr(widget.language, 'prayerAlerts'))), body: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18),
     ...List.generate(5, (i) => _GoldCard(child: SwitchListTile(contentPadding: EdgeInsets.zero, secondary: Icon([Icons.nightlight_round, Icons.wb_sunny, Icons.sunny, Icons.wb_twilight, Icons.nights_stay][i], color: emerald), title: Text(prayerNames[widget.language]![i]), value: enabled[i], onChanged: (v) async { setState(() => enabled[i] = v); (await SharedPreferences.getInstance()).setBool('prayer_$i', v); }))),
+    if (adhanReady) ...[
+      const SizedBox(height: 16),
+      _GoldCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Adhan settings · আজান সেটিংস', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 10),
+        RadioListTile<AdhanLength>(
+          title: const Text('Full Adhan · পূর্ণ আজান'),
+          value: AdhanLength.full,
+          groupValue: adhanAudio.length,
+          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
+        ),
+        RadioListTile<AdhanLength>(
+          title: const Text('Short Adhan · সংক্ষিপ্ত আজান'),
+          value: AdhanLength.short,
+          groupValue: adhanAudio.length,
+          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
+        ),
+        SwitchListTile(
+          title: const Text('Special Fajr Adhan'),
+          subtitle: const Text('ফজরের বিশেষ আজান চালু'),
+          value: adhanAudio.specialFajr,
+          onChanged: (v) async { await adhanAudio.setSpecialFajr(v); if (mounted) setState(() {}); },
+        ),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          OutlinedButton.icon(
+            onPressed: () async { try { await adhanAudio.preview(fajr: false); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
+            icon: const Icon(Icons.play_arrow), label: const Text('Preview Adhan'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async { try { await adhanAudio.preview(fajr: true); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
+            icon: const Icon(Icons.play_arrow), label: const Text('Preview Fajr'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () async { await adhanAudio.stop(); },
+            icon: const Icon(Icons.stop), label: const Text('Stop'),
+          ),
+        ]),
+        const SizedBox(height: 8),
+        const Text('Preview works inside the app. Scheduled alerts still use the device notification sound.', style: TextStyle(fontSize: 12, color: muted)),
+      ])),
+    ],
     const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
     const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(widget.language, 'notificationSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
     const SizedBox(height: 10),
