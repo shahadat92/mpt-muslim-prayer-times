@@ -22,7 +22,7 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.3.0';
+const versionLabel = '1.3.1';
 late final Future<void> mptServicesReady;
 
 Future<void> main() async {
@@ -100,6 +100,30 @@ const translations = <String, Map<String, String>>{
   'ar': {'home':'الرئيسية','qibla':'القبلة','calendar':'التقويم','settings':'الإعدادات','next':'الصلاة القادمة','today':'مواقيت الصلاة اليوم','remaining':'الوقت المتبقي','location':'موقعي','alerts':'تفعيل تنبيهات الصلاة','calculation':'طريقة الحساب','asr':'حساب العصر','language':'اللغة','appearance':'المظهر','light':'فاتح','dark':'داكن','hijri':'التقويم الهجري','sehri':'نهاية السحور (الفجر)','iftar':'الإفطار (المغرب)','notice':'التاريخ الهجري تقريبي؛ يرجى التأكد من المسجد المحلي.','prayer':'الصلاة أينما كنت','sound':'صوت التنبيه','soundHint':'نغمة الهاتف الافتراضية وليست أذاناً كاملاً','refreshHint':'افتح التطبيق لتجديد التنبيهات القادمة.','compassHelp':'أبق الهاتف مستوياً وبعيداً عن المغناطيس.','compassUnavailable':'مستشعر البوصلة غير متاح. استخدم الزاوية أدناه.','selectCity':'اختر مدينة','gps':'موقع GPS','about':'مواقيت الصلاة تقديرية بالحساب؛ تحقق من المسجد المحلي.','notificationSuccess':'تم جدولة تنبيهات الصلاة لعشرة أيام.','permission':'يلزم إذن الموقع.','method':'رابطة العالم الإسلامي (MWL)','duaTab':'الدعاء','ramadan':'رمضان','tasbih':'التسبيح','prayerAlerts':'تنبيهات الصلاة','manageAlerts':'إدارة تنبيهات الصلوات','saveAlerts':'حفظ وجدولة التنبيهات','testAlert':'اختبار التنبيه بعد 10 ثوانٍ','testSuccess':'تمت جدولة تنبيه تجريبي بعد 10 ثوانٍ.','hijriAdjust':'ضبط التاريخ الهجري','hijriHint':'اضبط ±يومين حسب رؤية الهلال المحلية','reset':'إعادة تعيين','tasbihCounter':'عداد التسبيح','dailyDua':'دعاء وتسبيح يومي','ramadanHere':'رمضان مبارك','ramadanStarts':'بداية رمضان المتوقعة بعد','days':'أيام','ramadanNotice':'مواعيد رمضان تقديرية؛ تحقق من المسجد المحلي.','notifyHint':'يستخدم صوت تنبيه الهاتف وقد يتأخر على أندرويد.','adSpace':'مساحة إعلان · AdMob غير مفعّل'},
 };
 String tr(String lang, String key) => translations[lang]?[key] ?? translations['en']?[key] ?? key;
+
+// Extra strings introduced in v1.3.1, without disturbing existing translations.
+const extraTranslations = <String, Map<String, String>>{
+  'en': {'northBearing':'from North','testTitle':'MPT · Test notification','testBody':'Prayer notification test successful.'},
+  'bn': {'northBearing':'উত্তর দিক থেকে','testTitle':'MPT · পরীক্ষামূলক নোটিফিকেশন','testBody':'নামাজের নোটিফিকেশন পরীক্ষা সফল হয়েছে।'},
+  'ko': {'northBearing':'북쪽 기준','testTitle':'MPT · 테스트 알림','testBody':'기도 알림 테스트가 완료되었습니다.'},
+  'ar': {'northBearing':'من الشمال','testTitle':'MPT · إشعار تجريبي','testBody':'نجح اختبار إشعار الصلاة.'},
+};
+String tx(String lang, String key) => extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
+
+String localizedCity(PrayerCity city, String language) {
+  if (language != 'bn') return city.label;
+  const names = <String, String>{'Seoul':'সিউল','Busan':'বুসান','Incheon':'ইনচন','Daegu':'দেগু','Daejeon':'দেজন','Gwangju':'গোয়াংজু','Suwon':'সুওন','Jeju':'জেজু','Tokyo':'টোকিও','Dhaka':'ঢাকা','London':'লন্ডন','New York':'নিউইয়র্ক','Istanbul':'ইস্তাম্বুল','Kuala Lumpur':'কুয়ালালামপুর','Makkah':'মক্কা','Dubai':'দুবাই','Jakarta':'জাকার্তা','Toronto':'টরন্টো','Sydney':'সিডনি'};
+  const countries = <String, String>{'South Korea':'দক্ষিণ কোরিয়া','Japan':'জাপান','Bangladesh':'বাংলাদেশ','United Kingdom':'যুক্তরাজ্য','United States':'যুক্তরাষ্ট্র','Türkiye':'তুরস্ক','Malaysia':'মালয়েশিয়া','Saudi Arabia':'সৌদি আরব','United Arab Emirates':'সংযুক্ত আরব আমিরাত','Indonesia':'ইন্দোনেশিয়া','Canada':'কানাডা','Australia':'অস্ট্রেলিয়া'};
+  return '${names[city.name] ?? city.name}, ${countries[city.country] ?? city.country}';
+}
+
+String localizedDate(DateTime date, String language) {
+  if (language != 'bn') return DateFormat('EEEE, d MMMM yyyy').format(date);
+  const weekdays = ['সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার','রবিবার'];
+  const months = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  return '${weekdays[date.weekday - 1]}, ${date.day} ${months[date.month - 1]} ${date.year}';
+}
+
 
 int hijriAdjustment = 0;
 ({int year, int month, int day}) adjustedHijri(DateTime date) =>
@@ -213,13 +237,13 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
   }
 }
 
-Future<void> scheduleTestNotification() async {
+Future<void> scheduleTestNotification({String language = 'en'}) async {
   await mptServicesReady;
   final android = notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
   final granted = await android?.requestNotificationsPermission();
   if (granted == false) throw StateError('Notification permission denied');
   await notifications.zonedSchedule(
-    99001, 'MPT · Test notification', 'Prayer notification test successful.',
+    99001, tx(language, 'testTitle'), tx(language, 'testBody'),
     tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
     const NotificationDetails(android: AndroidNotificationDetails(
       'mpt_test_v130', 'MPT test notifications', importance: Importance.max,
@@ -420,16 +444,16 @@ class _PrayerHomeState extends State<PrayerHome> {
           const Icon(Icons.location_on_outlined, color: gold, size: 21), const SizedBox(width: 8),
           Expanded(child: DropdownButtonHideUnderline(child: DropdownButton<PrayerCity>(
             isExpanded: true, value: cities.contains(widget.city) ? widget.city : null,
-            hint: Text(widget.city.label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+            hint: Text(localizedCity(widget.city, widget.language), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
             dropdownColor: deepGreen, iconEnabledColor: gold,
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15),
-            items: cities.map((city) => DropdownMenuItem(value: city, child: Text(city.label, overflow: TextOverflow.ellipsis))).toList(),
+            items: cities.map((city) => DropdownMenuItem(value: city, child: Text(localizedCity(city, widget.language), overflow: TextOverflow.ellipsis))).toList(),
             onChanged: (value) { if (value != null) widget.onCityChanged(value); },
           ))),
           IconButton(onPressed: widget.onUseLocation, icon: const Icon(Icons.gps_fixed, color: Colors.white)),
         ]),
         const SizedBox(height: 23),
-        Text(DateFormat('EEEE, d MMMM yyyy').format(now), style: const TextStyle(color: Colors.white70, fontSize: 13)),
+        Text(localizedDate(now, widget.language), style: const TextStyle(color: Colors.white70, fontSize: 13)),
         const SizedBox(height: 21),
         Text(tr(lang, 'next'), style: const TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
         const SizedBox(height: 8),
@@ -503,7 +527,7 @@ class QiblaPage extends StatelessWidget {
     final color = Theme.of(context).colorScheme.onSurface;
     return ListView(padding: const EdgeInsets.fromLTRB(24, 32, 24, 28), children: [
       Text(tr(language, 'qibla'), style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: color)),
-      const SizedBox(height: 8), Text(city.label, style: const TextStyle(color: muted, fontSize: 16)),
+      const SizedBox(height: 8), Text(localizedCity(city, language), style: const TextStyle(color: muted, fontSize: 16)),
       const IslamicHeroBanner(compact: true),
       const SizedBox(height: 24),
       StreamBuilder<CompassEvent?>(stream: FlutterCompass.events, builder: (context, snapshot) {
@@ -522,7 +546,7 @@ class QiblaPage extends StatelessWidget {
         )));
       }),
       const SizedBox(height: 25),
-      Center(child: Text('${b.toStringAsFixed(0)}° from North', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: color))),
+      Center(child: Text('${b.toStringAsFixed(0)}° ${tx(language, 'northBearing')}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: color))),
       const SizedBox(height: 12), Text(tr(language, 'compassHelp'), textAlign: TextAlign.center, style: const TextStyle(color: muted, height: 1.5)),
       const SizedBox(height: 35), const AdPlaceholder(),
     ]);
@@ -568,7 +592,7 @@ class _CalendarPageState extends State<CalendarPage> {
           return Container(alignment: Alignment.center, decoration: BoxDecoration(color: active ? emerald : Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(10), border: Border.all(color: gold.withValues(alpha: .35))), child: Text('$day', style: TextStyle(color: active ? Colors.white : null, fontWeight: FontWeight.w700)));
         }),
       const SizedBox(height: 18),
-      _GoldCard(child: Column(children: [Text('${h.day} ${hijriMonths[widget.language]![h.month - 1]} ${h.year} AH', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w900)), Text(DateFormat('EEEE, d MMMM yyyy').format(today))])),
+      _GoldCard(child: Column(children: [Text('${h.day} ${hijriMonths[widget.language]![h.month - 1]} ${h.year} AH', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w900)), Text(localizedDate(today, widget.language))])),
       const SizedBox(height: 12),
       Row(children: [Expanded(child: _GoldCard(child: Column(children: [const Icon(Icons.nightlight_round, color: emerald, size: 35), Text(tr(widget.language,'sehri')), Text(DateFormat('h:mm a').format(prayers[0].localTime), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18))]))), const SizedBox(width: 10), Expanded(child: _GoldCard(child: Column(children: [const Icon(Icons.wb_twilight, color: emerald, size: 35), Text(tr(widget.language,'iftar')), Text(DateFormat('h:mm a').format(prayers[3].localTime), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18))])))]),
       const SizedBox(height: 16),
@@ -731,7 +755,7 @@ class _NotificationPageState extends State<NotificationPage> {
     const SizedBox(height: 10),
     OutlinedButton.icon(onPressed: () async {
       try {
-        await scheduleTestNotification();
+        await scheduleTestNotification(language: widget.language);
         if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(tr(widget.language, 'testSuccess'))));
       } catch (e) {
