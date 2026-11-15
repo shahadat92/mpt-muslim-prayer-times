@@ -1,0 +1,8 @@
+MPT v1.4.1
+
+Calendar: weekday headings in four languages, localized Korean and Arabic Gregorian dates, responsive month heading.
+Dua: original Arabic, optional Bengali pronunciation, translated meaning in four languages, references and navigation.
+Preserves the existing four MP3 preview and scheduled notifications.
+
+NOTE: Automatic full MP3 adhan while app is terminated/locked is NOT implemented in this release.
+Flutter SDK is unavailable here; build and test through Codemagic.
