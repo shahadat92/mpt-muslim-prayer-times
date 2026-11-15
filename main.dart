@@ -5,6 +5,7 @@ import 'adhan_audio.dart';
 
 import 'package:adhan/adhan.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -23,7 +24,7 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.4.2';
+const versionLabel = '1.5.0';
 late final Future<void> mptServicesReady;
 
 Future<void> main() async {
@@ -95,10 +96,10 @@ const cities = <PrayerCity>[
 ];
 
 const translations = <String, Map<String, String>>{
-  'en': {'home':'Home','qibla':'Qibla','calendar':'Calendar','settings':'Settings','next':'NEXT PRAYER','today':"Today's prayers",'remaining':'Time remaining','location':'Use my location','alerts':'Enable prayer notifications','calculation':'Calculation method','asr':'Asr calculation','language':'Language','appearance':'Appearance','light':'Light','dark':'Dark','hijri':'Hijri calendar','sehri':'Sehri ends (Fajr)','iftar':'Iftar (Maghrib)','notice':'Hijri dates are approximate; verify with your local mosque.','prayer':'Prayer, wherever you are','sound':'Notification sound','soundHint':'Device alert sound (not a full adhan recording)','refreshHint':'Reopen the app to refresh upcoming prayer alerts.','compassHelp':'Keep your phone level and away from magnets.','compassUnavailable':'Compass sensor unavailable. Use the bearing below.','selectCity':'Choose a city','gps':'GPS location','about':'Prayer times are calculated estimates. Verify with your local mosque.','notificationSuccess':'Prayer reminders scheduled for the next 10 days.','permission':'Location permission is required.','method':'Muslim World League (MWL)','duaTab':'Dua','ramadan':'Ramadan','tasbih':'Tasbih','prayerAlerts':'Prayer notifications','manageAlerts':'Manage each prayer alert','saveAlerts':'Save & Schedule Alerts','testAlert':'Test notification (10 seconds)','testSuccess':'Test notification scheduled (Android may delay delivery).' ,'hijriAdjust':'Hijri date adjustment','hijriHint':'Match your local mosque’s moon sighting (±2 days).','reset':'Reset','tasbihCounter':'Tasbih Counter','dailyDua':'Daily Dua & Tasbih','ramadanHere':'Ramadan is here','ramadanStarts':'Estimated Ramadan starts in','days':'days','ramadanNotice':'Ramadan dates are estimates. Confirm with your local mosque.','notifyHint':'Uses device notification sound. Android may delay inexact alarms.','adSpace':'Ad space · AdMob not configured'},
-  'bn': {'home':'হোম','qibla':'কিবলা','calendar':'ক্যালেন্ডার','settings':'সেটিংস','next':'পরবর্তী নামাজ','today':'আজকের নামাজের সময়','remaining':'বাকি সময়','location':'আমার অবস্থান','alerts':'নামাজের নোটিফিকেশন চালু','calculation':'গণনার পদ্ধতি','asr':'আসরের পদ্ধতি','language':'ভাষা','appearance':'থিম','light':'লাইট','dark':'ডার্ক','hijri':'হিজরি ক্যালেন্ডার','sehri':'সেহরি শেষ (ফজর)','iftar':'ইফতার (মাগরিব)','notice':'হিজরি তারিখ আনুমানিক; স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','prayer':'যেখানেই থাকুন, নামাজের সাথে','sound':'নোটিফিকেশনের শব্দ','soundHint':'ফোনের অ্যালার্ট টোন; পূর্ণ আজান নয়','refreshHint':'পরবর্তী নামাজের অ্যালার্ট নবায়ন করতে অ্যাপ খুলুন।','compassHelp':'ফোন সমতল রাখুন ও চুম্বক থেকে দূরে রাখুন।','compassUnavailable':'কম্পাস সেন্সর নেই; নিচের দিকনির্দেশনা দেখুন।','selectCity':'শহর নির্বাচন','gps':'জিপিএস অবস্থান','about':'নামাজের সময় গণনাভিত্তিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notificationSuccess':'পরবর্তী ১০ দিনের নামাজের অ্যালার্ট নির্ধারিত হয়েছে।','permission':'লোকেশন অনুমতি প্রয়োজন।','method':'মুসলিম ওয়ার্ল্ড লীগ (MWL)','duaTab':'দোয়া','ramadan':'রমজান','tasbih':'তাসবিহ','prayerAlerts':'নামাজের নোটিফিকেশন','manageAlerts':'প্রতিটি ওয়াক্তের অ্যালার্ট নিয়ন্ত্রণ','saveAlerts':'সংরক্ষণ ও অ্যালার্ট চালু','testAlert':'১০ সেকেন্ডের টেস্ট নোটিফিকেশন','testSuccess':'১০ সেকেন্ড পর পরীক্ষামূলক নোটিফিকেশন আসার কথা।','hijriAdjust':'হিজরি তারিখ সমন্বয়','hijriHint':'স্থানীয় মসজিদের চাঁদ দেখার হিসাবে ±২ দিন ঠিক করুন।','reset':'রিসেট','tasbihCounter':'তাসবিহ কাউন্টার','dailyDua':'প্রতিদিনের দোয়া ও তাসবিহ','ramadanHere':'রমজান চলছে','ramadanStarts':'আনুমানিক রমজান শুরু হতে বাকি','days':'দিন','ramadanNotice':'রমজানের তারিখ আনুমানিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notifyHint':'ফোনের নোটিফিকেশন টোন ব্যবহার করে। অ্যান্ড্রয়েডে অ্যালার্ট দেরি হতে পারে।','adSpace':'বিজ্ঞাপনের স্থান · AdMob চালু হয়নি'},
-  'ko': {'home':'홈','qibla':'키블라','calendar':'달력','settings':'설정','next':'다음 기도','today':'오늘의 기도 시간','remaining':'남은 시간','location':'현재 위치','alerts':'기도 알림 켜기','calculation':'계산 방식','asr':'아스르 계산','language':'언어','appearance':'테마','light':'라이트','dark':'다크','hijri':'히즈리 달력','sehri':'수후르 종료 (파즈르)','iftar':'이프타르 (마그리브)','notice':'히즈리 날짜는 근사치입니다. 현지 모스크에 확인하세요.','prayer':'어디서나 기도를','sound':'알림 소리','soundHint':'기본 알림음 (전체 아잔 녹음 아님)','refreshHint':'알림을 갱신하려면 앱을 다시 여세요.','compassHelp':'휴대전화를 수평으로 두고 자석에서 멀리하세요.','compassUnavailable':'나침반 센서를 사용할 수 없습니다. 아래 각도를 참고하세요.','selectCity':'도시 선택','gps':'GPS 위치','about':'기도 시간은 계산된 추정치입니다. 현지 모스크에 확인하세요.','notificationSuccess':'향후 10일간의 기도 알림이 예약되었습니다.','permission':'위치 권한이 필요합니다.','method':'세계무슬림연맹 (MWL)','duaTab':'두아','ramadan':'라마단','tasbih':'타스비흐','prayerAlerts':'기도 알림','manageAlerts':'기도별 알림 설정','saveAlerts':'알림 저장 및 예약','testAlert':'10초 후 테스트 알림','testSuccess':'10초 후 테스트 알림이 예약되었습니다.','hijriAdjust':'히즈리 날짜 조정','hijriHint':'현지 모스크 기준 ±2일 조정','reset':'초기화','tasbihCounter':'타스비흐 카운터','dailyDua':'매일 두아와 타스비흐','ramadanHere':'라마단 기간','ramadanStarts':'라마단 예상 시작까지','days':'일','ramadanNotice':'라마단 날짜는 추정치입니다. 현지 모스크에서 확인하세요.','notifyHint':'기본 알림음을 사용합니다. Android에서 지연될 수 있습니다.','adSpace':'광고 공간 · AdMob 미설정'},
-  'ar': {'home':'الرئيسية','qibla':'القبلة','calendar':'التقويم','settings':'الإعدادات','next':'الصلاة القادمة','today':'مواقيت الصلاة اليوم','remaining':'الوقت المتبقي','location':'موقعي','alerts':'تفعيل تنبيهات الصلاة','calculation':'طريقة الحساب','asr':'حساب العصر','language':'اللغة','appearance':'المظهر','light':'فاتح','dark':'داكن','hijri':'التقويم الهجري','sehri':'نهاية السحور (الفجر)','iftar':'الإفطار (المغرب)','notice':'التاريخ الهجري تقريبي؛ يرجى التأكد من المسجد المحلي.','prayer':'الصلاة أينما كنت','sound':'صوت التنبيه','soundHint':'نغمة الهاتف الافتراضية وليست أذاناً كاملاً','refreshHint':'افتح التطبيق لتجديد التنبيهات القادمة.','compassHelp':'أبق الهاتف مستوياً وبعيداً عن المغناطيس.','compassUnavailable':'مستشعر البوصلة غير متاح. استخدم الزاوية أدناه.','selectCity':'اختر مدينة','gps':'موقع GPS','about':'مواقيت الصلاة تقديرية بالحساب؛ تحقق من المسجد المحلي.','notificationSuccess':'تم جدولة تنبيهات الصلاة لعشرة أيام.','permission':'يلزم إذن الموقع.','method':'رابطة العالم الإسلامي (MWL)','duaTab':'الدعاء','ramadan':'رمضان','tasbih':'التسبيح','prayerAlerts':'تنبيهات الصلاة','manageAlerts':'إدارة تنبيهات الصلوات','saveAlerts':'حفظ وجدولة التنبيهات','testAlert':'اختبار التنبيه بعد 10 ثوانٍ','testSuccess':'تمت جدولة تنبيه تجريبي بعد 10 ثوانٍ.','hijriAdjust':'ضبط التاريخ الهجري','hijriHint':'اضبط ±يومين حسب رؤية الهلال المحلية','reset':'إعادة تعيين','tasbihCounter':'عداد التسبيح','dailyDua':'دعاء وتسبيح يومي','ramadanHere':'رمضان مبارك','ramadanStarts':'بداية رمضان المتوقعة بعد','days':'أيام','ramadanNotice':'مواعيد رمضان تقديرية؛ تحقق من المسجد المحلي.','notifyHint':'يستخدم صوت تنبيه الهاتف وقد يتأخر على أندرويد.','adSpace':'مساحة إعلان · AdMob غير مفعّل'},
+  'en': {'home':'Home','qibla':'Qibla','calendar':'Calendar','settings':'Settings','next':'NEXT PRAYER','today':"Today's prayers",'remaining':'Time remaining','location':'Use my location','alerts':'Enable prayer notifications','calculation':'Calculation method','asr':'Asr calculation','language':'Language','appearance':'Appearance','light':'Light','dark':'Dark','hijri':'Hijri calendar','sehri':'Sehri ends (Fajr)','iftar':'Iftar (Maghrib)','notice':'Hijri dates are approximate; verify with your local mosque.','prayer':'Prayer, wherever you are','sound':'Notification sound','soundHint':'Device alert sound (not a full adhan recording)','refreshHint':'Reopen the app to refresh upcoming prayer alerts.','compassHelp':'Keep your phone level and away from magnets.','compassUnavailable':'Compass sensor unavailable. Use the bearing below.','selectCity':'Choose a city','gps':'GPS location','about':'Prayer times are calculated estimates. Verify with your local mosque.','notificationSuccess':'Prayer reminders scheduled for the next 10 days.','permission':'Location permission is required.','method':'Muslim World League (MWL)','duaTab':'Dua','ramadan':'Ramadan','tasbih':'Tasbih','prayerAlerts':'Prayer notifications','manageAlerts':'Manage each prayer alert','saveAlerts':'Save & Schedule Alerts','testAlert':'Test notification now','testSuccess':'Test notification sent.' ,'hijriAdjust':'Hijri date adjustment','hijriHint':'Match your local mosque’s moon sighting (±2 days).','reset':'Reset','tasbihCounter':'Tasbih Counter','dailyDua':'Daily Dua & Tasbih','ramadanHere':'Ramadan is here','ramadanStarts':'Estimated Ramadan starts in','days':'days','ramadanNotice':'Ramadan dates are estimates. Confirm with your local mosque.','notifyHint':'Uses device notification sound. Android may delay inexact alarms.','adSpace':'Ad space · AdMob not configured'},
+  'bn': {'home':'হোম','qibla':'কিবলা','calendar':'ক্যালেন্ডার','settings':'সেটিংস','next':'পরবর্তী নামাজ','today':'আজকের নামাজের সময়','remaining':'বাকি সময়','location':'আমার অবস্থান','alerts':'নামাজের নোটিফিকেশন চালু','calculation':'গণনার পদ্ধতি','asr':'আসরের পদ্ধতি','language':'ভাষা','appearance':'থিম','light':'লাইট','dark':'ডার্ক','hijri':'হিজরি ক্যালেন্ডার','sehri':'সেহরি শেষ (ফজর)','iftar':'ইফতার (মাগরিব)','notice':'হিজরি তারিখ আনুমানিক; স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','prayer':'যেখানেই থাকুন, নামাজের সাথে','sound':'নোটিফিকেশনের শব্দ','soundHint':'ফোনের অ্যালার্ট টোন; পূর্ণ আজান নয়','refreshHint':'পরবর্তী নামাজের অ্যালার্ট নবায়ন করতে অ্যাপ খুলুন।','compassHelp':'ফোন সমতল রাখুন ও চুম্বক থেকে দূরে রাখুন।','compassUnavailable':'কম্পাস সেন্সর নেই; নিচের দিকনির্দেশনা দেখুন।','selectCity':'শহর নির্বাচন','gps':'জিপিএস অবস্থান','about':'নামাজের সময় গণনাভিত্তিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notificationSuccess':'পরবর্তী ১০ দিনের নামাজের অ্যালার্ট নির্ধারিত হয়েছে।','permission':'লোকেশন অনুমতি প্রয়োজন।','method':'মুসলিম ওয়ার্ল্ড লীগ (MWL)','duaTab':'দোয়া','ramadan':'রমজান','tasbih':'তাসবিহ','prayerAlerts':'নামাজের নোটিফিকেশন','manageAlerts':'প্রতিটি ওয়াক্তের অ্যালার্ট নিয়ন্ত্রণ','saveAlerts':'সংরক্ষণ ও অ্যালার্ট চালু','testAlert':'এখনই টেস্ট নোটিফিকেশন','testSuccess':'পরীক্ষামূলক নোটিফিকেশন পাঠানো হয়েছে।','hijriAdjust':'হিজরি তারিখ সমন্বয়','hijriHint':'স্থানীয় মসজিদের চাঁদ দেখার হিসাবে ±২ দিন ঠিক করুন।','reset':'রিসেট','tasbihCounter':'তাসবিহ কাউন্টার','dailyDua':'প্রতিদিনের দোয়া ও তাসবিহ','ramadanHere':'রমজান চলছে','ramadanStarts':'আনুমানিক রমজান শুরু হতে বাকি','days':'দিন','ramadanNotice':'রমজানের তারিখ আনুমানিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notifyHint':'ফোনের নোটিফিকেশন টোন ব্যবহার করে। অ্যান্ড্রয়েডে অ্যালার্ট দেরি হতে পারে।','adSpace':'বিজ্ঞাপনের স্থান · AdMob চালু হয়নি'},
+  'ko': {'home':'홈','qibla':'키블라','calendar':'달력','settings':'설정','next':'다음 기도','today':'오늘의 기도 시간','remaining':'남은 시간','location':'현재 위치','alerts':'기도 알림 켜기','calculation':'계산 방식','asr':'아스르 계산','language':'언어','appearance':'테마','light':'라이트','dark':'다크','hijri':'히즈리 달력','sehri':'수후르 종료 (파즈르)','iftar':'이프타르 (마그리브)','notice':'히즈리 날짜는 근사치입니다. 현지 모스크에 확인하세요.','prayer':'어디서나 기도를','sound':'알림 소리','soundHint':'기본 알림음 (전체 아잔 녹음 아님)','refreshHint':'알림을 갱신하려면 앱을 다시 여세요.','compassHelp':'휴대전화를 수평으로 두고 자석에서 멀리하세요.','compassUnavailable':'나침반 센서를 사용할 수 없습니다. 아래 각도를 참고하세요.','selectCity':'도시 선택','gps':'GPS 위치','about':'기도 시간은 계산된 추정치입니다. 현지 모스크에 확인하세요.','notificationSuccess':'향후 10일간의 기도 알림이 예약되었습니다.','permission':'위치 권한이 필요합니다.','method':'세계무슬림연맹 (MWL)','duaTab':'두아','ramadan':'라마단','tasbih':'타스비흐','prayerAlerts':'기도 알림','manageAlerts':'기도별 알림 설정','saveAlerts':'알림 저장 및 예약','testAlert':'지금 알림 테스트','testSuccess':'테스트 알림을 보냈습니다.','hijriAdjust':'히즈리 날짜 조정','hijriHint':'현지 모스크 기준 ±2일 조정','reset':'초기화','tasbihCounter':'타스비흐 카운터','dailyDua':'매일 두아와 타스비흐','ramadanHere':'라마단 기간','ramadanStarts':'라마단 예상 시작까지','days':'일','ramadanNotice':'라마단 날짜는 추정치입니다. 현지 모스크에서 확인하세요.','notifyHint':'기본 알림음을 사용합니다. Android에서 지연될 수 있습니다.','adSpace':'광고 공간 · AdMob 미설정'},
+  'ar': {'home':'الرئيسية','qibla':'القبلة','calendar':'التقويم','settings':'الإعدادات','next':'الصلاة القادمة','today':'مواقيت الصلاة اليوم','remaining':'الوقت المتبقي','location':'موقعي','alerts':'تفعيل تنبيهات الصلاة','calculation':'طريقة الحساب','asr':'حساب العصر','language':'اللغة','appearance':'المظهر','light':'فاتح','dark':'داكن','hijri':'التقويم الهجري','sehri':'نهاية السحور (الفجر)','iftar':'الإفطار (المغرب)','notice':'التاريخ الهجري تقريبي؛ يرجى التأكد من المسجد المحلي.','prayer':'الصلاة أينما كنت','sound':'صوت التنبيه','soundHint':'نغمة الهاتف الافتراضية وليست أذاناً كاملاً','refreshHint':'افتح التطبيق لتجديد التنبيهات القادمة.','compassHelp':'أبق الهاتف مستوياً وبعيداً عن المغناطيس.','compassUnavailable':'مستشعر البوصلة غير متاح. استخدم الزاوية أدناه.','selectCity':'اختر مدينة','gps':'موقع GPS','about':'مواقيت الصلاة تقديرية بالحساب؛ تحقق من المسجد المحلي.','notificationSuccess':'تم جدولة تنبيهات الصلاة لعشرة أيام.','permission':'يلزم إذن الموقع.','method':'رابطة العالم الإسلامي (MWL)','duaTab':'الدعاء','ramadan':'رمضان','tasbih':'التسبيح','prayerAlerts':'تنبيهات الصلاة','manageAlerts':'إدارة تنبيهات الصلوات','saveAlerts':'حفظ وجدولة التنبيهات','testAlert':'اختبار الإشعار الآن','testSuccess':'تمت جدولة تنبيه تجريبي بعد 10 ثوانٍ.','hijriAdjust':'ضبط التاريخ الهجري','hijriHint':'اضبط ±يومين حسب رؤية الهلال المحلية','reset':'إعادة تعيين','tasbihCounter':'عداد التسبيح','dailyDua':'دعاء وتسبيح يومي','ramadanHere':'رمضان مبارك','ramadanStarts':'بداية رمضان المتوقعة بعد','days':'أيام','ramadanNotice':'مواعيد رمضان تقديرية؛ تحقق من المسجد المحلي.','notifyHint':'يستخدم صوت تنبيه الهاتف وقد يتأخر على أندرويد.','adSpace':'مساحة إعلان · AdMob غير مفعّل'},
 };
 String tr(String lang, String key) => translations[lang]?[key] ?? translations['en']?[key] ?? key;
 
@@ -228,6 +229,16 @@ List<PrayerItem> prayersFor(PrayerCity city, bool hanafi, DateTime date) {
   ];
 }
 
+const _adhanAlarm = MethodChannel('mpt/adhan_alarm');
+
+Future<bool> canScheduleExactAdhan() async {
+  try { return await _adhanAlarm.invokeMethod<bool>('canExact') ?? false; }
+  catch (_) { return false; }
+}
+Future<void> openExactAdhanSettings() async {
+  await _adhanAlarm.invokeMethod<void>('openExactSettings');
+}
+
 Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = true, List<bool>? enabled}) async {
   await mptServicesReady;
   final android = notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
@@ -238,6 +249,14 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
     throw StateError('Notification permission denied');
   }
   await notifications.cancelAll();
+  // Cancel previously scheduled native MP3 alarms before replacing them.
+  try { await _adhanAlarm.invokeMethod<void>('cancelAll'); }
+  catch (e) { debugPrint('Native adhan unavailable: $e'); }
+  final prefs = await SharedPreferences.getInstance();
+  final adhanLength = prefs.getString('adhan_length') == 'short' ? 'short' : 'full';
+  final specialFajr = prefs.getBool('special_fajr') ?? true;
+  var nativeAlarmId = 10000;
+
   final canExact = await android?.canScheduleExactNotifications() ?? false;
   final alarmMode = canExact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle;
   final details = NotificationDetails(
@@ -259,6 +278,15 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
       if (enabled != null && !enabled[prayer.index]) continue;
       final instant = localToInstant(prayer.localTime, city);
       if (instant.isAfter(DateTime.now())) {
+        // The native alarm plays the selected MP3 even when the Flutter UI is closed.
+        final kind = prayer.index == 0 && specialFajr ? 'fajr' : 'regular';
+        try {
+          await _adhanAlarm.invokeMethod<bool>('schedule', {
+            'id': nativeAlarmId++,
+            'at': instant.millisecondsSinceEpoch,
+            'audio': '${kind}_$adhanLength',
+          });
+        } catch (e) { debugPrint('Could not schedule MP3 adhan: $e'); }
         await notifications.zonedSchedule(
           id++, 'MUSLIM PRAYER TIMES · ${prayerNames['en']![prayer.index]}',
           'It is time for ${prayerNames['en']![prayer.index]}.',
@@ -278,14 +306,14 @@ Future<void> scheduleTestNotification({String language = 'en'}) async {
   final android = notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
   final granted = await android?.requestNotificationsPermission();
   if (granted == false) throw StateError('Notification permission denied');
-  await notifications.zonedSchedule(
+  // Immediate notification is an actual delivery test, not an inexact 10-second alarm.
+  await notifications.show(
     99001, tx(language, 'testTitle'), tx(language, 'testBody'),
-    tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
-    const NotificationDetails(android: AndroidNotificationDetails(
-      'mpt_test_v130', 'MPT test notifications', importance: Importance.max,
-      priority: Priority.high), iOS: DarwinNotificationDetails()),
-    androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    const NotificationDetails(
+      android: AndroidNotificationDetails('mpt_test_v150', 'MPT notification tests',
+        importance: Importance.max, priority: Priority.high),
+      iOS: DarwinNotificationDetails(),
+    ),
   );
 }
 
@@ -656,7 +684,7 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 }
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   final PrayerCity city;
   final bool hanafi;
   final String language;
@@ -666,51 +694,181 @@ class SettingsPage extends StatelessWidget {
   final ValueChanged<bool> onMadhabChanged;
   final ValueChanged<String> onLanguageChanged;
   final ValueChanged<bool> onDarkChanged;
-  const SettingsPage({super.key, required this.city, required this.hanafi, required this.language, required this.dark, required this.sound, required this.onSoundChanged, required this.onMadhabChanged, required this.onLanguageChanged, required this.onDarkChanged});
-  @override Widget build(BuildContext context) {
+  const SettingsPage({super.key, required this.city, required this.hanafi,
+    required this.language, required this.dark, required this.sound,
+    required this.onSoundChanged, required this.onMadhabChanged,
+    required this.onLanguageChanged, required this.onDarkChanged});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  final AdhanAudioService adhanAudio = AdhanAudioService();
+  bool adhanReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAdhan();
+  }
+
+  Future<void> _loadAdhan() async {
+    try {
+      await adhanAudio.load();
+      if (mounted) setState(() => adhanReady = true);
+    } catch (e) {
+      debugPrint('Adhan settings load failed: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(adhanAudio.dispose());
+    super.dispose();
+  }
+
+  Future<void> _preview(bool fajr) async {
+    try {
+      await adhanAudio.preview(fajr: fajr);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Adhan audio error: $e')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final language = widget.language;
     final color = Theme.of(context).colorScheme.onSurface;
     return ListView(padding: const EdgeInsets.fromLTRB(22, 32, 22, 32), children: [
-      Text(tr(language, 'settings'), style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: color)),
+      Text(tr(language, 'settings'), style: TextStyle(fontSize: 30,
+        fontWeight: FontWeight.w900, color: color)),
       const SizedBox(height: 28),
-      Text(tr(language, 'language'), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+      Text(tr(language, 'language'), style: const TextStyle(fontSize: 17,
+        fontWeight: FontWeight.w800)),
       DropdownButton<String>(value: language, isExpanded: true, items: const [
         DropdownMenuItem(value: 'en', child: Text('English')),
         DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
         DropdownMenuItem(value: 'ko', child: Text('한국어')),
         DropdownMenuItem(value: 'ar', child: Text('العربية')),
-      ], onChanged: (value) { if (value != null) onLanguageChanged(value); }),
+      ], onChanged: (value) { if (value != null) widget.onLanguageChanged(value); }),
       const SizedBox(height: 20),
-      SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(tr(language, 'appearance'), style: const TextStyle(fontWeight: FontWeight.w800)),
-        subtitle: Text(dark ? tr(language, 'dark') : tr(language, 'light')), value: dark, onChanged: onDarkChanged),
+      SwitchListTile(contentPadding: EdgeInsets.zero,
+        title: Text(tr(language, 'appearance'),
+          style: const TextStyle(fontWeight: FontWeight.w800)),
+        subtitle: Text(widget.dark ? tr(language, 'dark') : tr(language, 'light')),
+        value: widget.dark, onChanged: widget.onDarkChanged),
       const SizedBox(height: 24),
-      Text(tr(language, 'asr'), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+      Text(tr(language, 'asr'), style: const TextStyle(fontSize: 17,
+        fontWeight: FontWeight.w800)),
       const SizedBox(height: 12),
-      SegmentedButton<bool>(segments: const [ButtonSegment(value: false, label: Text('Shafi')), ButtonSegment(value: true, label: Text('Hanafi'))],
-        selected: {hanafi}, onSelectionChanged: (value) => onMadhabChanged(value.first)),
+      SegmentedButton<bool>(segments: const [
+        ButtonSegment(value: false, label: Text('Shafi')),
+        ButtonSegment(value: true, label: Text('Hanafi')),
+      ], selected: {widget.hanafi},
+        onSelectionChanged: (value) => widget.onMadhabChanged(value.first)),
       const SizedBox(height: 25),
-      Text('${tr(language, 'calculation')}: ${tr(language, 'method')}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+      Text('${tr(language, 'calculation')}: ${tr(language, 'method')}',
+        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
       const SizedBox(height: 22),
-      SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(tr(language, 'sound'), style: const TextStyle(fontWeight: FontWeight.w800)),
-        subtitle: Text(tr(language, 'soundHint')), value: sound, onChanged: onSoundChanged),
-      ListTile(leading: const Icon(Icons.notifications_active, color: emerald), title: Text(tr(language, 'prayerAlerts')), subtitle: Text(tr(language, 'manageAlerts')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NotificationPage(city: city, hanafi: hanafi, language: language)))),
-      const SizedBox(height: 24),
-      FilledButton.icon(style: FilledButton.styleFrom(backgroundColor: emerald, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 17)),
+      const Text('Adhan Settings · আজান সেটিংস',
+        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 10),
+      if (!adhanReady)
+        const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator())
+      else ...[
+        RadioListTile<AdhanLength>(
+          title: const Text('Full Adhan · পূর্ণ আজান'),
+          value: AdhanLength.full, groupValue: adhanAudio.length,
+          onChanged: (v) async {
+            if (v == null) return;
+            await adhanAudio.setLength(v);
+            if (mounted) setState(() {});
+          }),
+        RadioListTile<AdhanLength>(
+          title: const Text('Short Adhan · সংক্ষিপ্ত আজান'),
+          value: AdhanLength.short, groupValue: adhanAudio.length,
+          onChanged: (v) async {
+            if (v == null) return;
+            await adhanAudio.setLength(v);
+            if (mounted) setState(() {});
+          }),
+        SwitchListTile(
+          title: const Text('Special Fajr Adhan'),
+          subtitle: const Text('ফজরের বিশেষ আজান চালু'),
+          value: adhanAudio.specialFajr,
+          onChanged: (v) async {
+            await adhanAudio.setSpecialFajr(v);
+            if (mounted) setState(() {});
+          }),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          OutlinedButton.icon(onPressed: () => _preview(false),
+            icon: const Icon(Icons.play_arrow), label: const Text('Preview Adhan')),
+          OutlinedButton.icon(onPressed: () => _preview(true),
+            icon: const Icon(Icons.play_arrow), label: const Text('Preview Fajr')),
+          OutlinedButton.icon(onPressed: () async { await adhanAudio.stop(); },
+            icon: const Icon(Icons.stop), label: const Text('Stop')),
+        ]),
+        const SizedBox(height: 8),
+        const Text('Preview plays inside the app. Scheduled reminders currently use the device notification sound.',
+          style: TextStyle(fontSize: 12, color: muted)),
+      ],
+      const SizedBox(height: 22),
+      SwitchListTile(contentPadding: EdgeInsets.zero,
+        title: Text(tr(language, 'sound'),
+          style: const TextStyle(fontWeight: FontWeight.w800)),
+        subtitle: Text(tr(language, 'soundHint')),
+        value: widget.sound, onChanged: widget.onSoundChanged),
+      OutlinedButton.icon(
         onPressed: () async {
           try {
-            final prefs = await SharedPreferences.getInstance();
-            final selectedPrayers = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true);
-            await schedulePrayerAlerts(city, hanafi, sound: sound, enabled: selectedPrayers);
-            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(language, 'notificationSuccess'))));
-          } catch (error) {
-            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not schedule alerts: $error')));
+            final allowed = await canScheduleExactAdhan();
+            if (!allowed) {
+              await openExactAdhanSettings();
+            } else if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Exact alarms already allowed.')));
+            }
+          } catch (e) {
+            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
           }
-        }, icon: const Icon(Icons.notifications_active_outlined), label: Text(tr(language, 'alerts'))),
-      const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
-      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: TextStyle(color: muted, fontSize: 12))),
+        },
+        icon: const Icon(Icons.alarm_on),
+        label: const Text('Allow precise Adhan alarms · আজানের অনুমতি'),
+      ),
+      const SizedBox(height: 10),
+      ListTile(leading: const Icon(Icons.notifications_active, color: emerald),
+        title: Text(tr(language, 'prayerAlerts')),
+        subtitle: Text(tr(language, 'manageAlerts')),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) =>
+          NotificationPage(city: widget.city, hanafi: widget.hanafi,
+            language: language)))),
+      const SizedBox(height: 24),
+      FilledButton.icon(style: FilledButton.styleFrom(
+        backgroundColor: emerald, foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 17)),
+        onPressed: () async {
+          try {
+            await schedulePrayerAlerts(widget.city, widget.hanafi,
+              sound: widget.sound);
+            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(tr(language, 'notificationSuccess'))));
+          } catch (error) {
+            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Could not schedule alerts: $error')));
+          }
+        }, icon: const Icon(Icons.notifications_active_outlined),
+        label: Text(tr(language, 'alerts'))),
+      const SizedBox(height: 15),
+      Text(tr(language, 'refreshHint'),
+        style: const TextStyle(fontSize: 12, color: muted)),
+      const SizedBox(height: 28),
+      Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel',
+        style: const TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 }
-
 
 class _GoldCard extends StatelessWidget {
   final Widget child;
@@ -783,62 +941,11 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   List<bool> enabled = List.filled(5, true);
   bool sound = true;
-  final adhanAudio = AdhanAudioService();
-  bool adhanReady = false;
-  @override void initState() { super.initState(); _load(); _loadAdhan(); }
-  Future<void> _loadAdhan() async {
-    await adhanAudio.load();
-    if (mounted) setState(() => adhanReady = true);
-  }
-  @override void dispose() {
-    adhanAudio.dispose();
-    super.dispose();
-  }
+  @override void initState() { super.initState(); _load(); }
   Future<void> _load() async { final prefs = await SharedPreferences.getInstance(); if (mounted) setState(() { enabled = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true); sound = prefs.getBool('sound') ?? true; }); }
   @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(tr(widget.language, 'prayerAlerts'))), body: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18),
     ...List.generate(5, (i) => _GoldCard(child: SwitchListTile(contentPadding: EdgeInsets.zero, secondary: Icon([Icons.nightlight_round, Icons.wb_sunny, Icons.sunny, Icons.wb_twilight, Icons.nights_stay][i], color: emerald), title: Text(prayerNames[widget.language]![i]), value: enabled[i], onChanged: (v) async { setState(() => enabled[i] = v); (await SharedPreferences.getInstance()).setBool('prayer_$i', v); }))),
-    if (adhanReady) ...[
-      const SizedBox(height: 16),
-      _GoldCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Adhan settings · আজান সেটিংস', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 10),
-        RadioListTile<AdhanLength>(
-          title: const Text('Full Adhan · পূর্ণ আজান'),
-          value: AdhanLength.full,
-          groupValue: adhanAudio.length,
-          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
-        ),
-        RadioListTile<AdhanLength>(
-          title: const Text('Short Adhan · সংক্ষিপ্ত আজান'),
-          value: AdhanLength.short,
-          groupValue: adhanAudio.length,
-          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
-        ),
-        SwitchListTile(
-          title: const Text('Special Fajr Adhan'),
-          subtitle: const Text('ফজরের বিশেষ আজান চালু'),
-          value: adhanAudio.specialFajr,
-          onChanged: (v) async { await adhanAudio.setSpecialFajr(v); if (mounted) setState(() {}); },
-        ),
-        Wrap(spacing: 8, runSpacing: 8, children: [
-          OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: false); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: const Text('Preview Adhan'),
-          ),
-          OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: true); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: const Text('Preview Fajr'),
-          ),
-          OutlinedButton.icon(
-            onPressed: () async { await adhanAudio.stop(); },
-            icon: const Icon(Icons.stop), label: const Text('Stop'),
-          ),
-        ]),
-        const SizedBox(height: 8),
-        const Text('Preview works inside the app. Scheduled alerts still use the device notification sound.', style: TextStyle(fontSize: 12, color: muted)),
-      ])),
-    ],
     const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
     const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(widget.language, 'notificationSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
     const SizedBox(height: 10),
