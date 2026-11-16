@@ -1,0 +1,11 @@
+MPT v1.5.3 — GitHub আপলোড নির্দেশনা
+
+1. ZIP Extract করুন। ভেতরের mpt-muslim-prayer-times-main ফোল্ডার খুলুন।
+2. GitHub রিপোজিটরির ROOT-এ codemagic.yaml, pubspec.yaml, verify_source.py, verify_mpt.py, apply_native_v150.py, MainActivity.kt, AdhanReceiver.kt, AdhanService.kt আপডেট করুন।
+3. lib ফোল্ডারের ভেতর lib/main.dart এবং lib/adhan_audio.dart আপডেট করুন। শুধু root main.dart আপলোড করবেন না।
+4. assets/audio ফোল্ডারের চারটি MP3 অপরিবর্তিত রাখুন।
+5. GitHub-এ lib/main.dart খুলে const versionLabel = '1.5.3'; আছে কি না নিশ্চিত করুন।
+6. Codemagic-এ নতুন commit থেকে Build চালান। Build-এর প্রথম Verify correct Flutter source ধাপ PASS হওয়া চাই।
+7. APK ইনস্টল করে exact alarm access, notification permission এবং Samsung battery settings যাচাই করুন।
+
+সীমাবদ্ধতা: Flutter compiler/Android device test এখানে চালানো হয়নি। Android native foreground service, battery restrictions এবং reboot-এর পরে rescheduling বাস্তব ডিভাইসে যাচাই করতে হবে।
