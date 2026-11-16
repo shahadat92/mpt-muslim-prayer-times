@@ -12,6 +12,6 @@ class AdhanReceiver : BroadcastReceiver() {
         try {
             if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(service)
             else context.startService(service)
-        } catch (_: Exception) { /* Android may block background foreground-service starts. */ }
+        } catch (e: Exception) { android.util.Log.e("MPT_ADHAN", "Unable to start AdhanService", e) }
     }
 }

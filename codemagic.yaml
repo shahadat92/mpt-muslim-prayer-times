@@ -1,6 +1,6 @@
 workflows:
   mpt_android_debug:
-    name: MPT v1.5.1 Android Debug APK
+    name: MPT v1.5.2 Android Debug APK
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:

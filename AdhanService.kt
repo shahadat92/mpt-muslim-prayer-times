@@ -30,7 +30,7 @@ class AdhanService : Service() {
                 start()
             }
             if (player == null) stopSelf()
-        } catch (_: Exception) { stopSelf() }
+        } catch (e: Exception) { android.util.Log.e("MPT_ADHAN", "Playback failed", e); stopSelf() }
         return START_NOT_STICKY
     }
     override fun onDestroy() {
