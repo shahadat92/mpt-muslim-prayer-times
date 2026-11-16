@@ -24,5 +24,9 @@ for name in ['MainActivity.kt','AdhanReceiver.kt','AdhanService.kt']:
  shutil.copy2(source,package_dir/name)
 raw=android/'res/raw';raw.mkdir(parents=True,exist_ok=True)
 for name in ['fajr_full','fajr_short','regular_full','regular_short']:
- shutil.copy2(root/'assets/audio'/f'{name}.mp3',raw/f'{name}.mp3')
+ 
+ source_audio = root/'assets/audio'/f'{name}.mp3'
+ if not source_audio.is_file():
+  raise FileNotFoundError(f'Missing audio: {source_audio}')
+ shutil.copy2(source_audio,raw/f'{name}.mp3')
 print('MPT 1.5 native alarm files installed')
