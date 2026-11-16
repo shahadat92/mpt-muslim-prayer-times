@@ -5,7 +5,7 @@ android=root/'android/app/src/main'
 manifest=android/'AndroidManifest.xml'
 if not manifest.exists(): raise SystemExit('Run flutter create before this script')
 s=manifest.read_text()
-for perm in ['android.permission.FOREGROUND_SERVICE','android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK','android.permission.SCHEDULE_EXACT_ALARM','android.permission.RECEIVE_BOOT_COMPLETED','android.permission.POST_NOTIFICATIONS']:
+for perm in ['android.permission.INTERNET','android.permission.ACCESS_FINE_LOCATION','android.permission.ACCESS_COARSE_LOCATION','android.permission.FOREGROUND_SERVICE','android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK','android.permission.SCHEDULE_EXACT_ALARM','android.permission.RECEIVE_BOOT_COMPLETED','android.permission.POST_NOTIFICATIONS']:
  if perm not in s: s=s.replace('<application',f'<uses-permission android:name="{perm}"/>\n    <application',1)
 if 'com.koreaprayertimes.korea_prayer_times.AdhanService' not in s:
  s=s.replace('</application>', '''<service android:name="com.koreaprayertimes.korea_prayer_times.AdhanService" android:exported="false" android:foregroundServiceType="mediaPlayback" />

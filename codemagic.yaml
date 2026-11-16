@@ -7,8 +7,8 @@ workflows:
       flutter: stable
       java: 17
     scripts:
-      - name: Patch MPT Flutter source
-        script: python3 patch_main.py
+      - name: Verify correct Flutter source
+        script: python3 verify_source.py
       - name: Generate Android project
         script: flutter create --platforms=android --project-name korea_prayer_times --org com.koreaprayertimes .
       - name: Install native automatic Adhan alarm service

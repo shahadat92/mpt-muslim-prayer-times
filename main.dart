@@ -25,7 +25,7 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.5.2';
+const versionLabel = '1.5.3'; // MPT-153-VERIFIED-SOURCE
 late final Future<void> mptServicesReady;
 
 Future<void> main() async {
@@ -115,7 +115,7 @@ String tx(String lang, String key) => extraTranslations[lang]?[key] ?? extraTran
 
 const calendarDayLabels = <String, List<String>>{
   'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহঃ', 'শুক্র', 'শনি'],
+  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
   'ko': ['일', '월', '화', '수', '목', '금', '토'],
   'ar': ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
 };
