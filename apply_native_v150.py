@@ -10,6 +10,15 @@ for perm in ['android.permission.INTERNET','android.permission.ACCESS_FINE_LOCAT
 if 'com.koreaprayertimes.korea_prayer_times.AdhanService' not in s:
  s=s.replace('</application>', '''<service android:name="com.koreaprayertimes.korea_prayer_times.AdhanService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
         <receiver android:name="com.koreaprayertimes.korea_prayer_times.AdhanReceiver" android:exported="false" />
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" android:exported="false" />
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver" android:exported="false">
+          <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+          </intent-filter>
+        </receiver>
     </application>''',1)
 manifest.write_text(s)
 package_dir=android/'kotlin/com/koreaprayertimes/korea_prayer_times'

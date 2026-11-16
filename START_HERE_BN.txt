@@ -1,0 +1,23 @@
+MPT v1.5.3 — FULL REPOSITORY REPLACEMENT
+
+এটি Flutter source package, APK নয়।
+
+মূল কারণ: GitHub-এর পুরোনো lib/main.dart এখনও build হচ্ছিল। Flutter root/main.dart ব্যবহার করে না।
+
+মোবাইলে আপলোড:
+1. ZIP Extract করুন।
+2. GitHub repository-র main branch খুলুন।
+3. পুরোনো lib/main.dart এবং root/main.dart গুলিয়ে ফেলবেন না। এই প্যাকেজের lib/main.dart-ই আসল ফাইল।
+4. সবচেয়ে নির্ভরযোগ্য পদ্ধতি: GitHub-এর Add file > Upload files থেকে ZIP-এর ভেতরের ফাইল/ফোল্ডার আপলোড করুন; ZIP ফাইলটিকে শুধু একটি ZIP হিসেবে আপলোড করলে Build কাজ করবে না। GitHub mobile browser-এ ফোল্ডার আপলোড কঠিন হলে desktop site চালু করুন অথবা GitHub-compatible file manager ব্যবহার করুন।
+5. repo root-এ codemagic.yaml, verify_source.py, verify_mpt.py, apply_native_v150.py, MainActivity.kt, AdhanReceiver.kt, AdhanService.kt, pubspec.yaml থাকতে হবে।
+6. lib/main.dart এবং lib/adhan_audio.dart; assets/audio/*.mp3 ও assets/images/mpt_icon.png থাকতে হবে।
+7. GitHub commit করার পর Codemagic-এ সর্বশেষ commit SHA নির্বাচন করে build দিন।
+
+কাজের অবস্থা:
+- verify_source.py: 10/10 PASS (এই প্যাকেজে স্থানীয়ভাবে চালিয়ে যাচাই করা হয়েছে)।
+- Python scripts compile: PASS।
+- Flutter SDK এখানে ইনস্টল নেই: flutter analyze, Android compilation এবং APK/device playback যাচাই করা হয়নি।
+- Android-এ Settings > Apps > MPT > Alarms & reminders থেকে precise alarms অনুমতি লাগতে পারে।
+- Battery restriction, reboot, OS policy এবং permissions এর কারণে ব্যাকগ্রাউন্ড অডিও শতভাগ নিশ্চিত নয়।
+- ১০ দিনের পর নতুন schedule করতে অ্যাপ খুলে Save & Schedule Alerts চাপুন।
+- ব্যবহার করার আগে আজানের অডিও ফাইলের প্রকাশ/বিতরণ অধিকার নিশ্চিত করুন।
