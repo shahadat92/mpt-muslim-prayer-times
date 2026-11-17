@@ -38,6 +38,8 @@ workflows:
         script: flutter pub get
       - name: Generate launcher icon
         script: dart run flutter_launcher_icons
+      - name: Remove generated Flutter demo test
+        script: rm -f test/widget_test.dart
       - name: Analyze Flutter source
         script: flutter analyze --no-fatal-infos
       - name: Build debug APK
