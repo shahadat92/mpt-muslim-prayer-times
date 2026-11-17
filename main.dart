@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
-import 'package:flutter/services.dart';
 import 'adhan_audio.dart';
+import 'package:flutter/services.dart';
 
 import 'package:adhan/adhan.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -24,9 +25,7 @@ const muted = Color(0xFF78877E);
 const logoAsset = 'assets/images/mpt_icon.png';
 
 final notifications = FlutterLocalNotificationsPlugin();
-const versionLabel = '1.5.3';
-// MPT-153-VERIFIED-SOURCE
-const nativeAdhanChannel = MethodChannel('mpt/adhan_alarm');
+const versionLabel = '1.5.3'; // MPT-153-VERIFIED-SOURCE
 late final Future<void> mptServicesReady;
 
 Future<void> main() async {
@@ -114,21 +113,55 @@ const extraTranslations = <String, Map<String, String>>{
 };
 String tx(String lang, String key) => extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
 
+const calendarDayLabels = <String, List<String>>{
+  'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
+  'ko': ['일', '월', '화', '수', '목', '금', '토'],
+  'ar': ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
+};
+List<String> calendarWeekdays(String language) =>
+    calendarDayLabels[language] ?? calendarDayLabels['en']!;
+
+const MethodChannel nativeAdhanChannel = MethodChannel('mpt/adhan_alarm');
+
+/// Schedules audio independently of the Flutter UI. Android only.
+/// Exact alarm access must be granted in Android's special app access settings.
+Future<String> scheduleNativeAdhan(PrayerCity city, bool hanafi,
+    {List<bool>? enabled}) async {
+  if (defaultTargetPlatform != TargetPlatform.android) {
+    return 'Automatic audio alarm is Android-only in this build.';
+  }
+  final prefs = await SharedPreferences.getInstance();
+  final length = prefs.getString('adhan_length') == 'short' ? 'short' : 'full';
+  final specialFajr = prefs.getBool('special_fajr') ?? true;
+  final canExact = await nativeAdhanChannel.invokeMethod<bool>('canExact') ?? false;
+  await nativeAdhanChannel.invokeMethod<void>('cancelAll');
+  var id = 10000;
+  final today = cityNow(city);
+  for (var day = 0; day < 10; day++) {
+    final date = DateTime(today.year, today.month, today.day).add(Duration(days: day));
+    for (final prayer in prayersFor(city, hanafi, date)) {
+      if (enabled != null && !enabled[prayer.index]) continue;
+      final instant = localToInstant(prayer.localTime, city);
+      if (!instant.isAfter(DateTime.now())) continue;
+      final prefix = prayer.index == 0 && specialFajr ? 'fajr' : 'regular';
+      await nativeAdhanChannel.invokeMethod<bool>('schedule', <String, dynamic>{
+        'id': id++, 'at': instant.millisecondsSinceEpoch,
+        'audio': '${prefix}_$length',
+      });
+    }
+  }
+  return canExact
+      ? 'Automatic Adhan scheduled for the next 10 days.'
+      : 'Adhan scheduled approximately. Allow Alarms & reminders in Android settings for more precise timing.';
+}
+
+
 String localizedCity(PrayerCity city, String language) {
   if (language != 'bn') return city.label;
   const names = <String, String>{'Seoul':'সিউল','Busan':'বুসান','Incheon':'ইনচন','Daegu':'দেগু','Daejeon':'দেজন','Gwangju':'গোয়াংজু','Suwon':'সুওন','Jeju':'জেজু','Tokyo':'টোকিও','Dhaka':'ঢাকা','London':'লন্ডন','New York':'নিউইয়র্ক','Istanbul':'ইস্তাম্বুল','Kuala Lumpur':'কুয়ালালামপুর','Makkah':'মক্কা','Dubai':'দুবাই','Jakarta':'জাকার্তা','Toronto':'টরন্টো','Sydney':'সিডনি'};
   const countries = <String, String>{'South Korea':'দক্ষিণ কোরিয়া','Japan':'জাপান','Bangladesh':'বাংলাদেশ','United Kingdom':'যুক্তরাজ্য','United States':'যুক্তরাষ্ট্র','Türkiye':'তুরস্ক','Malaysia':'মালয়েশিয়া','Saudi Arabia':'সৌদি আরব','United Arab Emirates':'সংযুক্ত আরব আমিরাত','Indonesia':'ইন্দোনেশিয়া','Canada':'কানাডা','Australia':'অস্ট্রেলিয়া'};
   return '${names[city.name] ?? city.name}, ${countries[city.country] ?? city.country}';
-}
-
-List<String> calendarWeekdays(String language) {
-  const days = <String, List<String>>{
-    'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
-    'ko': ['일', '월', '화', '수', '목', '금', '토'],
-    'ar': ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-  };
-  return days[language] ?? days['en']!;
 }
 
 String localizedDate(DateTime date, String language) {
@@ -208,35 +241,6 @@ List<PrayerItem> prayersFor(PrayerCity city, bool hanafi, DateTime date) {
   ];
 }
 
-Future<void> scheduleNativeAdhan(PrayerCity city, bool hanafi, {List<bool>? enabled}) async {
-  final prefs = await SharedPreferences.getInstance();
-  final length = prefs.getString('adhan_length') == 'short' ? 'short' : 'full';
-  final specialFajr = prefs.getBool('special_fajr') ?? true;
-  final canExact = await nativeAdhanChannel.invokeMethod<bool>('canExact') ?? false;
-  if (!canExact) {
-    // Android may delay inexact alarms. Users can grant exact alarm access in system settings.
-    debugPrint('MPT: Exact alarm access unavailable; using inexact fallback.');
-  }
-  await nativeAdhanChannel.invokeMethod<void>('cancelAll');
-  final today = cityNow(city);
-  var id = 10000;
-  for (var day = 0; day < 10; day++) {
-    final date = DateTime(today.year, today.month, today.day).add(Duration(days: day));
-    for (final prayer in prayersFor(city, hanafi, date)) {
-      final currentId = id++;
-      if (enabled != null && !enabled[prayer.index]) continue;
-      final instant = localToInstant(prayer.localTime, city);
-      if (!instant.isAfter(DateTime.now())) continue;
-      final audio = prayer.index == 0 && specialFajr ? 'fajr_$length' : 'regular_$length';
-      await nativeAdhanChannel.invokeMethod<bool>('schedule', {
-        'id': currentId,
-        'at': instant.millisecondsSinceEpoch,
-        'audio': audio,
-      });
-    }
-  }
-}
-
 Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = true, List<bool>? enabled}) async {
   await mptServicesReady;
   final android = notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
@@ -247,21 +251,14 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
     throw StateError('Notification permission denied');
   }
   await notifications.cancelAll();
-  // Native playback is independent of the notification channel.
-  // Stop rather than silently ignoring native scheduling errors.
-  if (sound) {
-    await scheduleNativeAdhan(city, hanafi, enabled: enabled);
-  } else {
-    await nativeAdhanChannel.invokeMethod<void>('cancelAll');
-  }
   final details = NotificationDetails(
     android: AndroidNotificationDetails(
-      'mpt_prayer_silent_v153',
+      sound ? 'mpt_prayer_sound' : 'mpt_prayer_silent',
       'Prayer reminders',
       channelDescription: 'Daily prayer time reminders',
       importance: Importance.max,
       priority: Priority.high,
-      playSound: false,
+      playSound: sound,
     ),
     iOS: DarwinNotificationDetails(presentSound: sound),
   );
@@ -285,6 +282,9 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
       }
     }
   }
+  // Keep native audio scheduling in sync with prayer notification choices.
+  // Audio and visual notifications are separate Android subsystems.
+  await scheduleNativeAdhan(city, hanafi, enabled: enabled);
 }
 
 Future<void> scheduleTestNotification({String language = 'en'}) async {
@@ -712,14 +712,27 @@ class SettingsPage extends StatelessWidget {
         onPressed: () async {
           try {
             final prefs = await SharedPreferences.getInstance();
-            await schedulePrayerAlerts(city, hanafi, sound: sound, enabled: List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true));
+            final selected = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true);
+            await schedulePrayerAlerts(city, hanafi, sound: sound, enabled: selected);
             if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(language, 'notificationSuccess'))));
           } catch (error) {
             if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not schedule alerts: $error')));
           }
         }, icon: const Icon(Icons.notifications_active_outlined), label: Text(tr(language, 'alerts'))),
+      if (defaultTargetPlatform == TargetPlatform.android)
+        OutlinedButton.icon(
+          onPressed: () async {
+            try {
+              await nativeAdhanChannel.invokeMethod<void>('openExactSettings');
+            } catch (error) {
+              if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
+            }
+          },
+          icon: const Icon(Icons.alarm),
+          label: const Text('Allow precise Adhan alarms · সঠিক সময়ে আজান'),
+        ),
       const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
-      const SizedBox(height: 28), Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: const TextStyle(color: muted, fontSize: 12))),
+      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 }
@@ -780,9 +793,27 @@ class _DuaPageState extends State<DuaPage> {
     ['رَبِّ زِدْنِي عِلْمًا', 'My Lord, increase me in knowledge. (Quran 20:114)'],
     ['رَبَّنَا ظَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ', 'Our Lord, we have wronged ourselves. If You do not forgive us and have mercy on us, we will be among the losers. (Quran 7:23)'],
   ];
+  static const duaMeanings = <String, List<String>>{
+    'bn': [
+      'হে আমাদের রব! আমাদের দুনিয়ায় কল্যাণ দিন, আখিরাতেও কল্যাণ দিন এবং আগুনের শাস্তি থেকে রক্ষা করুন। (কুরআন ২:২০১)',
+      'হে আমার রব! আমার জ্ঞান বৃদ্ধি করে দিন। (কুরআন ২০:১১৪)',
+      'হে আমাদের রব! আমরা নিজেদের প্রতি জুলুম করেছি। আপনি ক্ষমা ও দয়া না করলে আমরা ক্ষতিগ্রস্তদের অন্তর্ভুক্ত হব। (কুরআন ৭:২৩)',
+    ],
+    'ko': [
+      '주님, 현세와 내세에서 저희에게 선을 베푸시고 불의 형벌에서 보호해 주소서. (꾸란 2:201)',
+      '주님, 저의 지식을 더하여 주소서. (꾸란 20:114)',
+      '주님, 저희는 스스로에게 잘못을 저질렀습니다. 용서와 자비를 베풀지 않으시면 저희는 손실을 입을 것입니다. (꾸란 7:23)',
+    ],
+    'ar': [
+      'ربنا آتنا خير الدنيا والآخرة وقنا عذاب النار. (البقرة ٢:٢٠١)',
+      'رب زدني علماً. (طه ٢٠:١١٤)',
+      'ربنا ظلمنا أنفسنا، وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين. (الأعراف ٧:٢٣)',
+    ],
+  };
+  String duaMeaning() => duaMeanings[widget.language]?[selected] ?? duas[selected][1];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
-    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), Text(duas[selected][1], textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
+    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
     const SizedBox(height: 20), _GoldCard(child: Column(children: [Text(tr(widget.language, 'tasbihCounter'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)), const Icon(Icons.grain, color: emerald, size: 46), Text('$count', style: const TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: emerald)), Row(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: () => setState(() => count = 0), icon: const Icon(Icons.restart_alt)), const SizedBox(width: 22), FilledButton(onPressed: () => setState(() => count++), child: const Icon(Icons.add))])])),
   ])));
 }
@@ -849,11 +880,11 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
         ]),
         const SizedBox(height: 8),
-        const Text('On Android, scheduled Adhan uses native playback. Grant exact alarm access for better timing; battery restrictions may delay playback.', style: TextStyle(fontSize: 12, color: muted)),
+        const Text('Preview plays inside the app. Save & Schedule Alerts also schedules Android Adhan audio. Allow precise alarms in Settings; Android battery restrictions may delay playback.', style: TextStyle(fontSize: 12, color: muted)),
       ])),
     ],
     const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
-    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(widget.language, 'notificationSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
+    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${tr(widget.language, 'notificationSuccess')} Automatic Adhan scheduled.'))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
     const SizedBox(height: 10),
     OutlinedButton.icon(onPressed: () async {
       try {
