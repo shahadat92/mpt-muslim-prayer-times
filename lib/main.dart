@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'adhan_audio.dart';
