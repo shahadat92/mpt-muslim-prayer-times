@@ -1,3 +1,4 @@
+
 workflows:
   mpt_android_debug:
     name: MPT v1.5.3 Android Debug APK
@@ -9,14 +10,33 @@ workflows:
     scripts:
       - name: Upgrade MPT source to v1.5.3
         script: python3 upgrade_mpt_v153.py
+
       - name: Verify correct Flutter source
         script: python3 verify_source.py
+
       - name: Generate Android project
         script: flutter create --platforms=android --project-name korea_prayer_times --org com.koreaprayertimes .
+
+      - name: Set Android app name to MPT
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('android/app/src/main/AndroidManifest.xml')
+          s = p.read_text()
+          s, count = re.subn(r'android:label="[^"]*"', 'android:label="MPT"', s, count=1)
+          if count != 1:
+              raise SystemExit('Android app label not found')
+          p.write_text(s)
+          print('Android app name set to MPT')
+          PY
+
       - name: Install native automatic Adhan alarm service
         script: python3 apply_native_v150.py
+
       - name: Verify repository and native files
         script: python3 verify_mpt.py
+
       - name: Enable desugaring
         script: |
           python3 - <<'PY'
@@ -34,15 +54,21 @@ workflows:
                   s+='\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
           p.write_text(s)
           PY
+
       - name: Install dependencies
         script: flutter pub get
+
       - name: Generate launcher icon
         script: dart run flutter_launcher_icons
+
       - name: Remove generated Flutter demo test
         script: rm -f test/widget_test.dart
+
       - name: Analyze Flutter source
         script: flutter analyze --no-fatal-infos
+
       - name: Build debug APK
         script: flutter build apk --debug
+
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
