@@ -249,7 +249,11 @@ Future<void> schedulePrayerAlerts(PrayerCity city, bool hanafi, {bool sound = tr
   await notifications.cancelAll();
   // Native playback is independent of the notification channel.
   // Stop rather than silently ignoring native scheduling errors.
-  await scheduleNativeAdhan(city, hanafi, enabled: enabled);
+  if (sound) {
+    await scheduleNativeAdhan(city, hanafi, enabled: enabled);
+  } else {
+    await nativeAdhanChannel.invokeMethod<void>('cancelAll');
+  }
   final details = NotificationDetails(
     android: AndroidNotificationDetails(
       'mpt_prayer_silent_v153',
