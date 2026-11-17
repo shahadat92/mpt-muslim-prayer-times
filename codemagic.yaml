@@ -7,6 +7,8 @@ workflows:
       flutter: stable
       java: 17
     scripts:
+      - name: Upgrade MPT source to v1.5.3
+        script: python3 upgrade_mpt_v153.py
       - name: Verify correct Flutter source
         script: python3 verify_source.py
       - name: Generate Android project
