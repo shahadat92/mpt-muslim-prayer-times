@@ -793,6 +793,25 @@ class _DuaPageState extends State<DuaPage> {
     ['رَبِّ زِدْنِي عِلْمًا', 'My Lord, increase me in knowledge. (Quran 20:114)'],
     ['رَبَّنَا ظَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ', 'Our Lord, we have wronged ourselves. If You do not forgive us and have mercy on us, we will be among the losers. (Quran 7:23)'],
   ];
+  // Phonetic reading guides; Arabic is already displayed above.
+  static const duaPronunciations = <String, List<String>>{
+    'en': [
+      'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar.',
+      'Rabbi zidni ilma.',
+      'Rabbana zalamna anfusana wa illam taghfir lana wa tarhamna lanakunanna minal-khasirin.',
+    ],
+    'bn': [
+      'রাব্বানা আতিনা ফিদ্দুনিয়া হাসানাতান ওয়া ফিল আখিরাতি হাসানাতান ওয়া ক্বিনা আযাবান্নার।',
+      'রাব্বি যিদনী ইলমা।',
+      'রাব্বানা যলামনা আনফুসানা ওয়া ইল্লাম তাগফির লানা ওয়া তারহামনা লানাকূনান্না মিনাল খাসিরীন।',
+    ],
+    'ko': [
+      '랍바나 아티나 핏둔야 하사나탄 와 필 아키라티 하사나탄 와 키나 아자반나르.',
+      '랍비 지드니 일마.',
+      '랍바나 잘람나 안푸사나 와 일람 타그피르 라나 와 타르함나 라나쿠난나 미날 카시린.',
+    ],
+  };
+  String? duaPronunciation() => duaPronunciations[widget.language]?[selected];
   static const duaMeanings = <String, List<String>>{
     'bn': [
       'হে আমাদের রব! আমাদের দুনিয়ায় কল্যাণ দিন, আখিরাতেও কল্যাণ দিন এবং আগুনের শাস্তি থেকে রক্ষা করুন। (কুরআন ২:২০১)',
@@ -813,7 +832,7 @@ class _DuaPageState extends State<DuaPage> {
   String duaMeaning() => duaMeanings[widget.language]?[selected] ?? duas[selected][1];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
-    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
+    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), if (duaPronunciation() != null) ...[Text(duaPronunciation()!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, height: 1.7, fontWeight: FontWeight.w600, color: emerald)), const SizedBox(height: 12)], Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
     const SizedBox(height: 20), _GoldCard(child: Column(children: [Text(tr(widget.language, 'tasbihCounter'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)), const Icon(Icons.grain, color: emerald, size: 46), Text('$count', style: const TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: emerald)), Row(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: () => setState(() => count = 0), icon: const Icon(Icons.restart_alt)), const SizedBox(width: 22), FilledButton(onPressed: () => setState(() => count++), child: const Icon(Icons.add))])])),
   ])));
 }
