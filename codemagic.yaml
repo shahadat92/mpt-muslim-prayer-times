@@ -7,6 +7,7 @@ workflows:
     environment:
       flutter: stable
       java: 17
+      scripts:
       - name: Verify correct Flutter source
         script: python3 verify_source.py
 
