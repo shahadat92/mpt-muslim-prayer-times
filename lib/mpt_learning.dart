@@ -321,6 +321,22 @@ class SurahLibraryPage extends StatelessWidget {
   );
 }
 
+// Adjustable Arabic text size shared by Surah and Dua readers.
+Widget _arabicSizeControl(String language, double size, ValueChanged<double> onChanged) {
+  final label = language == 'bn' ? 'আরবি লেখার আকার' : language == 'ko'
+      ? '아랍어 글자 크기' : language == 'ar' ? 'حجم الخط العربي' : 'Arabic text size';
+  return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+    Row(children: [
+      const Icon(Icons.format_size, size: 20, color: _green),
+      const SizedBox(width: 8),
+      Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500))),
+      Text('${size.round()}', style: const TextStyle(color: _green)),
+    ]),
+    Slider(min: 20, max: 40, divisions: 20, value: size,
+        label: '${size.round()}', onChanged: onChanged),
+  ]);
+}
+
 class _SurahReader extends StatefulWidget {
   final _Surah surah;
   final String language;
@@ -329,16 +345,18 @@ class _SurahReader extends StatefulWidget {
 }
 class _SurahReaderState extends State<_SurahReader> {
   bool showPron=true, showMeaning=true;
+  double arabicFontSize = 27;
   @override Widget build(BuildContext context) {
     final s=widget.surah,lang=widget.language;
-    return Scaffold(appBar:AppBar(title:Text(s.title(lang))),body:ListView(padding:const EdgeInsets.all(16),children:[
+    return Scaffold(appBar:AppBar(title:Text(s.title(lang))),body:ListView(padding:const EdgeInsets.fromLTRB(14,14,14,36),children:[
       Text('${s.enName} · ${s.number} · ${s.verses.length} ${learningLabel(lang,'verses')}',textAlign:TextAlign.center,style:const TextStyle(color:_green,fontWeight:FontWeight.bold)),
-      if(s.number!=1) const Padding(padding:EdgeInsets.symmetric(vertical:20),child:Text('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:TextStyle(fontSize:27,height:1.7))),
+      if(s.number!=1) Padding(padding:const EdgeInsets.symmetric(vertical:16),child:Text('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:TextStyle(fontSize:arabicFontSize,height:1.75))),
+      _arabicSizeControl(lang, arabicFontSize, (value) => setState(() => arabicFontSize = value)),
       SwitchListTile(title:Text(learningLabel(lang,'pron')),value:showPron,onChanged:(v)=>setState(()=>showPron=v)),
       SwitchListTile(title:Text(learningLabel(lang,'meaning')),value:showMeaning,onChanged:(v)=>setState(()=>showMeaning=v)),
       for(var i=0;i<s.verses.length;i++) Card(margin:const EdgeInsets.only(bottom:10),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
         Text('${i+1}',style:const TextStyle(color:_green,fontWeight:FontWeight.bold)),
-        Text(s.verses[i],textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:const TextStyle(fontSize:27,height:2.0)),
+        Text(s.verses[i],textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:TextStyle(fontSize:arabicFontSize,height:1.85)),
         if (showPron && lang != 'ar')
           Text(
             (lang == 'bn' || lang == 'ko') &&
@@ -409,7 +427,6 @@ final _morningEveningDuas = <_Entry>[
     'We have entered the evening; all dominion and praise belong to Allah.',
     '우리는 저녁을 맞았습니다. 모든 주권과 찬미는 알라께 있습니다.',
     'Sahih Muslim 2723 (opening excerpt)'),
-  _kursi[0],
 ];
 
 final _protectionDuas = <_Entry>[
@@ -427,7 +444,6 @@ final _protectionDuas = <_Entry>[
     'In Allah’s name, with which nothing on earth or in heaven can cause harm; He is All-Hearing, All-Knowing.',
     '알라의 이름으로. 그분의 이름과 함께라면 땅과 하늘의 어떤 것도 해를 끼칠 수 없으며 그분은 모든 것을 들으시고 아십니다.',
     'Sunan Abi Dawud 5088'),
-  _kursi[0],
 ];
 
 class LearningDuaPage extends StatelessWidget {
@@ -448,7 +464,7 @@ class LearningDuaPage extends StatelessWidget {
       for(final section in sections) Card(margin:const EdgeInsets.only(bottom:9),child:ListTile(
         leading:Icon(section.icon,color:_green,size:30),
         title:Text(learningLabel(language,section.key),style:const TextStyle(fontWeight:FontWeight.bold)),
-        subtitle:section.key=='kalima'?const Text('6 Kalima · ৬ কালিমা'):null,
+        subtitle:section.key=='kalima'?Text(learningLabel(language,'kalima')):null,
         trailing:const Icon(Icons.chevron_right),
         onTap:(){ if(section.key=='quran'){ onOpenQuranicDuas(); } else { Navigator.push(context,MaterialPageRoute(builder:(_)=>_DuaCollection(title:learningLabel(language,section.key),entries:section.items,language:language))); } },
       )),
@@ -457,23 +473,35 @@ class LearningDuaPage extends StatelessWidget {
   }
 }
 
-class _DuaCollection extends StatelessWidget {
+class _DuaCollection extends StatefulWidget {
   final String title,language;
   final List<_Entry> entries;
   const _DuaCollection({required this.title,required this.entries,required this.language});
-  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(title)),body:ListView.builder(
-    padding:const EdgeInsets.all(14),itemCount:entries.length,itemBuilder:(context,i){
-      final d=entries[i];
+  @override State<_DuaCollection> createState() => _DuaCollectionState();
+}
+class _DuaCollectionState extends State<_DuaCollection> {
+  double arabicFontSize = 27;
+  @override Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(widget.title)),
+    body: Column(children: [
+      Padding(padding: const EdgeInsets.fromLTRB(18, 8, 18, 0),
+        child: _arabicSizeControl(widget.language, arabicFontSize,
+            (value) => setState(() => arabicFontSize = value))),
+      Expanded(child: ListView.builder(
+    padding:const EdgeInsets.fromLTRB(14,4,14,36),itemCount:widget.entries.length,itemBuilder:(context,i){
+      final d=widget.entries[i];
       return Card(margin:const EdgeInsets.only(bottom:12),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
-        Text(_localizedEntryTitle(d,language),style:const TextStyle(color:_green,fontSize:18,fontWeight:FontWeight.bold)),
-        const SizedBox(height:12),Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:25,height:1.75)),
-        if (language != 'ar') ...[
+        Text(_localizedEntryTitle(d,widget.language),style:const TextStyle(color:_green,fontSize:18,fontWeight:FontWeight.bold)),
+        const SizedBox(height:12),Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:TextStyle(fontSize:arabicFontSize,height:1.75)),
+        if (widget.language != 'ar') ...[
           const SizedBox(height:12),
-          Text(_localizedEntryPron(d,language),style:TextStyle(fontSize:15,color:Theme.of(context).colorScheme.primary,height:1.7)),
+          Text(_localizedEntryPron(d,widget.language),style:TextStyle(fontSize:15,color:Theme.of(context).colorScheme.primary,height:1.7)),
         ],
-        const SizedBox(height:10),Text(learningLabel(language,'meaning'),style:const TextStyle(fontWeight:FontWeight.bold)),
-        Text(language=='bn'?d.bn:language=='ko'?d.ko:language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en,style:const TextStyle(fontSize:15,height:1.6)),
-        const SizedBox(height:8),Text('${learningLabel(language,'reference')}: ${d.reference}',style:const TextStyle(fontSize:11,color:Colors.grey)),
+        const SizedBox(height:10),Text(learningLabel(widget.language,'meaning'),style:const TextStyle(fontWeight:FontWeight.bold)),
+        Text(widget.language=='bn'?d.bn:widget.language=='ko'?d.ko:widget.language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en,style:const TextStyle(fontSize:15,height:1.6)),
+        const SizedBox(height:8),Text('${learningLabel(widget.language,'reference')}: ${d.reference}',style:const TextStyle(fontSize:11,color:Colors.grey)),
       ])));
-    }));
+    })),
+    ]),
+  );
 }
