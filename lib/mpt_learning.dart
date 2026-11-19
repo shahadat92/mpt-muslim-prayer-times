@@ -2,7 +2,6 @@ import 'mpt_verse_meanings.dart';
 import 'package:flutter/material.dart';
 
 const _green = Color(0xFF116B53);
-const _gold = Color(0xFFD8AF58);
 
 String learningLabel(String lang, String key) {
   const words = <String, Map<String, String>>{
@@ -22,6 +21,47 @@ String learningLabel(String lang, String key) {
     'note': {'en':'Bengali and Korean readings are approximate learning aids; verify recitation with a qualified teacher.','bn':'বাংলা ও কোরিয়ান উচ্চারণ আনুমানিক সহায়ক; শুদ্ধ তিলাওয়াতের জন্য যোগ্য শিক্ষকের কাছে যাচাই করুন।','ko':'음역은 학습 보조 자료이며 정확한 아랍어 낭송을 대체하지 않습니다.','ar':'النقل الصوتي للتعلم ولا يغني عن التلاوة الصحيحة.'},
   };
   return words[key]?[lang] ?? words[key]?['en'] ?? key;
+}
+
+// Localized titles and pronunciation aids for the displayed daily/Salah entries.
+const _entryLocalization = <String, List<String>>{
+  'Before eating': ['খাওয়ার আগে', '식사 전', 'قبل الطعام', 'বিসমিল্লাহ', '비스밀라'],
+  'After eating': ['খাওয়ার পরে', '식사 후', 'بعد الطعام', 'আলহামদুলিল্লাহ', '알함두 릴라'],
+  'Before sleeping': ['ঘুমানোর আগে', '잠자기 전', 'قبل النوم', 'বিসমিকা আল্লাহুম্মা আমূতু ওয়া আহইয়া', '비스미칼라훔마 아무투 와 아흐야'],
+  'Upon waking': ['ঘুম থেকে ওঠার পরে', '잠에서 깬 후', 'عند الاستيقاظ', 'আলহামদু লিল্লাহিল্লাযী আহইয়ানা বা’দা মা আমাতানা ওয়া ইলাইহিন নুশূর', '알함두 릴라힐라지 아흐야나 바으다 마 아마타나 와 일라이힌 누슈르'],
+  'Opening supplication (Sana)': ['সানা (নামাজ শুরুর দোয়া)', '개시 두아 (사나)', 'دعاء الاستفتاح', 'সুবহানাকা আল্লাহুম্মা ওয়া বিহামদিকা ওয়া তাবারাকাসমুকা ওয়া তা’আলা জাদ্দুকা ওয়া লা ইলাহা গাইরুক', '수브하나칼라훔마 와 비함디카 와 타바라카스무카 와 타알라 자두카 와 라 일라하 가이루크'],
+  'Ruku remembrance': ['রুকুর তাসবিহ', '루쿠의 찬미', 'ذكر الركوع', 'সুবহানা রাব্বিয়াল আযীম', '수브하나 랍비얄 아짐'],
+  'Sujud remembrance': ['সিজদার তাসবিহ', '수주드의 찬미', 'ذكر السجود', 'সুবহানা রাব্বিয়াল আ’লা', '수브하나 랍비얄 아알라'],
+  'Between two prostrations': ['দুই সিজদার মাঝের দোয়া', '두 번의 수주드 사이', 'الدعاء بين السجدتين', 'রাব্বিগফির লী', '랍비그피르 리'],
+  'Prayer for parents': ['মা-বাবার জন্য দোয়া', '부모님을 위한 두아', 'الدعاء للوالدين', 'রাব্বিগফির লী ওয়া লিওয়ালিদাইয়্যা', '랍비그피르 리 와 리왈리다이야'],
+  'Ayatul Kursi · Quran 2:255': ['আয়াতুল কুরসি · ২:২৫৫', '아야툴 쿠르시 · 2:255', 'آية الكرسي · البقرة ٢٥٥', '', ''],
+};
+
+String _entryTitle(_Entry d, String lang) {
+  final value = _entryLocalization[d.title];
+  if (value != null) {
+    if (lang == 'bn') return value[0];
+    if (lang == 'ko') return value[1];
+    if (lang == 'ar') return value[2];
+  }
+  const kalimas = <String, List<String>>{
+    '1. Kalima Tayyibah': ['১. কালিমা তাইয়্যেবা', '1. 칼리마 타이이바', '١. الكلمة الطيبة'],
+    '2. Kalima Shahadah': ['২. কালিমা শাহাদাত', '2. 칼리마 샤하다', '٢. كلمة الشهادة'],
+    '3. Kalima Tamjid': ['৩. কালিমা তামজিদ', '3. 칼리마 탐지드', '٣. كلمة التمجيد'],
+    '4. Kalima Tawhid': ['৪. কালিমা তাওহীদ', '4. 칼리마 타우히드', '٤. كلمة التوحيد'],
+    '5. Kalima Istighfar': ['৫. কালিমা ইস্তিগফার', '5. 칼리마 이스티그파르', '٥. كلمة الاستغفار'],
+    '6. Kalima Radd-e-Kufr': ['৬. কালিমা রদ্দে কুফর', '6. 칼리마 라드 알쿠프르', '٦. كلمة رد الكفر'],
+  };
+  final k = kalimas[d.title];
+  if (k != null) return lang == 'bn' ? k[0] : lang == 'ko' ? k[1] : lang == 'ar' ? k[2] : d.title;
+  return d.title;
+}
+
+String _entryPronunciation(_Entry d, String lang) {
+  final value = _entryLocalization[d.title];
+  if (value != null && lang == 'bn' && value[3].isNotEmpty) return value[3];
+  if (value != null && lang == 'ko' && value[4].isNotEmpty) return value[4];
+  return d.roman;
 }
 
 class _Entry {
@@ -226,7 +266,7 @@ class _SurahReaderState extends State<_SurahReader> {
   bool showPron=true, showMeaning=true;
   @override Widget build(BuildContext context) {
     final s=widget.surah,lang=widget.language;
-    return Scaffold(appBar:AppBar(title:Text(s.title(lang))),body:ListView(padding:const EdgeInsets.all(16),children:[
+    return Scaffold(appBar:AppBar(title:Text(s.title(lang))),body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,20,16,24),children:[
       Text('${s.enName} · ${s.number} · ${s.verses.length} ${learningLabel(lang,'verses')}',textAlign:TextAlign.center,style:const TextStyle(color:_green,fontWeight:FontWeight.bold)),
       if(s.number!=1) const Padding(padding:EdgeInsets.symmetric(vertical:20),child:Text('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:TextStyle(fontSize:27,height:1.7))),
       SwitchListTile(title:Text(learningLabel(lang,'pron')),value:showPron,onChanged:(v)=>setState(()=>showPron=v)),
@@ -239,7 +279,7 @@ class _SurahReaderState extends State<_SurahReader> {
       ]))),
 
       const SizedBox(height:12),Text(learningLabel(lang,'note'),style:const TextStyle(fontSize:12)),
-    ]));
+    ])));
   }
 }
 
@@ -303,16 +343,16 @@ class _DuaCollection extends StatelessWidget {
   final String title,language;
   final List<_Entry> entries;
   const _DuaCollection({required this.title,required this.entries,required this.language});
-  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(title)),body:ListView.builder(
-    padding:const EdgeInsets.all(14),itemCount:entries.length,itemBuilder:(context,i){
+  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(title)),body:SafeArea(child:ListView.builder(
+    padding:const EdgeInsets.fromLTRB(14,18,14,24),itemCount:entries.length,itemBuilder:(context,i){
       final d=entries[i];
       return Card(margin:const EdgeInsets.only(bottom:12),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
-        Text(d.title,style:const TextStyle(color:_green,fontSize:18,fontWeight:FontWeight.bold)),
+        Text(_entryTitle(d,language),style:const TextStyle(color:_green,fontSize:18,fontWeight:FontWeight.bold)),
         const SizedBox(height:12),Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:26,height:1.9)),
-        const SizedBox(height:12),Text(d.roman,style:const TextStyle(fontSize:15,color:_green,height:1.6)),
+        const SizedBox(height:12),Text(_entryPronunciation(d,language),style:const TextStyle(fontSize:15,color:_green,height:1.6)),
         const SizedBox(height:10),Text(learningLabel(language,'meaning'),style:const TextStyle(fontWeight:FontWeight.bold)),
         Text(language=='bn'?d.bn:language=='ko'?d.ko:language=='ar'?'المعنى العربي التفصيلي قيد المراجعة؛ النص أعلاه هو الأصل العربي.':d.en,style:const TextStyle(fontSize:15,height:1.6)),
         const SizedBox(height:8),Text('${learningLabel(language,'reference')}: ${d.reference}',style:const TextStyle(fontSize:11,color:Colors.grey)),
       ])));
-    }));
+    })));
 }
