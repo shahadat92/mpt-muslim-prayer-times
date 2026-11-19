@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'adhan_audio.dart';
+import 'mpt_learning.dart';
 import 'package:flutter/services.dart';
 
 import 'package:adhan/adhan.dart';
@@ -474,8 +475,9 @@ class _MainShellState extends State<MainShell> {
           SharedPreferences.getInstance().then((p) => p.setString('city', value.name));
         }, onUseLocation: useLocation),
       QiblaPage(city: city, language: lang),
+      SurahLibraryPage(language: lang),
       CalendarPage(city: city, hanafi: hanafi, language: lang),
-      DuaPage(language: lang),
+      LearningDuaPage(language: lang, onOpenQuranicDuas: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang)))),
       SettingsPage(city: city, hanafi: hanafi, language: lang, dark: widget.dark,
         sound: sound, onLanguageChanged: widget.onLanguageChanged,
         onDarkChanged: widget.onDarkChanged,
@@ -490,11 +492,14 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: SafeArea(child: IndexedStack(index: tab, children: pages)),
       bottomNavigationBar: NavigationBar(
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        height: 66,
         selectedIndex: tab,
         onDestinationSelected: (value) => setState(() => tab = value),
         destinations: [
           NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: tr(lang, 'home')),
           NavigationDestination(icon: const Icon(Icons.explore_outlined), selectedIcon: const Icon(Icons.explore), label: tr(lang, 'qibla')),
+          NavigationDestination(icon: const Icon(Icons.menu_book_outlined), label: learningLabel(lang, 'surah')),
           NavigationDestination(icon: const Icon(Icons.calendar_month_outlined), label: tr(lang, 'calendar')),
           NavigationDestination(icon: const Icon(Icons.volunteer_activism_outlined), label: tr(lang, 'duaTab')),
           NavigationDestination(icon: const Icon(Icons.tune), label: tr(lang, 'settings')),
@@ -606,7 +611,7 @@ class _PrayerHomeState extends State<PrayerHome> {
       Row(children: [
         Expanded(child: _FeatureButton(icon: Icons.calendar_month, title: tr(lang, 'ramadan'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RamadanPage(city: widget.city, hanafi: widget.hanafi, language: lang))))),
         const SizedBox(width: 8),
-        Expanded(child: _FeatureButton(icon: Icons.menu_book, title: tr(lang, 'duaTab'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))))),
+        Expanded(child: _FeatureButton(icon: Icons.menu_book, title: tr(lang, 'duaTab'), onTap: () { Navigator.push(context, MaterialPageRoute(builder: (_) => LearningDuaPage(language: lang, onOpenQuranicDuas: () { Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))); }))); })),
         const SizedBox(width: 8),
         Expanded(child: _FeatureButton(icon: Icons.touch_app_outlined, title: tr(lang, 'tasbih'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))))),
       ]),
