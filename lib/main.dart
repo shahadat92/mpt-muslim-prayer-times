@@ -104,6 +104,15 @@ const translations = <String, Map<String, String>>{
 };
 String tr(String lang, String key) => translations[lang]?[key] ?? translations['en']?[key] ?? key;
 
+const uiExtras = <String, Map<String, String>>{
+  'en': {'gpsSuccess': 'Using GPS coordinates and device timezone.', 'duaNumber': 'Dua', 'adhanSuccess': 'Prayer alerts and automatic Adhan scheduled.', 'alertError': 'Could not schedule alerts'},
+  'bn': {'gpsSuccess': 'জিপিএস অবস্থান ও ফোনের সময় অঞ্চল ব্যবহার করা হচ্ছে।', 'duaNumber': 'দোয়া', 'adhanSuccess': 'নামাজের অ্যালার্ট ও স্বয়ংক্রিয় আজান নির্ধারিত হয়েছে।', 'alertError': 'অ্যালার্ট নির্ধারণ করা যায়নি'},
+  'ko': {'gpsSuccess': 'GPS 좌표와 휴대전화 시간대를 사용합니다.', 'duaNumber': '두아', 'adhanSuccess': '기도 알림과 자동 아잔이 예약되었습니다.', 'alertError': '알림을 예약할 수 없습니다'},
+  'ar': {'gpsSuccess': 'يتم استخدام إحداثيات GPS والمنطقة الزمنية للجهاز.', 'duaNumber': 'دعاء', 'adhanSuccess': 'تمت جدولة تنبيهات الصلاة والأذان التلقائي.', 'alertError': 'تعذرت جدولة التنبيهات'},
+};
+String uix(String lang, String key) => uiExtras[lang]?[key] ?? uiExtras['en']?[key] ?? key;
+
+
 // Extra strings introduced in v1.3.1, without disturbing existing translations.
 const extraTranslations = <String, Map<String, String>>{
   'en': {'northBearing':'from North','testTitle':'MPT · Test notification','testBody':'Prayer notification test successful.'},
@@ -451,7 +460,7 @@ class _MainShellState extends State<MainShell> {
       await prefs.setDouble('gps_lat', pos.latitude);
       await prefs.setDouble('gps_lon', pos.longitude);
       await prefs.setString('gps_zone', tz.local.name);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Using GPS coordinates and device timezone.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(uix(widget.language, 'gpsSuccess'))));
     } catch (error) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
     }
@@ -540,7 +549,7 @@ class _PrayerHomeState extends State<PrayerHome> {
       Row(children: [
         const MptLogo(size: 56), const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('MUSLIM PRAYER TIMES', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: foreground)),
+          Text('MUSLIM PRAYER TIMES', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: foreground)),
           Text(tr(lang, 'prayer'), style: TextStyle(fontSize: 12, color: secondary)),
         ])),
         IconButton(onPressed: widget.onUseLocation, icon: const Icon(Icons.my_location, color: emerald)),
@@ -572,11 +581,11 @@ class _PrayerHomeState extends State<PrayerHome> {
         const SizedBox(height: 7),
         Text(DateFormat('h:mm a').format(nextItem.localTime), style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
-        Text('${tr(lang, 'remaining')}  $countdown', style: const TextStyle(color: Colors.white70, fontSize: 14)),
+        FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text('${tr(lang, 'remaining')}  $countdown', style: const TextStyle(color: Colors.white70, fontSize: 14))),
       ])),
       const SizedBox(height: 26),
       Row(children: [
-        Expanded(child: Text(tr(lang, 'today'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: foreground))),
+        Expanded(child: Text(tr(lang, 'today'), maxLines: 2, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: foreground))),
         Text('MWL · ${widget.hanafi ? 'Hanafi' : 'Shafi'}', style: TextStyle(color: dark ? gold : emerald, fontSize: 12, fontWeight: FontWeight.w700)),
       ]),
       const SizedBox(height: 13),
@@ -590,7 +599,7 @@ class _PrayerHomeState extends State<PrayerHome> {
             Text(prayerNames[lang]![p.index], style: TextStyle(fontWeight: FontWeight.w800, color: foreground)),
             if (lang != 'en') Text(prayerNames['en']![p.index], style: TextStyle(color: secondary, fontSize: 12)),
           ])),
-          Text(DateFormat('h:mm a').format(p.localTime), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: foreground)),
+          FittedBox(fit: BoxFit.scaleDown, child: Text(DateFormat('h:mm a').format(p.localTime), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: foreground))),
         ]),
       )),
       const SizedBox(height: 8),
@@ -604,19 +613,20 @@ class _PrayerHomeState extends State<PrayerHome> {
       const SizedBox(height: 16),
       Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
       const SizedBox(height: 20),
-      const AdPlaceholder(),
+      AdPlaceholder(language: lang),
     ]);
   }
 }
 
 class AdPlaceholder extends StatelessWidget {
-  const AdPlaceholder({super.key});
+  final String language;
+  const AdPlaceholder({super.key, required this.language});
   @override Widget build(BuildContext context) => Container(
     height: 60, alignment: Alignment.center,
     decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: .5), borderRadius: BorderRadius.circular(15)),
-    child: const Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(Icons.campaign_outlined, size: 17), SizedBox(width: 8),
-      Flexible(child: Text('Ad space · AdMob not configured', style: TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
+    child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Icon(Icons.campaign_outlined, size: 17), const SizedBox(width: 8),
+      Flexible(child: Text(tr(language, 'adSpace'), style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
     ])),
   );
 }
@@ -657,9 +667,9 @@ class QiblaPage extends StatelessWidget {
         )));
       }),
       const SizedBox(height: 25),
-      Center(child: Text('${b.toStringAsFixed(0)}° ${tx(language, 'northBearing')}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: color))),
+      Center(child: Text('${b.toStringAsFixed(0)}° ${tx(language, 'northBearing')}', textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: color))),
       const SizedBox(height: 12), Text(tr(language, 'compassHelp'), textAlign: TextAlign.center, style: const TextStyle(color: muted, height: 1.5)),
-      const SizedBox(height: 35), const AdPlaceholder(),
+      const SizedBox(height: 35), AdPlaceholder(language: language),
     ]);
   }
 }
@@ -679,8 +689,6 @@ class _CalendarPageState extends State<CalendarPage> {
     final monthIndex = (h.year - 1) * 12 + (h.month - 1) + offset;
     final shownYear = monthIndex ~/ 12 + 1;
     final shownMonth = monthIndex % 12 + 1;
-    final first = DateTime(today.year, today.month, today.day).add(
-      Duration(days: islamicStart(shownYear, shownMonth) - julianDay(today) - hijriAdjustment));
     final monthStart = first.weekday % 7;
     final monthLength = islamicStart(shownYear + (shownMonth == 12 ? 1 : 0),
       shownMonth == 12 ? 1 : shownMonth + 1) - islamicStart(shownYear, shownMonth);
@@ -777,7 +785,7 @@ class SettingsPage extends StatelessWidget {
             await schedulePrayerAlerts(city, hanafi, sound: sound, enabled: selected);
             if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(language, 'notificationSuccess'))));
           } catch (error) {
-            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not schedule alerts: $error')));
+            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${uix(language, 'alertError')}: $error')));
           }
         }, icon: const Icon(Icons.notifications_active_outlined), label: Text(tr(language, 'alerts'))),
       if (defaultTargetPlatform == TargetPlatform.android)
@@ -810,7 +818,7 @@ class IslamicHeroBanner extends StatelessWidget {
   @override Widget build(BuildContext context) => Container(height: compact ? 120 : 145, decoration: BoxDecoration(gradient: const LinearGradient(colors: [deepGreen, emerald, deepGreen]), borderRadius: BorderRadius.circular(22), border: Border.all(color: gold, width: 2)), child: Stack(children: [
     const Positioned(top: 12, left: 18, child: Icon(Icons.auto_awesome, color: gold, size: 25)),
     const Positioned(top: 12, right: 18, child: Icon(Icons.auto_awesome, color: gold, size: 25)),
-    Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.mosque, color: gold, size: compact ? 45 : 62), const SizedBox(height: 5), Text('MUSLIM PRAYER TIMES', style: TextStyle(color: Colors.white, fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900)), const Text('MPT  •  Prayer wherever you are', style: TextStyle(color: gold, fontSize: 11))])),
+    Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.mosque, color: gold, size: compact ? 45 : 62), const SizedBox(height: 5), Text('MUSLIM PRAYER TIMES', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900)), const Text('MPT  •  Prayer wherever you are', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: gold, fontSize: 11))])),
   ]));
 }
 class _FeatureButton extends StatelessWidget {
@@ -818,7 +826,7 @@ class _FeatureButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   const _FeatureButton({required this.icon, required this.title, required this.onTap});
-  @override Widget build(BuildContext context) => InkWell(onTap: onTap, borderRadius: BorderRadius.circular(14), child: _GoldCard(child: Column(children: [Icon(icon, color: emerald, size: 27), const SizedBox(height: 5), Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12))])));
+  @override Widget build(BuildContext context) => InkWell(onTap: onTap, borderRadius: BorderRadius.circular(14), child: _GoldCard(child: Column(children: [Icon(icon, color: emerald, size: 27), const SizedBox(height: 5), Text(title, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12))])));
 }
 class RamadanPage extends StatelessWidget {
   final PrayerCity city;
@@ -853,6 +861,16 @@ class _DuaPageState extends State<DuaPage> {
     ['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ', 'Our Lord, grant us good in this world and good in the Hereafter, and protect us from the Fire. (Quran 2:201)'],
     ['رَبِّ زِدْنِي عِلْمًا', 'My Lord, increase me in knowledge. (Quran 20:114)'],
     ['رَبَّنَا ظَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ', 'Our Lord, we have wronged ourselves. If You do not forgive us and have mercy on us, we will be among the losers. (Quran 7:23)'],
+    ['رَبِّ اشْرَحْ لِي صَدْرِي', 'My Lord, expand my chest for me. (Quran 20:25)'],
+    ['وَيَسِّرْ لِي أَمْرِي', 'And make my task easy for me. (Quran 20:26)'],
+    ['رَبِّ هَبْ لِي مِنَ الصَّالِحِينَ', 'My Lord, grant me righteous offspring. (Quran 37:100)'],
+    ['رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنْتَ السَّمِيعُ الْعَلِيمُ', 'Our Lord, accept this from us. You are the All-Hearing, All-Knowing. (Quran 2:127)'],
+    ['رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ', 'Our Lord, forgive me, my parents and the believers on the Day of Reckoning. (Quran 14:41)'],
+    ['رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِنْ لَدُنْكَ رَحْمَةً إِنَّكَ أَنْتَ الْوَهَّابُ', 'Our Lord, do not let our hearts deviate after You have guided us; grant us mercy from Yourself. You are the Bestower. (Quran 3:8)'],
+    ['رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنْتَ خَيْرُ الْوَارِثِينَ', 'My Lord, do not leave me alone, though You are the best of inheritors. (Quran 21:89)'],
+    ['رَبِّ أَعُوذُ بِكَ مِنْ هَمَزَاتِ الشَّيَاطِينِ', 'My Lord, I seek refuge in You from the temptations of the devils. (Quran 23:97)'],
+    ['رَبِّ أَنْزِلْنِي مُنْزَلًا مُبَارَكًا وَأَنْتَ خَيْرُ الْمُنْزِلِينَ', 'My Lord, let me land at a blessed place, for You are the best to bring us to land. (Quran 23:29)'],
+    ['رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَتَوَفَّنَا مُسْلِمِينَ', 'Our Lord, pour patience upon us and let us die as Muslims. (Quran 7:126)'],
   ];
   // Phonetic reading guides; Arabic is already displayed above.
   static const duaPronunciations = <String, List<String>>{
@@ -860,40 +878,100 @@ class _DuaPageState extends State<DuaPage> {
       'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar.',
       'Rabbi zidni ilma.',
       'Rabbana zalamna anfusana wa illam taghfir lana wa tarhamna lanakunanna minal-khasirin.',
+      'Rabbi ishrah li sadri.',
+      'Wa yassir li amri.',
+      'Rabbi hab li minas-salihin.',
+      'Rabbana taqabbal minna innaka antas-samiul-alim.',
+      'Rabbighfir li wa liwalidayya wa lil-muminina yawma yaqumul-hisab.',
+      'Rabbana la tuzigh qulubana bada idh hadaytana wa hab lana min ladunka rahmah, innaka antal-wahhab.',
+      'Rabbi la tadharni fardan wa anta khayrul-warithin.',
+      'Rabbi audhu bika min hamazatish-shayatin.',
+      'Rabbi anzilni munzalan mubarakan wa anta khayrul-munzilin.',
+      'Rabbana afrigh alayna sabran wa tawaffana muslimin.',
     ],
     'bn': [
       'রাব্বানা আতিনা ফিদ্দুনিয়া হাসানাতান ওয়া ফিল আখিরাতি হাসানাতান ওয়া ক্বিনা আযাবান্নার।',
       'রাব্বি যিদনী ইলমা।',
       'রাব্বানা যলামনা আনফুসানা ওয়া ইল্লাম তাগফির লানা ওয়া তারহামনা লানাকূনান্না মিনাল খাসিরীন।',
+      'রাব্বিশরাহ লী সদরী।',
+      'ওয়া ইয়াসসির লী আমরী।',
+      'রাব্বি হাব লী মিনাস সালিহীন।',
+      'রাব্বানা তাকাব্বাল মিন্না ইন্নাকা আনতাস সামীউল আলীম।',
+      'রাব্বিগফির লী ওয়া লিওয়ালিদাইয়্যা ওয়া লিল মুমিনীনা ইয়াওমা ইয়াকূমুল হিসাব।',
+      'রাব্বানা লা তুযিগ কুলূবানা বা’দা ইয হাদাইতানা ওয়া হাব লানা মিল্লাদুনকা রাহমাহ, ইন্নাকা আনতাল ওয়াহহাব।',
+      'রাব্বি লা তাযারনী ফারদাওঁ ওয়া আনতা খাইরুল ওয়ারিসীন।',
+      'রাব্বি আউযু বিকা মিন হামাযাতিশ শায়াতীন।',
+      'রাব্বি আনযিলনী মুনযালাম মুবারাকাওঁ ওয়া আনতা খাইরুল মুনযিলীন।',
+      'রাব্বানা আফরিগ আলাইনা সাবরাওঁ ওয়া তাওয়াফফানা মুসলিমীন।',
     ],
     'ko': [
       '랍바나 아티나 핏둔야 하사나탄 와 필 아키라티 하사나탄 와 키나 아자반나르.',
       '랍비 지드니 일마.',
       '랍바나 잘람나 안푸사나 와 일람 타그피르 라나 와 타르함나 라나쿠난나 미날 카시린.',
+      '랍비 이슈라흐 리 사드리.',
+      '와 얏시르 리 암리.',
+      '랍비 합 리 미낫살리힌.',
+      '랍바나 타깝발 민나 인나카 안탓사미울 알림.',
+      '랍비그피르 리 와 리왈리다이야 와 릴무미니나 야우마 야꾸물 히삽.',
+      '랍바나 라 투지그 꿀루바나 바다 이즈 하다이타나 와 합 라나 민 라둔카 라흐마, 인나카 안탈 와합.',
+      '랍비 라 타자르니 파르단 와 안타 카이룰 와리신.',
+      '랍비 아우주 비카 민 하마자티쉬 샤야틴.',
+      '랍비 안질니 문잘란 무바라칸 와 안타 카이룰 문질린.',
+      '랍바나 아프리그 알라이나 사브란 와 타와파나 무슬리민.',
     ],
   };
-  String? duaPronunciation() => duaPronunciations[widget.language]?[selected];
+  String? duaPronunciation() => widget.language == 'ar' ? null : (duaPronunciations[widget.language] ?? duaPronunciations['en'])?[selected];
   static const duaMeanings = <String, List<String>>{
     'bn': [
       'হে আমাদের রব! আমাদের দুনিয়ায় কল্যাণ দিন, আখিরাতেও কল্যাণ দিন এবং আগুনের শাস্তি থেকে রক্ষা করুন। (কুরআন ২:২০১)',
       'হে আমার রব! আমার জ্ঞান বৃদ্ধি করে দিন। (কুরআন ২০:১১৪)',
       'হে আমাদের রব! আমরা নিজেদের প্রতি জুলুম করেছি। আপনি ক্ষমা ও দয়া না করলে আমরা ক্ষতিগ্রস্তদের অন্তর্ভুক্ত হব। (কুরআন ৭:২৩)',
+      'হে আমার রব, আমার বক্ষ প্রশস্ত করে দিন। (কুরআন 20:25)',
+      'আর আমার কাজ সহজ করে দিন। (কুরআন 20:26)',
+      'হে আমার রব, আমাকে সৎ সন্তান দান করুন। (কুরআন 37:100)',
+      'হে আমাদের রব, আমাদের পক্ষ থেকে কবুল করুন; আপনি সর্বশ্রোতা, সর্বজ্ঞ। (কুরআন 2:127)',
+      'হে আমাদের রব, হিসাবের দিনে আমাকে, আমার পিতা-মাতাকে ও মুমিনদের ক্ষমা করুন। (কুরআন 14:41)',
+      'হে আমাদের রব, হেদায়াত দেওয়ার পর আমাদের অন্তরকে বিচ্যুত করবেন না; আপনার পক্ষ থেকে রহমত দিন। (কুরআন 3:8)',
+      'হে আমার রব, আমাকে একা রেখে দেবেন না; আপনিই সর্বোত্তম উত্তরাধিকারী। (কুরআন 21:89)',
+      'হে আমার রব, শয়তানদের কুমন্ত্রণা থেকে আপনার আশ্রয় চাই। (কুরআন 23:97)',
+      'হে আমার রব, আমাকে বরকতময় স্থানে অবতরণ করান; আপনিই সর্বোত্তম অবতরণকারী। (কুরআন 23:29)',
+      'হে আমাদের রব, আমাদের ওপর ধৈর্য ঢেলে দিন এবং মুসলিম হিসেবে মৃত্যু দিন। (কুরআন 7:126)',
     ],
     'ko': [
       '주님, 현세와 내세에서 저희에게 선을 베푸시고 불의 형벌에서 보호해 주소서. (꾸란 2:201)',
       '주님, 저의 지식을 더하여 주소서. (꾸란 20:114)',
       '주님, 저희는 스스로에게 잘못을 저질렀습니다. 용서와 자비를 베풀지 않으시면 저희는 손실을 입을 것입니다. (꾸란 7:23)',
+      '주님, 제 가슴을 넓혀 주소서. (꾸란 20:25)',
+      '제 일을 쉽게 해 주소서. (꾸란 20:26)',
+      '주님, 제게 의로운 자손을 허락해 주소서. (꾸란 37:100)',
+      '주님, 저희에게서 받아 주소서. 주님은 모든 것을 들으시고 아십니다. (꾸란 2:127)',
+      '주님, 심판의 날에 저와 부모님과 믿는 이들을 용서해 주소서. (꾸란 14:41)',
+      '주님, 저희를 인도하신 뒤 마음이 빗나가지 않게 하시고 자비를 베풀어 주소서. (꾸란 3:8)',
+      '주님, 저를 홀로 남겨 두지 마소서. 주님은 가장 훌륭한 상속자이십니다. (꾸란 21:89)',
+      '주님, 악마들의 유혹으로부터 주님께 보호를 구합니다. (꾸란 23:97)',
+      '주님, 저를 축복받은 곳에 내리게 하소서. 주님은 가장 훌륭히 인도하십니다. (꾸란 23:29)',
+      '주님, 저희에게 인내를 내려 주시고 무슬림으로 죽게 하소서. (꾸란 7:126)',
     ],
     'ar': [
       'ربنا آتنا خير الدنيا والآخرة وقنا عذاب النار. (البقرة ٢:٢٠١)',
       'رب زدني علماً. (طه ٢٠:١١٤)',
       'ربنا ظلمنا أنفسنا، وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين. (الأعراف ٧:٢٣)',
+      'رب اشرح لي صدري. (القرآن 20:25)',
+      'ويسر لي أمري. (القرآن 20:26)',
+      'رب هب لي من الصالحين. (القرآن 37:100)',
+      'ربنا تقبل منا إنك أنت السميع العليم. (القرآن 2:127)',
+      'رب اغفر لي ولوالدي وللمؤمنين يوم يقوم الحساب. (القرآن 14:41)',
+      'ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة إنك أنت الوهاب. (القرآن 3:8)',
+      'رب لا تذرني فردا وأنت خير الوارثين. (القرآن 21:89)',
+      'رب أعوذ بك من همزات الشياطين. (القرآن 23:97)',
+      'رب أنزلني منزلا مباركا وأنت خير المنزلين. (القرآن 23:29)',
+      'ربنا أفرغ علينا صبرا وتوفنا مسلمين. (القرآن 7:126)',
     ],
   };
   String duaMeaning() => duaMeanings[widget.language]?[selected] ?? duas[selected][1];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
-    const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
-    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), if (duaPronunciation() != null) ...[Text(duaPronunciation()!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, height: 1.7, fontWeight: FontWeight.w600, color: emerald)), const SizedBox(height: 12)], Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
+    const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), maxLines: 2, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
+    _GoldCard(child: Column(children: [Text('${uix(widget.language, 'duaNumber')} ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), if (duaPronunciation() != null) ...[Text(duaPronunciation()!, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, height: 1.7, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)), const SizedBox(height: 12)], Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
     const SizedBox(height: 20), _GoldCard(child: Column(children: [Text(tr(widget.language, 'tasbihCounter'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)), const Icon(Icons.grain, color: emerald, size: 46), Text('$count', style: const TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: emerald)), Row(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: () => setState(() => count = 0), icon: const Icon(Icons.restart_alt)), const SizedBox(width: 22), FilledButton(onPressed: () => setState(() => count++), child: const Icon(Icons.add))])])),
   ])));
 }
@@ -964,7 +1042,7 @@ class _NotificationPageState extends State<NotificationPage> {
       ])),
     ],
     const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
-    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${tr(widget.language, 'notificationSuccess')} ${atx(widget.language, 'adhanScheduled')}'))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
+    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(uix(widget.language, 'adhanSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
     const SizedBox(height: 10),
     OutlinedButton.icon(onPressed: () async {
       try {
