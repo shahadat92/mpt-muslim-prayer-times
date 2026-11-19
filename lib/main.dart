@@ -113,6 +113,67 @@ const extraTranslations = <String, Map<String, String>>{
 };
 String tx(String lang, String key) => extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
 
+// Additional localized Adhan controls for the next release.
+const adhanTranslations = <String, Map<String, String>>{
+  'en': {
+    'preciseAdhan': 'Allow precise Adhan alarms',
+    'adhanSettings': 'Adhan settings',
+    'fullAdhan': 'Full Adhan',
+    'shortAdhan': 'Short Adhan',
+    'specialFajr': 'Special Fajr Adhan',
+    'specialFajrHint': 'Use a special Adhan for Fajr',
+    'previewAdhan': 'Preview Adhan',
+    'previewFajr': 'Preview Fajr',
+    'stopAdhan': 'Stop',
+    'adhanHelp': 'Preview plays inside the app. Save & Schedule Alerts also schedules Android Adhan audio. Allow precise alarms in Settings; Android battery restrictions may delay playback.',
+    'adhanScheduled': 'Automatic Adhan scheduled.',
+    'audioError': 'Audio error',
+  },
+  'bn': {
+    'preciseAdhan': 'সঠিক সময়ে আজানের অনুমতি দিন',
+    'adhanSettings': 'আজান সেটিংস',
+    'fullAdhan': 'পূর্ণ আজান',
+    'shortAdhan': 'সংক্ষিপ্ত আজান',
+    'specialFajr': 'ফজরের বিশেষ আজান',
+    'specialFajrHint': 'ফজরের জন্য বিশেষ আজান ব্যবহার করুন',
+    'previewAdhan': 'আজান শুনুন',
+    'previewFajr': 'ফজরের আজান শুনুন',
+    'stopAdhan': 'বন্ধ করুন',
+    'adhanHelp': 'প্রিভিউ অ্যাপের ভেতরে বাজে। অ্যালার্ট সংরক্ষণ করলে Android-এ আজানও নির্ধারিত হয়। সেটিংসে সঠিক সময়ের অ্যালার্ম অনুমতি দিন; ব্যাটারি সীমাবদ্ধতায় আজান দেরি হতে পারে।',
+    'adhanScheduled': 'স্বয়ংক্রিয় আজান নির্ধারিত হয়েছে।',
+    'audioError': 'অডিও সমস্যা',
+  },
+  'ko': {
+    'preciseAdhan': '정확한 아잔 알람 허용',
+    'adhanSettings': '아잔 설정',
+    'fullAdhan': '전체 아잔',
+    'shortAdhan': '짧은 아잔',
+    'specialFajr': '파즈르 특별 아잔',
+    'specialFajrHint': '파즈르 기도에 특별 아잔 사용',
+    'previewAdhan': '아잔 미리 듣기',
+    'previewFajr': '파즈르 아잔 미리 듣기',
+    'stopAdhan': '중지',
+    'adhanHelp': '미리 듣기는 앱 안에서 재생됩니다. 알림을 저장하면 Android 아잔도 예약됩니다. 설정에서 정확한 알람을 허용하세요. 배터리 제한으로 재생이 지연될 수 있습니다.',
+    'adhanScheduled': '자동 아잔이 예약되었습니다.',
+    'audioError': '오디오 오류',
+  },
+  'ar': {
+    'preciseAdhan': 'السماح بتنبيهات الأذان الدقيقة',
+    'adhanSettings': 'إعدادات الأذان',
+    'fullAdhan': 'الأذان الكامل',
+    'shortAdhan': 'الأذان المختصر',
+    'specialFajr': 'أذان الفجر الخاص',
+    'specialFajrHint': 'استخدام أذان خاص لصلاة الفجر',
+    'previewAdhan': 'استمع إلى الأذان',
+    'previewFajr': 'استمع إلى أذان الفجر',
+    'stopAdhan': 'إيقاف',
+    'adhanHelp': 'تعمل المعاينة داخل التطبيق. عند حفظ التنبيهات، تتم جدولة الأذان على أندرويد أيضًا. اسمح بالمنبهات الدقيقة في الإعدادات؛ قد تؤخر قيود البطارية التشغيل.',
+    'adhanScheduled': 'تمت جدولة الأذان تلقائيًا.',
+    'audioError': 'خطأ صوتي',
+  },
+};
+String atx(String lang, String key) => adhanTranslations[lang]?[key] ?? adhanTranslations['en']?[key] ?? key;
+
 const calendarDayLabels = <String, List<String>>{
   'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
@@ -729,7 +790,7 @@ class SettingsPage extends StatelessWidget {
             }
           },
           icon: const Icon(Icons.alarm),
-          label: const Text('Allow precise Adhan alarms · সঠিক সময়ে আজান'),
+          label: Text(atx(language, 'preciseAdhan')),
         ),
       const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
       const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: TextStyle(color: muted, fontSize: 12))),
@@ -864,46 +925,46 @@ class _NotificationPageState extends State<NotificationPage> {
     if (adhanReady) ...[
       const SizedBox(height: 16),
       _GoldCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Adhan settings · আজান সেটিংস', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+        Text(atx(widget.language, 'adhanSettings'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
         RadioListTile<AdhanLength>(
-          title: const Text('Full Adhan · পূর্ণ আজান'),
+          title: Text(atx(widget.language, 'fullAdhan')),
           value: AdhanLength.full,
           groupValue: adhanAudio.length,
           onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
         ),
         RadioListTile<AdhanLength>(
-          title: const Text('Short Adhan · সংক্ষিপ্ত আজান'),
+          title: Text(atx(widget.language, 'shortAdhan')),
           value: AdhanLength.short,
           groupValue: adhanAudio.length,
           onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
         ),
         SwitchListTile(
-          title: const Text('Special Fajr Adhan'),
-          subtitle: const Text('ফজরের বিশেষ আজান চালু'),
+          title: Text(atx(widget.language, 'specialFajr')),
+          subtitle: Text(atx(widget.language, 'specialFajrHint')),
           value: adhanAudio.specialFajr,
           onChanged: (v) async { await adhanAudio.setSpecialFajr(v); if (mounted) setState(() {}); },
         ),
         Wrap(spacing: 8, runSpacing: 8, children: [
           OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: false); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: const Text('Preview Adhan'),
+            onPressed: () async { try { await adhanAudio.preview(fajr: false); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); } },
+            icon: const Icon(Icons.play_arrow), label: Text(atx(widget.language, 'previewAdhan')),
           ),
           OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: true); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: const Text('Preview Fajr'),
+            onPressed: () async { try { await adhanAudio.preview(fajr: true); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); } },
+            icon: const Icon(Icons.play_arrow), label: Text(atx(widget.language, 'previewFajr')),
           ),
           OutlinedButton.icon(
             onPressed: () async { await adhanAudio.stop(); },
-            icon: const Icon(Icons.stop), label: const Text('Stop'),
+            icon: const Icon(Icons.stop), label: Text(atx(widget.language, 'stopAdhan')),
           ),
         ]),
         const SizedBox(height: 8),
-        const Text('Preview plays inside the app. Save & Schedule Alerts also schedules Android Adhan audio. Allow precise alarms in Settings; Android battery restrictions may delay playback.', style: TextStyle(fontSize: 12, color: muted)),
+        Text(atx(widget.language, 'adhanHelp'), style: TextStyle(fontSize: 12, color: muted)),
       ])),
     ],
     const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
-    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${tr(widget.language, 'notificationSuccess')} Automatic Adhan scheduled.'))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
+    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${tr(widget.language, 'notificationSuccess')} ${atx(widget.language, 'adhanScheduled')}'))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
     const SizedBox(height: 10),
     OutlinedButton.icon(onPressed: () async {
       try {
