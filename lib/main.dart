@@ -802,7 +802,7 @@ class SettingsPage extends StatelessWidget {
           label: Text(atx(language, 'preciseAdhan')),
         ),
       const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
-      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: TextStyle(color: muted, fontSize: 12))),
+      const SizedBox(height: 28), Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: const TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 }
