@@ -25,6 +25,16 @@ String learningLabel(String lang, String key) {
 }
 
 const _entryLocalization = <String, List<String>>{
+  'Morning remembrance': ['সকালের যিকির', '아침의 기억', 'ذكر الصباح', 'আসবাহনা ওয়া আসবাহাল মুলকু লিল্লাহ', '아스바흐나 와 아스바할 물쿠 릴라'],
+  'Evening remembrance': ['সন্ধ্যার যিকির', '저녁의 기억', 'ذكر المساء', 'আমসাইনা ওয়া আমসাল মুলকু লিল্লাহ', '암사이나 와 암살 물쿠 릴라'],
+  'Seeking refuge': ['আশ্রয় প্রার্থনা', '보호를 구하는 두아', 'دعاء الاستعاذة', 'আউযু বিকালিমাতিল্লাহিত তাম্মাতি মিন শাররি মা খালাক', '아우주 비칼리마틸라힛 탐마티 민 샤르리 마 할라끄'],
+  'Protection in Allah’s name': ['আল্লাহর নামে সুরক্ষার দোয়া', '알라의 이름으로 보호를 구하는 두아', 'دعاء الحفظ باسم الله', '', ''],
+  '1. Kalima Tayyibah': ['১. কালিমা তাইয়্যিবা', '1. 칼리마 타이이바', '١. الكلمة الطيبة', '', ''],
+  '2. Kalima Shahadah': ['২. কালিমা শাহাদাত', '2. 칼리마 샤하다', '٢. كلمة الشهادة', '', ''],
+  '3. Kalima Tamjid': ['৩. কালিমা তামজীদ', '3. 칼리마 탐지드', '٣. كلمة التمجيد', '', ''],
+  '4. Kalima Tawhid': ['৪. কালিমা তাওহীদ', '4. 칼리마 타우히드', '٤. كلمة التوحيد', '', ''],
+  '5. Kalima Istighfar': ['৫. কালিমা ইস্তিগফার', '5. 칼리마 이스티그파르', '٥. كلمة الاستغفار', '', ''],
+  '6. Kalima Radd-e-Kufr': ['৬. কালিমা রদ্দে কুফর', '6. 칼리마 라드 알쿠프르', '٦. كلمة رد الكفر', '', ''],
   'Before eating': ['খাওয়ার আগে', '식사 전', 'قبل الطعام', 'বিসমিল্লাহ', '비스밀라'],
   'After eating': ['খাওয়ার পরে', '식사 후', 'بعد الطعام', 'আলহামদুলিল্লাহ', '알함두릴라'],
   'Before sleeping': ['ঘুমানোর আগে', '잠자기 전', 'قبل النوم', 'বিসমিকা আল্লাহুম্মা আমূতু ওয়া আহইয়া', '비스미칼라훔마 아무투 와 아흐야'],
@@ -37,6 +47,10 @@ const _entryLocalization = <String, List<String>>{
   'Ayatul Kursi · Quran 2:255': ['আয়াতুল কুরসি · ২:২৫৫', '아야툴 쿠르시 · 2:255', 'آية الكرسي · البقرة ٢٥٥', '', ''],
 };
 const _arabicEntryMeanings = <String, String>{
+  'Morning remembrance': 'أصبحنا وأصبح الملك لله، وله الحمد.',
+  'Evening remembrance': 'أمسينا وأمسى الملك لله، وله الحمد.',
+  'Seeking refuge': 'أطلب الحماية بكلمات الله التامات من شر المخلوقات.',
+  'Protection in Allah’s name': 'أستعين باسم الله الذي لا يضر مع اسمه شيء، وهو السميع العليم.',
   'Before eating': 'أبدأ الطعام مستعينًا باسم الله.',
   'After eating': 'الحمد والثناء كله لله تعالى.',
   'Before sleeping': 'أذكر اسم الله عند النوم، فبأمره تكون الحياة والموت.',
@@ -54,12 +68,59 @@ const _arabicEntryMeanings = <String, String>{
   '5. Kalima Istighfar': 'أستغفر الله من الذنوب كلها، ما علمت منها وما لم أعلم، وأتوب إليه.',
   '6. Kalima Radd-e-Kufr': 'أستعيذ بالله من الشرك المتعمد، وأستغفره من الشرك غير المقصود، وأتوب من الكفر وسائر الذنوب وأجدد الشهادة.',
 };
+const _kalimaTitles = <String, List<String>>{
+  '1. Kalima Tayyibah': ['১. কালিমা তাইয়্যিবা', '1. 칼리마 타이이바', '١. الكلمة الطيبة'],
+  '2. Kalima Shahadah': ['২. কালিমা শাহাদাত', '2. 칼리마 샤하다', '٢. كلمة الشهادة'],
+  '3. Kalima Tamjid': ['৩. কালিমা তামজীদ', '3. 칼리마 탐지드', '٣. كلمة التمجيد'],
+  '4. Kalima Tawhid': ['৪. কালিমা তাওহীদ', '4. 칼리마 타우히드', '٤. كلمة التوحيد'],
+  '5. Kalima Istighfar': ['৫. কালিমা ইস্তিগফার', '5. 칼리마 이스티그파르', '٥. كلمة الاستغفار'],
+  '6. Kalima Radd-e-Kufr': ['৬. কালিমা রদ্দে কুফর', '6. 칼리마 라드 알쿠프르', '٦. كلمة رد الكفر'],
+};
 String _localizedEntryTitle(_Entry d, String lang) {
   final v = _entryLocalization[d.title];
-  if (v == null) return d.title;
+  if (v == null) {
+    final k = _kalimaTitles[d.title];
+    if (k != null) return lang == 'bn' ? k[0] : lang == 'ko' ? k[1] : lang == 'ar' ? k[2] : d.title;
+    return d.title;
+  }
   return lang == 'bn' ? v[0] : lang == 'ko' ? v[1] : lang == 'ar' ? v[2] : d.title;
 }
+// Complete reading guides for the six traditional Kalimas and Ayatul Kursi.
+// Approximate script aids only: recitation must be learned from Arabic/tajwid.
+const _longEntryPronunciations = <String, Map<String, String>>{
+  '1. Kalima Tayyibah': {
+    'bn': 'লা ইলাহা ইল্লাল্লাহু মুহাম্মাদুর রাসূলুল্লাহ।',
+    'ko': '라 일라하 일랄라후 무함마두르 라술룰라.',
+  },
+  '2. Kalima Shahadah': {
+    'bn': 'আশহাদু আল্লা ইলাহা ইল্লাল্লাহু ওয়া আশহাদু আন্না মুহাম্মাদান আবদুহু ওয়া রাসূলুহু।',
+    'ko': '아슈하두 알 라 일라하 일랄라후 와 아슈하두 안나 무함마단 압두후 와 라술루후.',
+  },
+  '3. Kalima Tamjid': {
+    'bn': 'সুবহানাল্লাহি ওয়াল হামদু লিল্লাহি ওয়া লা ইলাহা ইল্লাল্লাহু ওয়াল্লাহু আকবার। ওয়া লা হাওলা ওয়া লা কুওয়াতা ইল্লা বিল্লাহিল আলিয়্যিল আযীম।',
+    'ko': '수브하날라히 왈함두 릴라히 와 라 일라하 일랄라후 왈라후 아크바르. 와 라 하울라 와 라 꾸와타 일라 빌라힐 알리이일 아짐.',
+  },
+  '4. Kalima Tawhid': {
+    'bn': 'লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু, লাহুল মুলকু ওয়া লাহুল হামদু, ইউহয়ী ওয়া ইউমীতু, ওয়া হুওয়া হাইয়্যুল লা ইয়ামূতু আবাদান আবাদা, যুল জালালি ওয়াল ইকরাম, বিইয়াদিহিল খাইরু, ওয়া হুওয়া আলা কুল্লি শাইইন কাদীর।',
+    'ko': '라 일라하 일랄라후 와흐다후 라 샤리카 라후, 라훌 물쿠 와 라훌 함두, 유흐이 와 유미투, 와 후와 하이율 라 야무투 아바단 아바다, 줄 잘랄리 왈 이크람, 비야디힐 하이루, 와 후와 알라 쿨리 샤이인 까디르.',
+  },
+  '5. Kalima Istighfar': {
+    'bn': 'আস্তাগফিরুল্লাহা রাব্বী মিন কুল্লি যানবিন আযনাবতুহু আমাদান আও খাতাআন, সিররান আও আলানিয়াতান, ওয়া আতূবু ইলাইহি মিনায যানবিল্লাযী আ’লামু ওয়া মিনায যানবিল্লাযী লা আ’লামু। ইন্নাকা আনতা আল্লামুল গুয়ূবি ওয়া সাত্তারুল উয়ূবি ওয়া গাফফারুয যুনূবি। ওয়া লা হাওলা ওয়া লা কুওয়াতা ইল্লা বিল্লাহিল আলিয়্যিল আযীম।',
+    'ko': '아스타그피룰라하 랍비 민 쿨리 잔빈 아즈납투후 아마단 아우 하타안, 시르란 아우 알라니야탄, 와 아투부 일라이히 미나즈 잔빌라지 아알라무 와 미나즈 잔빌라지 라 아알라무. 인나카 안타 알라물 구유비 와 삿타룰 우유비 와 가파루즈 주누비. 와 라 하울라 와 라 꾸와타 일라 빌라힐 알리이일 아짐.',
+  },
+  '6. Kalima Radd-e-Kufr': {
+    'bn': 'আল্লাহুম্মা ইন্নী আউযু বিকা মিন আন উশরিকা বিকা শাইআন ওয়া আনা আ’লামু বিহী, ওয়া আস্তাগফিরুকা লিমা লা আ’লামু বিহী। তুবতু আনহু ওয়া তাবাররাতু মিনাল কুফরি ওয়াশ শিরকি ওয়াল কাযিবি ওয়াল গীবাতি ওয়াল বিদআতি ওয়ান নামীমাতি ওয়াল ফাওয়াহিশি ওয়াল বুহতানি ওয়াল মাআসী কুল্লিহা। ওয়া আসলামতু ওয়া আকূলু লা ইলাহা ইল্লাল্লাহু মুহাম্মাদুর রাসূলুল্লাহ।',
+    'ko': '알라훔마 인니 아우주 비카 민 안 우슈리카 비카 샤이안 와 아나 아알라무 비히, 와 아스타그피루카 리마 라 아알라무 비히. 툽투 안후 와 타바라투 미날 쿠프리 와슈 시르키 왈 카지비 왈 기바티 왈 비드아티 완 나미마티 왈 파와히시 왈 부흐타니 왈 마아시 쿨리하. 와 아슬람투 와 아꿀루 라 일라하 일랄라후 무함마두르 라술룰라.',
+  },
+  'Ayatul Kursi · Quran 2:255': {
+    'bn': 'আল্লাহু লা ইলাহা ইল্লা হুওয়াল হাইয়্যুল কাইয়্যূম। লা তা’খুযুহু সিনাতুওঁ ওয়া লা নাওম। লাহু মা ফিস সামাওয়াতি ওয়া মা ফিল আরদ। মান যাল্লাযী ইয়াশফাউ ইনদাহু ইল্লা বিইযনিহী। ইয়া’লামু মা বাইনা আইদীহিম ওয়া মা খালফাহুম। ওয়া লা ইউহীতূনা বিশাইইম মিন ইলমিহী ইল্লা বিমা শাআ। ওয়াসিআ কুরসিয়্যুহুস সামাওয়াতি ওয়াল আরদ। ওয়া লা ইয়াউদুহু হিফযুহুমা। ওয়া হুওয়াল আলিয়্যুল আযীম।',
+    'ko': '알라후 라 일라하 일라 후왈 하이율 까이윰. 라 타후주후 시나툰 와 라 나움. 라후 마 피스 사마와티 와 마 필 아르드. 만 잘라지 야슈파우 인다후 일라 비이즈니히. 야알라무 마 바이나 아이디힘 와 마 할파훔. 와 라 유히투나 비샤이임 민 일미히 일라 비마 샤아. 와시아 쿠르시이유후스 사마와티 왈 아르드. 와 라 야우두후 히프주후마. 와 후왈 알리이율 아짐.',
+  },
+};
+
 String _localizedEntryPron(_Entry d, String lang) {
+  final complete = _longEntryPronunciations[d.title]?[lang];
+  if (complete != null) return complete;
   final v = _entryLocalization[d.title];
   if (v != null && lang == 'bn' && v[3].isNotEmpty) return v[3];
   if (v != null && lang == 'ko' && v[4].isNotEmpty) return v[4];
@@ -154,79 +215,81 @@ const _surahs = <_Surah>[
 // Bengali/Korean phonetic aids (approximate, NOT a tajwid-certified transcription).
 const _phoneticBySurah = <int, List<List<String>>>{
   1: [
-    ['বিসমিল্লাহির-রাহমানির-রাহীম', '비스밀라히르-라흐마니르-라힘'],
-    ['আলহামদু লিল্লাহি রাব্বিল-আলামীন', '알함두 릴라히 랍빌-알라민'],
-    ['আর-রাহমানির-রাহীম', '아르-라흐마니르-라힘'],
-    ['মালিকি ইয়াওমিদ-দীন', '말리키 야우미드-딘'],
-    ['ইয়্যাকা নাবুদু ওয়া ইয়্যাকা নাস্তাঈন', '이야카 나부두 와 이야카 나스타인'],
-    ['ইহদিনাস-সিরাতাল-মুস্তাকীম', '이흐디나스-시라탈-무스타킴'],
-    ['সিরাতাল-লআধইনআ আনআমতআ আলআইহইম গ়আইরইল-মআগ়দউবই আলআইহইম ওয়া লআদ-দআললইন', '시라탈-ㄹ아드인아 안아므트아 알아이흐이므 그아이르이ㄹ-므아그드우브이 알아이흐이므 와 ㄹ아드-드알ㄹ인'],
+    ['বিসমিল্লাহির রাহমানির রাহীম', '비스밀라히르 라흐마니르 라힘'],
+    ['আলহামদু লিল্লাহি রাব্বিল আলামীন', '알함두 릴라히 랍빌 알라민'],
+    ['আর রাহমানির রাহীম', '아르 라흐마니르 라힘'],
+    ['মালিকি ইয়াওমিদ্দীন', '말리키 야우믿 딘'],
+    ['ইয়্যাকা না’বুদু ওয়া ইয়্যাকা নাস্তাঈন', '이야카 나부두 와 이야카 나스타인'],
+    ['ইহদিনাস সিরাতাল মুস্তাকীম', '이흐디나스 시라탈 무스타킴'],
+    ['সিরাতাল্লাযীনা আনআমতা আলাইহিম গাইরিল মাগদূবি আলাইহিম ওয়ালাদ্দাল্লীন',
+     '시라탈 라지나 안암타 알라이힘 가이릴 마그두비 알라이힘 왈라 달린'],
   ],
   103: [
-    ['ওয়াল-আসর', '왈-아스르'],
-    ['ইন্নাল-ইনসানা লাফী খুসর', '인날-인사나 라피 후스르'],
-    ['ইল্লআল-লআধইনআ আমআনউ ওয়া আমইলউস-সআলইহআতই ওয়া তআউআসআউ বইল-হআককই ওয়া তআউআসআউ বইস-সআবর', '이ㄹ알-ㄹ아드인아 아므안우 와 아므이ㄹ우스-스알이흐아트이 와 트아우아스아우 브이ㄹ-흐아끄끄이 와 트아우아스아우 브이스-스아브르'],
+    ['ওয়াল আসর', '왈 아스르'],
+    ['ইন্নাল ইনসানা লাফী খুসর', '인날 인사나 라피 후스르'],
+    ['ইল্লাল্লাযীনা আমানূ ওয়া আমিলুস সালিহাতি ওয়া তাওয়াসাও বিল হাক্কি ওয়া তাওয়াসাও বিস সাবর',
+     '일랄 라지나 아마누 와 아밀루스 살리하티 와 타와사우 빌 하끼 와 타와사우 비스 사브르'],
   ],
   106: [
-    ['লই-ইলআফই কুরআইশ', 'ㄹ이-이ㄹ아프이 꾸르아이시'],
-    ['ইলআফইহইম রইহলআতআশ-শইতআই ওয়আস-সআইফ', '이ㄹ아프이흐이므 르이흐ㄹ아트아시-시이트아이 와아스-스아이프'],
-    ['ফআলয়আবউদউ রআব্বআ হআধআল-বআইত', '프알이아브우드우 르아ㅂ아 흐아드알-브아이트'],
-    ['আললআধই আতআমআহউম মিন জউইন ওয়া আমআনআহউম মিন খআউফ', '알ㄹ아드이 아트아므아흐우므 민 즈우인 와 아므안아흐우므 민 흐아우프'],
+    ['লি-ঈলাফি কুরাইশ', '리일라피 꾸라이시'],
+    ['ঈলাফিহিম রিহলাতাশ শিতাই ওয়াস সাইফ', '일라피힘 리흘라타쉬 시타이 왓 사이프'],
+    ['ফালইয়াবুদূ রাব্বা হাযাল বাইত', '팔야부두 랍바 하잘 바이트'],
+    ['আল্লাযী আতআমাহুম মিন জূইঁ ওয়া আমানাহুম মিন খাওফ', '알라지 아트아마훔 민 주인 와 아마나훔 민 하우프'],
   ],
   107: [
-    ['আরআয়তআল-লআধই য়উকআধধইবউ বইদ-দীন', '아르아이트알-ㄹ아드이 이우크아드드이브우 브이드-딘'],
-    ['ফআধআলইকআল-লআধই য়আদউল-য়আতইম', '프아드알이크알-ㄹ아드이 이아드우ㄹ-이아트이므'],
-    ['ওয়া লআ য়আহউদ্দউ আলআ তআমইল-মইসকইন', '와 ㄹ아 이아흐우ㄷ우 알아 트아므이ㄹ-므이스크인'],
-    ['ফআউআইলউল-লইল-মউসআললইন', '프아우아이ㄹ우ㄹ-ㄹ이ㄹ-므우스알ㄹ인'],
-    ['আললআধইনআ হউম আন সআলআতইহইম সআহউন', '알ㄹ아드인아 흐우므 안 스알아트이흐이므 스아흐운'],
-    ['আললআধইনআ হউম য়উরআউন', '알ㄹ아드인아 흐우므 이우르아운'],
-    ['ওয়া য়আমনআউনআল-মআউন', '와 이아므느아운알-므아운'],
+    ['আরাআইতাল্লাযী ইউকাযযিবু বিদ্দীন', '아라아이탈라지 유카지부 빋딘'],
+    ['ফাযালিকাল্লাযী ইয়াদুউল ইয়াতীম', '파잘리칼라지 야두울 야팀'],
+    ['ওয়ালা ইয়াহুদ্দু আলা তাআমিল মিসকীন', '왈라 야후두 알라 타아밀 미스킨'],
+    ['ফাওয়াইলুল্লিল মুসাল্লীন', '파와일룰 릴무살린'],
+    ['আল্লাযীনা হুম আন সালাতিহিম সাহূন', '알라지나 훔 안 살라티힘 사훈'],
+    ['আল্লাযীনা হুম ইউরাঊন', '알라지나 훔 유라운'],
+    ['ওয়া ইয়ামনাঊনাল মাঊন', '와 얌나우날 마운'],
   ],
   108: [
-    ['ইননআ আতআইনআকআল-কআউথআর', '인느아 아트아이느아크알-크아우트아르'],
-    ['ফআসআললই লই-রআব্বইকআ ওয়আনহআর', '프아스알ㄹ이 ㄹ이-르아ㅂ이크아 와안흐아르'],
-    ['ইননআ শআনইআকআ হউওয়আল-আবতআর', '인느아 시안이아크아 흐우와알-아브트아르'],
+    ['ইন্না আতাইনাকাল কাউসার', '인나 아타이나칼 카우사르'],
+    ['ফাসাল্লি লিরাব্বিকা ওয়ানহার', '파살리 리랍비카 완하르'],
+    ['ইন্না শানিআকা হুয়াল আবতার', '인나 샤니아카 후왈 압타르'],
   ],
   109: [
-    ['কুল য়আ আইয়উহআল-কআফইরউন', '꿀 이아 아이이우흐알-크아프이르운'],
-    ['লআ আবউদউ মআ তআবউদউন', 'ㄹ아 아브우드우 므아 트아브우드운'],
-    ['ওয়া লআ আনতউম আবইদউনআ মআ আবউদ', '와 ㄹ아 안트우므 아브이드운아 므아 아브우드'],
-    ['ওয়া লআ আনআ আবইদউম মআ আবআদতউম', '와 ㄹ아 안아 아브이드우므 므아 아브아드트우므'],
-    ['ওয়া লআ আনতউম আবইদউনআ মআ আবউদ', '와 ㄹ아 안트우므 아브이드운아 므아 아브우드'],
-    ['লআকউম দইনউকউম ওয়া লইয়আ দীন', 'ㄹ아크우므 드인우크우므 와 ㄹ이이아 딘'],
+    ['কুল ইয়া আইয়ুহাল কাফিরূন', '꿀 야 아이유할 카피룬'],
+    ['লা আ’বুদু মা তা’বুদূন', '라 아부두 마 타부둔'],
+    ['ওয়ালা আনতুম আবিদূনা মা আ’বুদ', '왈라 안툼 아비두나 마 아부드'],
+    ['ওয়ালা আনা আবিদুম মা আবাত্তুম', '왈라 아나 아비둠 마 아밧툼'],
+    ['ওয়ালা আনতুম আবিদূনা মা আ’বুদ', '왈라 안툼 아비두나 마 아부드'],
+    ['লাকুম দীনুকুম ওয়ালিয়া দীন', '라쿰 디누쿰 왈리야 딘'],
   ],
   110: [
-    ['ইধআ জআ নআসরউল্লআহই ওয়াল-ফআথ', '이드아 즈아 느아스르우ㄹ아흐이 왈-프아트'],
-    ['ওয়া রআয়তআন-নআসআ য়আদখউলউনআ ফই দইনইল্লআহই আফওয়আজআ', '와 르아이트안-느아스아 이아드흐우ㄹ운아 프이 드인이ㄹ아흐이 아프와아즈아'],
-    ['ফআসআব্বইহ বইহআমদই রআব্বইকআ ওয়আসতআগ়ফইরহ ইননআহউ কআনআ তআউওয়আবআ', '프아스아ㅂ이흐 브이흐아므드이 르아ㅂ이크아 와아스트아그프이르흐 인느아흐우 크안아 트아우와아브아'],
+    ['ইযা জাআ নাসরুল্লাহি ওয়াল ফাতহ', '이자 자아 나스룰라히 왈 파트흐'],
+    ['ওয়া রাআইতান নাসা ইয়াদখুলূনা ফী দীনিল্লাহি আফওয়াজা', '와 라아이탄 나사 야드훌루나 피 디닐라히 아프와자'],
+    ['ফাসাব্বিহ বিহামদি রাব্বিকা ওয়াস্তাগফিরহু ইন্নাহু কানা তাওয়াবা', '파삽비흐 비함디 랍비카 와스타그피르후 인나후 카나 타와바'],
   ],
   111: [
-    ['তআব্বআত য়আদআ আবই লআহআবইন ওয়া তআব্ব', '트아ㅂ아트 이아드아 아브이 ㄹ아흐아브인 와 트아ㅂ'],
-    ['মআ আগ়নআ আনহউ মআলউহউ ওয়া মআ কআসআব', '므아 아그느아 안흐우 므알우흐우 와 므아 크아스아브'],
-    ['সআইআসলআ নআরআন ধআতআ লআহআব', '스아이아스ㄹ아 느아르안 드아트아 ㄹ아흐아브'],
-    ['ওয়আমরআতউহউ হআম্মআলআতআল-হআতআব', '와아므르아트우흐우 흐아ㅁ알아트알-흐아트아브'],
-    ['ফই জইদইহআ হআবলউম মইম মআসআদ', '프이 즈이드이흐아 흐아브ㄹ우므 므이므 므아스아드'],
+    ['তাব্বাত ইয়াদা আবী লাহাবিঁও ওয়া তাব্ব', '탑밧 야다 아비 라하빈 와 탑'],
+    ['মা আগনা আনহু মালুহু ওয়ামা কাসাব', '마 아그나 안후 말루후 와마 카삽'],
+    ['সাইয়াসলা নারান যাতা লাহাব', '사야슬라 나란 자타 라합'],
+    ['ওয়ামরাআতুহু হাম্মালাতাল হাতাব', '왐라아투후 함말라탈 하탑'],
+    ['ফী জীদিহা হাবলুম মিম মাসাদ', '피 지디하 하블룸 밈 마사드'],
   ],
   112: [
     ['কুল হুওয়াল্লাহু আহাদ', '꿀 후왈라후 아하드'],
-    ['আল্লাহুস-সামাদ', '알라후스-사마드'],
+    ['আল্লাহুস সামাদ', '알라후스 사마드'],
     ['লাম ইয়ালিদ ওয়া লাম ইউলাদ', '람 얄리드 와 람 율라드'],
-    ['ওয়া লাম য়আকউল-লআহউ কউফউওয়আন আহাদ', '와 람 이아크우ㄹ-ㄹ아흐우 크우프우와안 아하드'],
+    ['ওয়া লাম ইয়াকুল্লাহু কুফুওয়ান আহাদ', '와 람 야꿀라후 쿠푸완 아하드'],
   ],
   113: [
-    ['কুল আউধউ বই-রাব্বিল-ফালাক', '꿀 아우드우 브이-랍빌-팔라크'],
-    ['মিন শাররি মআ খআলআক', '민 샤르리 므아 흐알아끄'],
-    ['ওয়া মিন শাররি গ়আসইকইন ইধআ ওয়আকআব', '와 민 샤르리 그아스이끄인 이드아 와아끄아브'],
-    ['ওয়া মিন শআররইন-নআফফআথআতই ফইল-উকআদ', '와 민 시아르르인-느아프프아트아트이 프이ㄹ-우끄아드'],
-    ['ওয়া মিন শাররি হআসইদইন ইধআ হআসআদ', '와 민 샤르리 흐아스이드인 이드아 흐아스아드'],
+    ['কুল আউযু বিরাব্বিল ফালাক', '꿀 아우주 비랍빌 팔라끄'],
+    ['মিন শাররি মা খালাক', '민 샤르리 마 할라끄'],
+    ['ওয়া মিন শাররি গাসিকিন ইযা ওয়াকাব', '와 민 샤르리 가시낀 이자 와깝'],
+    ['ওয়া মিন শাররিন নাফফাসাতি ফিল উকাদ', '와 민 샤르린 나파사티 필 우까드'],
+    ['ওয়া মিন শাররি হাসিদিন ইযা হাসাদ', '와 민 샤르리 하시딘 이자 하사드'],
   ],
   114: [
-    ['কুল আউধউ বই-রআব্বইন-নাস', '꿀 아우드우 브이-르아ㅂ인-나스'],
-    ['মআলইকইন-নাস', '므알이크인-나스'],
-    ['ইলআহইন-নাস', '이ㄹ아흐인-나스'],
-    ['মিন শআররইল-ওয়আসওয়আসইল-খআননআস', '민 시아르르이ㄹ-와아스와아스이ㄹ-흐안느아스'],
-    ['আললআধই য়উওয়আসওয়ইসউ ফই সউদউরইন-নাস', '알ㄹ아드이 이우와아스와이스우 프이 스우드우르인-나스'],
-    ['মইনআল-জইননআতই ওয়আন-নাস', '므인알-즈인느아트이 와안-나스'],
+    ['কুল আউযু বিরাব্বিন নাস', '꿀 아우주 비랍빈 나스'],
+    ['মালিকিন নাস', '말리킨 나스'],
+    ['ইলাহিন নাস', '일라힌 나스'],
+    ['মিন শাররিল ওয়াসওয়াসিল খান্নাস', '민 샤르릴 와스와실 한나스'],
+    ['আল্লাযী ইউওয়াসউইসু ফী সুদূরিন নাস', '알라지 유와스위수 피 수두린 나스'],
+    ['মিনাল জিন্নাতি ওয়ান নাস', '미날 진나티 완 나스'],
   ],
 };
 
@@ -237,7 +300,7 @@ class _Surah {
   final String bnMeaning, enMeaning, koMeaning;
   const _Surah(this.number,this.enName,this.bnName,this.koName,this.arName,this.verses,this.roman,this.bnMeaning,this.enMeaning,this.koMeaning);
   String title(String lang) => lang == 'bn' ? bnName : lang == 'ko' ? koName : lang == 'ar' ? arName : enName;
-  String meaning(String lang) => lang == 'bn' ? bnMeaning : lang == 'ko' ? koMeaning : lang == 'ar' ? verses.join(' ') : enMeaning;
+  String meaning(String lang) => lang == 'bn' ? bnMeaning : lang == 'ko' ? koMeaning : enMeaning;
 }
 
 class SurahLibraryPage extends StatelessWidget {
@@ -276,8 +339,25 @@ class _SurahReaderState extends State<_SurahReader> {
       for(var i=0;i<s.verses.length;i++) Card(margin:const EdgeInsets.only(bottom:10),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
         Text('${i+1}',style:const TextStyle(color:_green,fontWeight:FontWeight.bold)),
         Text(s.verses[i],textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:const TextStyle(fontSize:27,height:2.0)),
-        if(showPron && lang!='ar') Text(s.roman[i],style:const TextStyle(color:_green,fontSize:15,height:1.7)),
-        if(showMeaning) Padding(padding:const EdgeInsets.only(top:8),child:Text(mptVerseMeanings[s.number]![i][lang] ?? mptVerseMeanings[s.number]![i]['en']!,style:const TextStyle(fontSize:15,height:1.6))),
+        if (showPron && lang != 'ar')
+          Text(
+            (lang == 'bn' || lang == 'ko') &&
+                    (_phoneticBySurah[s.number]?.length ?? 0) > i
+                ? _phoneticBySurah[s.number]![i][lang == 'bn' ? 0 : 1]
+                : s.roman[i],
+            style: TextStyle(color: Theme.of(context).colorScheme.primary,fontSize:15,height:1.7),
+          ),
+        if(showMeaning) Padding(
+          padding:const EdgeInsets.only(top:8),
+          child:Text(
+            (mptVerseMeanings[s.number] != null && mptVerseMeanings[s.number]!.length > i)
+                ? (mptVerseMeanings[s.number]![i][lang] ??
+                    mptVerseMeanings[s.number]![i]['en'] ??
+                    s.meaning(lang))
+                : s.meaning(lang),
+            style:const TextStyle(fontSize:15,height:1.6),
+          ),
+        ),
       ]))),
 
       const SizedBox(height:12),Text(learningLabel(lang,'note'),style:const TextStyle(fontSize:12)),
@@ -314,6 +394,42 @@ const _kursi = <_Entry>[
   _Entry('Ayatul Kursi · Quran 2:255','اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ','Allahu la ilaha illa huwal-hayyul-qayyum, la takhudhuhu sinatuw-wa la nawm, lahu ma fis-samawati wa ma fil-ard, man dhal-ladhi yashfau indahu illa bi-idhnih, yalamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi-shayim-min ilmihi illa bima shaa, wasia kursiyyuhus-samawati wal-ard, wa la yauduhu hifzuhuma, wa huwal-aliyyul-azim','আল্লাহ ছাড়া কোনো উপাস্য নেই। তিনি চিরঞ্জীব, সবকিছুর ধারক। তাঁকে তন্দ্রা বা নিদ্রা স্পর্শ করে না। আসমান ও জমিনের সবকিছু তাঁর। তাঁর অনুমতি ছাড়া কেউ সুপারিশ করতে পারে না। তিনি সব জানেন; তাঁর জ্ঞান থেকে কেউ কিছু আয়ত্ত করতে পারে না, তিনি যা চান তা ছাড়া। তাঁর কুরসি আসমান ও জমিন পরিব্যাপ্ত। এগুলোর রক্ষণাবেক্ষণ তাঁকে ক্লান্ত করে না। তিনি সর্বোচ্চ, মহান।','Allah—there is no deity except Him, the Ever-Living, Sustainer. Neither drowsiness nor sleep overtakes Him. All in the heavens and earth belongs to Him. No one intercedes except by His permission. He knows all that is before and behind them; none encompass His knowledge except as He wills. His Kursi extends over the heavens and earth; preserving them does not tire Him. He is Most High, Most Great.','알라 외에는 신이 없습니다. 그분은 영원히 살아 계시며 만물을 유지하십니다. 졸음도 잠도 그분을 덮지 못합니다. 하늘과 땅의 모든 것은 그분의 것입니다. 그분의 허락 없이는 누구도 중재하지 못합니다. 그분의 지식은 모든 것을 포괄하며 그분의 권좌는 하늘과 땅에 미칩니다. 그분은 가장 높고 위대하십니다.','Quran 2:255'),
 ];
 
+final _morningEveningDuas = <_Entry>[
+  _Entry('Morning remembrance',
+    'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
+    'Asbahna wa asbahal-mulku lillah walhamdu lillah',
+    'আমরা সকালে উপনীত হয়েছি; সকল রাজত্ব ও প্রশংসা আল্লাহর।',
+    'We have entered the morning; all dominion and praise belong to Allah.',
+    '우리는 아침을 맞았습니다. 모든 주권과 찬미는 알라께 있습니다.',
+    'Sahih Muslim 2723 (opening excerpt)'),
+  _Entry('Evening remembrance',
+    'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
+    'Amsayna wa amsal-mulku lillah walhamdu lillah',
+    'আমরা সন্ধ্যায় উপনীত হয়েছি; সকল রাজত্ব ও প্রশংসা আল্লাহর।',
+    'We have entered the evening; all dominion and praise belong to Allah.',
+    '우리는 저녁을 맞았습니다. 모든 주권과 찬미는 알라께 있습니다.',
+    'Sahih Muslim 2723 (opening excerpt)'),
+  _kursi[0],
+];
+
+final _protectionDuas = <_Entry>[
+  _Entry('Seeking refuge',
+    'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',
+    'Audhu bikalimatillahit-tammati min sharri ma khalaq',
+    'আল্লাহর পরিপূর্ণ বাণীর আশ্রয় চাই তাঁর সৃষ্টির অনিষ্ট থেকে।',
+    'I seek refuge in Allah’s perfect words from the evil of what He created.',
+    '알라의 완전한 말씀에 의지하여 그분이 창조하신 것의 악으로부터 보호를 구합니다.',
+    'Sahih Muslim 2708'),
+  _Entry('Protection in Allah’s name',
+    'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
+    'Bismillahil-ladhi la yadurru maasmihi shayun fil-ardi wa la fis-samai wa huwas-samiul-alim',
+    'আল্লাহর নামে, যাঁর নামের সঙ্গে পৃথিবী ও আকাশের কোনো কিছু ক্ষতি করতে পারে না; তিনি সর্বশ্রোতা, সর্বজ্ঞ।',
+    'In Allah’s name, with which nothing on earth or in heaven can cause harm; He is All-Hearing, All-Knowing.',
+    '알라의 이름으로. 그분의 이름과 함께라면 땅과 하늘의 어떤 것도 해를 끼칠 수 없으며 그분은 모든 것을 들으시고 아십니다.',
+    'Sunan Abi Dawud 5088'),
+  _kursi[0],
+];
+
 class LearningDuaPage extends StatelessWidget {
   final String language;
   final VoidCallback onOpenQuranicDuas;
@@ -325,8 +441,8 @@ class LearningDuaPage extends StatelessWidget {
       (key:'kalima',icon:Icons.filter_6_outlined,items:_kalimas),
       (key:'kursi',icon:Icons.auto_awesome_outlined,items:_kursi),
       (key:'quran',icon:Icons.menu_book_outlined,items:const []),
-      (key:'morning',icon:Icons.wb_twilight_outlined,items:[_kursi[0]]),
-      (key:'protection',icon:Icons.shield_outlined,items:[_kursi[0]]),
+      (key:'morning',icon:Icons.wb_twilight_outlined,items:_morningEveningDuas),
+      (key:'protection',icon:Icons.shield_outlined,items:_protectionDuas),
     ];
     return Scaffold(appBar:AppBar(title:Text(learningLabel(language,'dua'))),body:ListView(padding:const EdgeInsets.all(14),children:[
       for(final section in sections) Card(margin:const EdgeInsets.only(bottom:9),child:ListTile(
@@ -350,8 +466,11 @@ class _DuaCollection extends StatelessWidget {
       final d=entries[i];
       return Card(margin:const EdgeInsets.only(bottom:12),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
         Text(_localizedEntryTitle(d,language),style:const TextStyle(color:_green,fontSize:18,fontWeight:FontWeight.bold)),
-        const SizedBox(height:12),Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:26,height:1.9)),
-        const SizedBox(height:12),Text(_localizedEntryPron(d,language),style:const TextStyle(fontSize:15,color:_green,height:1.6)),
+        const SizedBox(height:12),Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:const TextStyle(fontSize:25,height:1.75)),
+        if (language != 'ar') ...[
+          const SizedBox(height:12),
+          Text(_localizedEntryPron(d,language),style:TextStyle(fontSize:15,color:Theme.of(context).colorScheme.primary,height:1.7)),
+        ],
         const SizedBox(height:10),Text(learningLabel(language,'meaning'),style:const TextStyle(fontWeight:FontWeight.bold)),
         Text(language=='bn'?d.bn:language=='ko'?d.ko:language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en,style:const TextStyle(fontSize:15,height:1.6)),
         const SizedBox(height:8),Text('${learningLabel(language,'reference')}: ${d.reference}',style:const TextStyle(fontSize:11,color:Colors.grey)),
