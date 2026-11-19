@@ -689,7 +689,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final monthIndex = (h.year - 1) * 12 + (h.month - 1) + offset;
     final shownYear = monthIndex ~/ 12 + 1;
     final shownMonth = monthIndex % 12 + 1;
-    final monthStart = first.weekday % 7;
+    // Julian day 0 is Monday; calendar headings start on Sunday.
+    final monthStart = (islamicStart(shownYear, shownMonth) + 1) % 7;
     final monthLength = islamicStart(shownYear + (shownMonth == 12 ? 1 : 0),
       shownMonth == 12 ? 1 : shownMonth + 1) - islamicStart(shownYear, shownMonth);
     final prayers = prayersFor(widget.city, widget.hanafi, today);
