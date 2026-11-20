@@ -1,16 +1,9 @@
-MPT — আল্লাহর ৯৯টি নাম (অডিও ছাড়া)
-==================================
-এই ZIP-এ lib/ ফোল্ডারের ৭টি Dart ফাইল আছে।
-GitHub-এর আপনার প্রোজেক্টের lib/ ফোল্ডারে ফাইলগুলো আপলোড/প্রতিস্থাপন করুন।
-main.dart আগের অ্যাপের Home পেজে নতুন একটি 99 Names of Allah কার্ড যোগ করেছে।
-নতুন ফাইল: mpt_allah_names.dart, mpt_allah_names_data.dart।
-ফিচার: ৯৯ নাম, আট ভাষায় সংক্ষিপ্ত অর্থ, নাম/অর্থ/নম্বর দিয়ে খোঁজা,
-Favorites, মুখস্থ ট্র্যাকার, বিস্তারিত পেজ, অফলাইন ডেটা, আরবি নাম।
-অডিও নেই। Favorites ও মুখস্থ তালিকা shared_preferences-এ সংরক্ষিত হয়।
+MPT — Allah 99 Names, eight-language pronunciation update (no audio)
 
-সতর্কতা: উচ্চারণের ক্ষেত্রে English/Bengali/Korean/Hindi/Indonesian/Uzbek
-ভাষায় Latin reading guide ব্যবহৃত হয়েছে; Urdu/Arabic-এ আরবি লিপি।
-এটি সংশ্লিষ্ট সব ভাষার স্বতন্ত্র স্থানীয়-লিপির ধ্বনিলিপি নয়।
-অর্থগুলো সংক্ষিপ্ত শিক্ষামূলক ব্যাখ্যা; আলেম/ভাষা বিশেষজ্ঞ দিয়ে যাচাই প্রয়োজন।
-৯৯ নামের তালিকার একাধিক প্রচলিত বিন্যাস আছে।
-Flutter SDK-তে compile/build ও Android-এ বাস্তব পরীক্ষা করা হয়নি।
+All 99 name reading aids now use the selected language script:
+English: Latin; Bangla: বাংলা; Korean: 한글; Arabic: Arabic; Urdu: Urdu Perso-Arabic; Hindi: देवनागरी; Indonesian: Latin; Uzbek: Latin.
+
+The 99 names and meanings, UI, favorites, learned tracker, search, and existing app files are retained.
+These are approximate learner reading aids, not authenticated tajwid transcriptions. Urdu uses unvowelled Urdu-style Arabic script and may be ambiguous for beginners. Religious proofreading by qualified Arabic-language and native-language readers is required before publication.
+
+Upload/replace all lib/*.dart files in the GitHub repository, then run a Codemagic debug build. A local Flutter SDK was not available to compile this package.
