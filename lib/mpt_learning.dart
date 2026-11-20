@@ -368,7 +368,7 @@ class _SurahReaderState extends State<_SurahReader> {
       for(var i=0;i<s.verses.length;i++) Card(margin:const EdgeInsets.only(bottom:10),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
         Text('${i+1}',style:const TextStyle(color:_green,fontWeight:FontWeight.bold)),
         Text(s.verses[i],textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:TextStyle(fontSize:arabicFontSize,height:1.85)),
-        if (showPron && lang != 'ar')
+        if (showPron && lang != 'ar' && lang != 'ur')
           Text(
             mptExtraSurahPronunciations[lang]?[s.number] != null &&
                     mptExtraSurahPronunciations[lang]![s.number]!.length > i
@@ -507,7 +507,7 @@ class _DuaCollectionState extends State<_DuaCollection> {
       return Card(margin:const EdgeInsets.only(bottom:12),child:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
         Text(_localizedEntryTitle(d,widget.language),style:const TextStyle(color:_green,fontSize:18,fontWeight:FontWeight.bold)),
         const SizedBox(height:12),Text(d.arabic,textDirection:TextDirection.rtl,textAlign:TextAlign.center,style:TextStyle(fontSize:arabicFontSize,height:1.75)),
-        if (widget.language != 'ar') ...[
+        if (widget.language != 'ar' && widget.language != 'ur') ...[
           const SizedBox(height:12),
           Text(_localizedEntryPron(d,widget.language),style:TextStyle(fontSize:15,color:Theme.of(context).colorScheme.primary,height:1.7)),
         ],
