@@ -1162,7 +1162,67 @@ class _DuaPageState extends State<DuaPage> {
   String duaMeaning() => mptQuranicDuaMeanings[widget.language]?[selected] ?? duaMeanings[widget.language]?[selected] ?? duas[selected][1];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), maxLines: 2, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
-    _GoldCard(child: Column(children: [Text('${uix(widget.language, 'duaNumber')} ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), if (duaPronunciation() != null) ...[Text(duaPronunciation()!, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, height: 1.7, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)), const SizedBox(height: 12)], Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
+    // Swipe horizontally anywhere on the dua card to move between the 13 duas.
+    // Keep the card's natural height and the outer vertical scrolling intact.
+    GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragEnd: (details) {
+        final velocity = details.primaryVelocity ?? 0;
+        if (velocity.abs() < 160) return;
+        setState(() {
+          selected = (selected + (velocity < 0 ? 1 : duas.length - 1)) % duas.length;
+        });
+      },
+      child: _GoldCard(child: Column(children: [
+        Text('${uix(widget.language, 'duaNumber')} ${selected + 1}/${duas.length}',
+          style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 18),
+        Text(duas[selected][0], textDirection: ui.TextDirection.rtl,
+          textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)),
+        const SizedBox(height: 16),
+        if (duaPronunciation() != null) ...[
+          Text(duaPronunciation()!, textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 17, height: 1.7,
+              fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)),
+          const SizedBox(height: 12),
+        ],
+        Text(duaMeaning(), textAlign: TextAlign.center),
+        const SizedBox(height: 14),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          IconButton(
+            tooltip: 'Previous dua',
+            onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length),
+            icon: const Icon(Icons.chevron_left)),
+          Text('${selected + 1} / ${duas.length}',
+            style: const TextStyle(fontWeight: FontWeight.w700, color: emerald)),
+          IconButton(
+            tooltip: 'Next dua',
+            onPressed: () => setState(() => selected = (selected + 1) % duas.length),
+            icon: const Icon(Icons.chevron_right)),
+        ]),
+        const SizedBox(height: 6),
+        // Compact progress indicator without overflowing narrow screens.
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: List.generate(
+          duas.length, (i) => AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: i == selected ? 14 : 5,
+            height: 5,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: BoxDecoration(
+              color: i == selected ? emerald : emerald.withValues(alpha: .20),
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        )),
+        const SizedBox(height: 8),
+        Text(widget.language == 'bn' ? 'পরের দোয়া পড়তে বামে সোয়াইপ করুন'
+          : widget.language == 'ko' ? '왼쪽으로 밀어 다음 두아 보기'
+          : widget.language == 'ar' ? 'اسحب لليسار للدعاء التالي'
+          : 'Swipe left for the next dua',
+          style: TextStyle(fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+      ])),
+    ),
     const SizedBox(height: 20), _GoldCard(child: Column(children: [Text(tr(widget.language, 'tasbihCounter'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)), const Icon(Icons.grain, color: emerald, size: 46), Text('$count', style: const TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: emerald)), Row(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: () => setState(() => count = 0), icon: const Icon(Icons.restart_alt)), const SizedBox(width: 22), FilledButton(onPressed: () => setState(() => count++), child: const Icon(Icons.add))])])),
   ])));
 }
