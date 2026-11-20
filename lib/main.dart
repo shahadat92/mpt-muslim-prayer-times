@@ -986,7 +986,21 @@ class _DuaPageState extends State<DuaPage> {
       '랍바나 아프리그 알라이나 사브란 와 타와파나 무슬리민.',
     ],
   };
-  String? duaPronunciation() => widget.language == 'ar' ? null : (mptExtraQuranicDuaPronunciations[widget.language] ?? duaPronunciations[widget.language] ?? duaPronunciations['en'])?[selected];
+  String? duaPronunciation() {
+    final lang = widget.language;
+    // Arabic and Urdu use Arabic script for the original text.
+    // Hide the separate phonetic line to avoid duplicate Arabic-script text.
+    if (lang == 'ar' || lang == 'ur') return null;
+
+    final pronunciations =
+        mptExtraQuranicDuaPronunciations[lang] ??
+        duaPronunciations[lang] ??
+        duaPronunciations['en'];
+    if (pronunciations == null || selected >= pronunciations.length) {
+      return null;
+    }
+    return pronunciations[selected];
+  }
   static const duaMeanings = <String, List<String>>{
     'bn': [
       'হে আমাদের রব! আমাদের দুনিয়ায় কল্যাণ দিন, আখিরাতেও কল্যাণ দিন এবং আগুনের শাস্তি থেকে রক্ষা করুন। (কুরআন ২:২০১)',
