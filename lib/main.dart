@@ -1,3 +1,4 @@
+import 'mpt_allah_names.dart';
 import 'mpt_extra_languages.dart';
 import 'mpt_extra_pronunciations.dart';
 import 'dart:async';
@@ -637,6 +638,39 @@ class _PrayerHomeState extends State<PrayerHome> {
         const SizedBox(width: 8),
         Expanded(child: _FeatureButton(icon: Icons.touch_app_outlined, title: tr(lang, 'tasbih'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))))),
       ]),
+      const SizedBox(height: 12),
+      InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => Navigator.push(context, MaterialPageRoute(
+          builder: (_) => MptAllahNamesPage(language: lang))),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: gold.withValues(alpha: .55)),
+          ),
+          child: Row(children: [
+            Container(width: 52, height: 52,
+              decoration: BoxDecoration(color: deepGreen, borderRadius: BorderRadius.circular(15)),
+              child: const Icon(Icons.auto_awesome, color: gold, size: 26)),
+            const SizedBox(width: 13),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(const <String,String>{
+                'en':'99 Names of Allah','bn':'আল্লাহর ৯৯টি নাম',
+                'ko':'알라의 99가지 이름','ar':'أسماء الله الحسنى',
+                'ur':'اللہ کے ۹۹ نام','hi':'अल्लाह के 99 नाम',
+                'id':'99 Nama Allah','uz':'Allohning 99 ismi',
+              }[lang] ?? '99 Names of Allah',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: foreground)),
+              const SizedBox(height: 3),
+              Text('أَسْمَاءُ اللَّهِ الْحُسْنَى',
+                style: TextStyle(fontSize: 14, color: secondary)),
+            ])),
+            Icon(Icons.chevron_right, color: secondary),
+          ]),
+        ),
+      ),
       const SizedBox(height: 16),
       Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
       const SizedBox(height: 20),
