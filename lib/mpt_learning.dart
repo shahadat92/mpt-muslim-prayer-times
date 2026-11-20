@@ -1,4 +1,5 @@
 import 'mpt_extra_languages.dart';
+import 'mpt_extra_pronunciations.dart';
 import 'mpt_verse_meanings.dart';
 import 'package:flutter/material.dart';
 
@@ -120,6 +121,8 @@ const _longEntryPronunciations = <String, Map<String, String>>{
 };
 
 String _localizedEntryPron(_Entry d, String lang) {
+  final extra = mptExtraEntryPronunciations[lang]?[d.title];
+  if (extra != null) return extra;
   final complete = _longEntryPronunciations[d.title]?[lang];
   if (complete != null) return complete;
   final v = _entryLocalization[d.title];
@@ -367,7 +370,10 @@ class _SurahReaderState extends State<_SurahReader> {
         Text(s.verses[i],textDirection:TextDirection.rtl,textAlign:TextAlign.right,style:TextStyle(fontSize:arabicFontSize,height:1.85)),
         if (showPron && lang != 'ar')
           Text(
-            (lang == 'bn' || lang == 'ko') &&
+            mptExtraSurahPronunciations[lang]?[s.number] != null &&
+                    mptExtraSurahPronunciations[lang]![s.number]!.length > i
+                ? mptExtraSurahPronunciations[lang]![s.number]![i]
+                : (lang == 'bn' || lang == 'ko') &&
                     (_phoneticBySurah[s.number]?.length ?? 0) > i
                 ? _phoneticBySurah[s.number]![i][lang == 'bn' ? 0 : 1]
                 : s.roman[i],
