@@ -10,6 +10,9 @@ workflows:
       - name: Verify correct Flutter source
         script: python3 verify_source.py
 
+      - name: Integrate new Daily Duas (8 languages)
+        script: python3 integrate_daily_duas.py
+
       - name: Generate Android project
         script: flutter create --platforms=android --project-name korea_prayer_times --org com.koreaprayertimes .
 

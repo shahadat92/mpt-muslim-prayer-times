@@ -1,0 +1,22 @@
+MPT Daily Duas — revised pronunciation review, 2026-11-20
+
+SOURCE CHECKS:
+- Bathroom entry: Sahih al-Bukhari 142
+- Bathroom exit: Sunan Abi Dawud 30 (reference retained from Stage 1)
+- Leaving home: Sunan Abi Dawud 5095 (Al-Albani: Sahih; other print editions may differ in grading)
+- Entering home: Sahih Muslim 2018a recommends mentioning Allah's name; "Bismillah" is a short practical invocation, not a verbatim standalone dua from the cited narration
+- Entering/leaving mosque: Sahih Muslim 713a
+- Vehicle: Quran 43:13-14, excerpt beginning Subhana lladhi
+
+CORRECTIONS IN THIS REVISION:
+- English transliterations now distinguish long vowels, Arabic ʿayn, hamza, and emphatic sounds where practical.
+- Mosque-entry pronunciation adjusted to include initial vowel (iftaḥ) in English, Bangla, Korean, Hindi and Indonesian.
+- Improved several Korean, Hindi, Uzbek and Urdu reading aids.
+- All 7 entries have 8 language keys in each of titles, pronunciations and meanings (automated test).
+
+LIMITATIONS / PUBLICATION GATE:
+- Romanized/local-script pronunciation is inherently approximate; Korean/Hindi/Bangla phonology cannot encode every Arabic consonant precisely.
+- No qualified native speaker of each of the eight languages has independently signed off on every phrase; do NOT describe this as certified final linguistic review.
+- Qur'anic Arabic recitation should be learned from qualified reciters, not transliteration alone.
+- Flutter analyzer, Codemagic build, Android device UI and actual audio recitation were NOT executed here.
+- Preserve existing repository backup and build/test on a debug branch before publishing.

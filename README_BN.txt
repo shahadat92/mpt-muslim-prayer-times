@@ -1,16 +1,23 @@
-MPT সংশোধন প্যাকেজ
+MPT v1.5.3 DAILY DUAS - 8 LANGUAGES
 
-এই প্যাকেজে রয়েছে:
-1. patch_main.py — আপনার সরবরাহ করা lib/main.dart-এর নির্দিষ্ট সমস্যা সংশোধন করে।
-2. verify_mpt.py — সংশোধন ও প্রয়োজনীয় Native ফাইল পরীক্ষা করে।
-3. codemagic.yaml — Flutter build workflow; আগের Native installer-কে অপরিবর্তিত রেখে ব্যবহার করে।
+Upload these THREE files to the SAME relative paths in your GitHub repository:
+  1) lib/mpt_daily_duas_additions.dart    (NEW)
+  2) integrate_daily_duas.py              (NEW, repo root)
+  3) codemagic.yaml                       (REPLACE existing root file)
 
-ব্যবহার:
-- GitHub repository-র root-এ patch_main.py ও verify_mpt.py আপলোড করুন।
-- codemagic.yaml-এর পুরোনো ফাইলটি নতুনটি দিয়ে বদলান।
-- আপনার আগের apply_native_v150.py, Kotlin ফাইল এবং assets/audio-র চারটি MP3 অপরিবর্তিত রাখুন।
-- Codemagic-এ নতুন build চালান।
+IMPORTANT: This update uses a build-time integration script. It patches the
+working copy of lib/mpt_learning.dart inside Codemagic, not the GitHub copy.
+Existing UI, prayer alarms, native Kotlin files and other Dart files remain
+unchanged in GitHub. The script stops the build if the expected original
+source structure has changed, rather than making an unsafe edit.
 
-সীমাবদ্ধতা: এই প্যাকেজ native alarm service-এর আসল implementation তৈরি/যাচাই করে না।
-আগের native installer-এ method-channel contract কী তা না জানায় স্বয়ংক্রিয় MP3 playback
-নিশ্চিত করা সম্ভব নয়। এটি UI এবং notification scheduling সংশোধনের নিরাপদ প্রথম ধাপ।
+Contains 7 distinct duas covering 8 requested occasions. Each has Arabic,
+8 localized titles, 8 pronunciation guides and 8 meanings. Pronunciations
+are approximate and should be reviewed by qualified native speakers.
+
+Not yet Flutter-compiled or device-tested. First run Codemagic DEBUG build.
+Keep a backup of codemagic.yaml before replacing it.
+
+REVISED 2026-11-20: pronunciation and source review; see REVIEW_NOTES_BN.txt.
+After upload, run: python3 verify_daily_duas.py (optional local check).
+Do not replace the existing 1.5.3 app in production until Codemagic and device testing passes.
