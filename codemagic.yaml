@@ -13,12 +13,18 @@ workflows:
       - name: Integrate new Daily Duas (8 languages)
         script: python3 integrate_daily_duas.py
 
+      - name: Remove obsolete root-level Dart copies
+        script: |
+          rm -f main.dart mpt_learning.dart
+          test -f lib/main.dart && test -f lib/mpt_learning.dart
+          echo 'Only lib/ Dart entrypoints will be analyzed.'
+
       - name: Generate Android project
         script: flutter create --platforms=android --project-name korea_prayer_times --org com.koreaprayertimes .
 
       - name: Set Android app name to MPT
         script: |
-          python3 - <<'PY'
+          python3 - <<'PYCODE'
           from pathlib import Path
           import re
           p = Path('android/app/src/main/AndroidManifest.xml')
@@ -28,7 +34,7 @@ workflows:
               raise SystemExit('Android app label not found')
           p.write_text(s)
           print('Android app name set to MPT')
-          PY
+          PYCODE
 
       - name: Install native automatic Adhan alarm service
         script: python3 apply_native_v150.py
@@ -38,7 +44,7 @@ workflows:
 
       - name: Enable desugaring
         script: |
-          python3 - <<'PY'
+          python3 - <<'PYCODE'
           from pathlib import Path
           p=Path('android/app/build.gradle.kts')
           if not p.exists():
@@ -52,7 +58,7 @@ workflows:
               else:
                   s+='\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
           p.write_text(s)
-          PY
+          PYCODE
 
       - name: Install dependencies
         script: flutter pub get
