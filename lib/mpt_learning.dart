@@ -2,6 +2,7 @@ import 'mpt_extra_languages.dart';
 import 'mpt_extra_pronunciations.dart';
 import 'mpt_verse_meanings.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const _green = Color(0xFF116B53);
 const _gold = Color(0xFFD8AF58);
@@ -314,22 +315,148 @@ class _Surah {
   String meaning(String lang) => lang == 'bn' ? bnMeaning : lang == 'ko' ? koMeaning : enMeaning;
 }
 
-class SurahLibraryPage extends StatelessWidget {
+class SurahLibraryPage extends StatefulWidget {
   final String language;
-  const SurahLibraryPage({super.key,required this.language});
-  @override Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(learningLabel(language,'surah'))),
-    body: ListView.builder(padding: const EdgeInsets.all(14), itemCount: _surahs.length, itemBuilder: (context,index) {
-      final s=_surahs[index];
-      return Card(child: ListTile(
-        leading: CircleAvatar(backgroundColor:_green,foregroundColor:Colors.white,child:Text('${index+1}')),
-        title: Text(s.title(language),style:const TextStyle(fontWeight:FontWeight.bold)),
-        subtitle: Text('${s.enName} · ${s.number} · ${s.verses.length} ${learningLabel(language,'verses')}'),
-        trailing:const Icon(Icons.chevron_right),
-        onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>_SurahReader(surah:s,language:language))),
-      ));
-    }),
-  );
+  const SurahLibraryPage({super.key, required this.language});
+
+  @override
+  State<SurahLibraryPage> createState() => _SurahLibraryPageState();
+}
+
+class _SurahLibraryPageState extends State<SurahLibraryPage> {
+  String query = '';
+  Set<int> bookmarks = <int>{};
+  int? lastRead;
+  bool bookmarksOnly = false;
+
+  String _label(String en, String bn, String ko, String ar) {
+    switch (widget.language) {
+      case 'bn': return bn;
+      case 'ko': return ko;
+      case 'ar': return ar;
+      default: return en;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _restore();
+  }
+
+  Future<void> _restore() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      bookmarks = (prefs.getStringList('mpt_surah_bookmarks') ?? <String>[])
+          .map(int.tryParse).whereType<int>().toSet();
+      lastRead = prefs.getInt('mpt_last_read_surah');
+    });
+  }
+
+  Future<void> _toggleBookmark(int number) async {
+    setState(() {
+      if (!bookmarks.add(number)) bookmarks.remove(number);
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('mpt_surah_bookmarks',
+        bookmarks.map((number) => number.toString()).toList()..sort());
+  }
+
+  Future<void> _openSurah(_Surah surah) async {
+    setState(() => lastRead = surah.number);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('mpt_last_read_surah', surah.number);
+    if (!mounted) return;
+    await Navigator.push(context, MaterialPageRoute(
+      builder: (_) => _SurahReader(surah: surah, language: widget.language),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final q = query.trim().toLowerCase();
+    final filtered = _surahs.where((surah) {
+      if (bookmarksOnly && !bookmarks.contains(surah.number)) return false;
+      return q.isEmpty || surah.number.toString() == q ||
+          surah.enName.toLowerCase().contains(q) ||
+          surah.bnName.toLowerCase().contains(q) ||
+          surah.koName.toLowerCase().contains(q) ||
+          surah.arName.toLowerCase().contains(q) ||
+          surah.title(widget.language).toLowerCase().contains(q);
+    }).toList();
+    final recent = lastRead == null ? <_Surah>[] :
+        _surahs.where((surah) => surah.number == lastRead).toList();
+
+    return Scaffold(
+      appBar: AppBar(title: Text(learningLabel(widget.language, 'surah'))),
+      body: Column(children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
+          child: TextField(
+            onChanged: (value) => setState(() => query = value),
+            decoration: InputDecoration(
+              hintText: _label('Search surah name or number',
+                  'সূরার নাম বা নম্বর খুঁজুন', '수라 이름 또는 번호 검색',
+                  'ابحث عن اسم السورة أو رقمها'),
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16)),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: FilterChip(
+              selected: bookmarksOnly,
+              label: Text(_label('Bookmarks', 'বুকমার্ক', '북마크', 'المحفوظات')),
+              avatar: const Icon(Icons.bookmark_outline, size: 18),
+              onSelected: (value) => setState(() => bookmarksOnly = value),
+            ),
+          ),
+        ),
+        if (recent.isNotEmpty && q.isEmpty && !bookmarksOnly)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Card(child: ListTile(
+              leading: const Icon(Icons.history, color: _green),
+              title: Text(_label('Continue reading', 'সর্বশেষ পড়া সূরা',
+                  '마지막으로 읽은 수라', 'متابعة القراءة')),
+              subtitle: Text(recent.first.title(widget.language)),
+              onTap: () => _openSurah(recent.first),
+            )),
+          ),
+        Expanded(child: ListView.builder(
+          padding: const EdgeInsets.all(14),
+          itemCount: filtered.length,
+          itemBuilder: (context, index) {
+            final surah = filtered[index];
+            final saved = bookmarks.contains(surah.number);
+            return Card(child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: _green,
+                foregroundColor: Colors.white,
+                child: Text('${surah.number}'),
+              ),
+              title: Text(surah.title(widget.language),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text('${surah.enName} · ${surah.number} · '
+                  '${surah.verses.length} ${learningLabel(widget.language, 'verses')}'),
+              trailing: IconButton(
+                tooltip: saved ? 'Remove bookmark' : 'Bookmark',
+                icon: Icon(saved ? Icons.bookmark : Icons.bookmark_border,
+                    color: saved ? _green : null),
+                onPressed: () => _toggleBookmark(surah.number),
+              ),
+              onTap: () => _openSurah(surah),
+            ));
+          },
+        )),
+      ]),
+    );
+  }
 }
 
 // Adjustable Arabic text size shared by Surah and Dua readers.

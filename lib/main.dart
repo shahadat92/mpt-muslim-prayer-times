@@ -193,7 +193,7 @@ String atx(String lang, String key) => mptExtraTranslations[lang]?[key] ?? adhan
 
 const calendarDayLabels = <String, List<String>>{
   'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
+  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহ', 'শুক্র', 'শনি'],
   'ko': ['일', '월', '화', '수', '목', '금', '토'],
   'ar': ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
   'ur': ['اتوار','پیر','منگل','بدھ','جمعرات','جمعہ','ہفتہ'],
@@ -523,7 +523,7 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: tr(lang, 'home')),
           NavigationDestination(icon: const Icon(Icons.explore_outlined), selectedIcon: const Icon(Icons.explore), label: tr(lang, 'qibla')),
           NavigationDestination(icon: const Icon(Icons.menu_book_outlined), label: learningLabel(lang, 'surah')),
-          NavigationDestination(icon: const Icon(Icons.calendar_month_outlined), label: tr(lang, 'calendar')),
+          NavigationDestination(icon: const Icon(Icons.calendar_month_outlined), label: lang == 'bn' ? 'দিনপঞ্জি' : tr(lang, 'calendar')),
           NavigationDestination(icon: const Icon(Icons.volunteer_activism_outlined), label: tr(lang, 'duaTab')),
           NavigationDestination(icon: const Icon(Icons.tune), label: tr(lang, 'settings')),
         ],
@@ -567,6 +567,7 @@ class _PrayerHomeState extends State<PrayerHome> {
     final lang = widget.language;
     final now = cityNow(widget.city);
     final entries = prayersFor(widget.city, widget.hanafi, now);
+    final homeHijri = adjustedHijri(now);
     final next = entries.where((p) => p.localTime.isAfter(now)).firstOrNull;
     final nextItem = next ?? prayersFor(widget.city, widget.hanafi,
         now.add(const Duration(days: 1))).first;
@@ -588,40 +589,21 @@ class _PrayerHomeState extends State<PrayerHome> {
       color: dark ? Theme.of(context).scaffoldBackgroundColor
           : const Color(0xFFD9EDDF),
       child: ListView(padding: const EdgeInsets.fromLTRB(14, 14, 14, 26), children: [
-        // Home-only premium hero; other screens keep their existing banner.
-        Container(
-          height: 142,
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFFE9F8ED),
-              Color(0xFFB9E5CB), Color(0xFF75C6A2)]),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: gold.withValues(alpha: .8)),
-          ),
-          child: Stack(children: [
-            Positioned(right: -14, bottom: -10,
-              child: Icon(Icons.mosque, color: emerald.withValues(alpha: .22), size: 145)),
-            Row(children: [
-              const MptLogo(size: 72),
-              const SizedBox(width: 13),
-              Expanded(child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('MPT', style: TextStyle(fontSize: 38,
-                      fontWeight: FontWeight.w900, color: deepGreen, height: 1)),
-                  const SizedBox(height: 4),
-                  const Text('Muslim Prayer Times', maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800,
-                      color: deepGreen)),
-                  const SizedBox(height: 5),
-                  Text(tr(lang, 'prayer'), maxLines: 2,
-                    style: const TextStyle(color: Color(0xFF805B1F), fontSize: 12)),
-                ],
-              )),
-            ]),
-          ]),
+        // Approved C banner, unchanged image artwork.
+        ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: AspectRatio(aspectRatio: 1296 / 275, child: Image.asset('assets/images/mpt_banner_c.png',
+            width: double.infinity, fit: BoxFit.contain,
+            errorBuilder: (context, error, stack) => Container(
+              height: 142, alignment: Alignment.center,
+              decoration: BoxDecoration(color: const Color(0xFFE2F3E9),
+                borderRadius: BorderRadius.circular(24)),
+              child: const Row(mainAxisAlignment: MainAxisAlignment.center,
+                children: [MptLogo(size: 58), SizedBox(width: 12),
+                  Text('MPT', style: TextStyle(fontSize: 36,
+                    fontWeight: FontWeight.w900, color: deepGreen))]),
+            ),
+          )),
         ),
         const SizedBox(height: 12),
         Container(
@@ -654,10 +636,16 @@ class _PrayerHomeState extends State<PrayerHome> {
             const SizedBox(width: 8),
             const Icon(Icons.calendar_month, color: emerald, size: 19),
             const SizedBox(width: 5),
-            Flexible(child: Text(DateFormat('d MMM yyyy').format(now),
-              maxLines: 2, textAlign: TextAlign.center,
-              style: TextStyle(color: textColor, fontSize: 11,
-                fontWeight: FontWeight.w700))),
+            Flexible(child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(DateFormat('d MMM yyyy').format(now),
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: textColor, fontSize: 11,
+                  fontWeight: FontWeight.w700)),
+              Text('${homeHijri.day} ${hijriMonths[lang]![homeHijri.month - 1]} ${homeHijri.year} AH',
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: emerald, fontSize: 9,
+                  fontWeight: FontWeight.w600)),
+            ])),
           ]),
         ),
         const SizedBox(height: 15),
@@ -889,7 +877,7 @@ class _CalendarPageState extends State<CalendarPage> {
         Expanded(child: Text('${hijriMonths[widget.language]![shownMonth - 1]} $shownYear AH', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17))),
         IconButton(onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right))]),
       const SizedBox(height: 10),
-      Row(children: calendarWeekdays(widget.language).map((d) => Expanded(child: Center(child: Text(d, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12))))).toList()),
+      Row(children: calendarWeekdays(widget.language).map((d) => Expanded(child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(d, maxLines: 1, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)))))).toList()),
       const SizedBox(height: 8),
       GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: monthStart + monthLength,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, childAspectRatio: 1.05, mainAxisSpacing: 5, crossAxisSpacing: 5),
@@ -1185,6 +1173,20 @@ class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key, required this.city, required this.hanafi, required this.language});
   @override State<NotificationPage> createState() => _NotificationPageState();
 }
+
+const _premiumAdhanLabels = <String, Map<String, String>>{
+  'en': {'auto':'Automatic Adhan','autoHint':'Play the Adhan at prayer times.','intro':'Play Adhan automatically at prayer times','prayers':'Prayer Adhan','prayersHint':'Choose which prayers will play the Adhan.','duration':'Adhan Duration','durationHint':'Select the length of the Adhan.','listen':'Listen to the Adhan','save':'Save Settings'},
+  'bn': {'auto':'স্বয়ংক্রিয় আজান','autoHint':'নামাজের সময় আজান বাজবে।','intro':'নামাজের সময় স্বয়ংক্রিয় আজান শুনুন','prayers':'নামাজের আজান','prayersHint':'যে ওয়াক্তে আজান বাজবে তা নির্বাচন করুন।','duration':'আজানের দৈর্ঘ্য','durationHint':'আজানের দৈর্ঘ্য নির্বাচন করুন।','listen':'আজান শুনে দেখুন','save':'সেটিংস সংরক্ষণ'},
+  'ko': {'auto':'자동 아잔','autoHint':'기도 시간에 아잔을 재생합니다.','intro':'기도 시간에 아잔 자동 재생','prayers':'기도별 아잔','prayersHint':'아잔을 재생할 기도를 선택하세요.','duration':'아잔 길이','durationHint':'아잔 길이를 선택하세요.','listen':'아잔 들어보기','save':'설정 저장'},
+  'ar': {'auto':'الأذان التلقائي','autoHint':'تشغيل الأذان في أوقات الصلاة.','intro':'تشغيل الأذان تلقائيًا عند الصلاة','prayers':'أذان الصلوات','prayersHint':'اختر الصلوات التي يُشغّل لها الأذان.','duration':'مدة الأذان','durationHint':'اختر طول الأذان.','listen':'استمع إلى الأذان','save':'حفظ الإعدادات'},
+  'ur': {'auto':'خودکار اذان','autoHint':'نماز کے وقت اذان چلائیں۔','intro':'نماز کے وقت خودکار اذان','prayers':'نماز کی اذان','prayersHint':'اذان کے لیے نمازیں منتخب کریں۔','duration':'اذان کا دورانیہ','durationHint':'اذان کی لمبائی منتخب کریں۔','listen':'اذان سنیں','save':'ترتیبات محفوظ کریں'},
+  'uz': {'auto':'Avtomatik azon','autoHint':'Namoz vaqtida azon yangraydi.','intro':'Namoz vaqtida avtomatik azon','prayers':'Namoz azoni','prayersHint':'Azon chalinadigan namozlarni tanlang.','duration':'Azon davomiyligi','durationHint':'Azon uzunligini tanlang.','listen':'Azonni tinglash','save':'Sozlamalarni saqlash'},
+  'id': {'auto':'Adzan otomatis','autoHint':'Putar adzan saat waktu salat.','intro':'Putar adzan otomatis saat salat','prayers':'Adzan salat','prayersHint':'Pilih salat yang membunyikan adzan.','duration':'Durasi adzan','durationHint':'Pilih panjang adzan.','listen':'Dengarkan adzan','save':'Simpan pengaturan'},
+  'hi': {'auto':'स्वचालित अज़ान','autoHint':'नमाज़ के समय अज़ान बजाएँ।','intro':'नमाज़ के समय अपने आप अज़ान','prayers':'नमाज़ की अज़ान','prayersHint':'अज़ान के लिए नमाज़ें चुनें।','duration':'अज़ान की अवधि','durationHint':'अज़ान की लंबाई चुनें।','listen':'अज़ान सुनें','save':'सेटिंग्स सहेजें'},
+};
+String premiumAdhanLabel(String lang, String key) =>
+    _premiumAdhanLabels[lang]?[key] ?? _premiumAdhanLabels['en']![key]!;
+
 class _NotificationPageState extends State<NotificationPage> {
   List<bool> enabled = List.filled(5, true);
   bool sound = true;
@@ -1269,7 +1271,7 @@ class _NotificationPageState extends State<NotificationPage> {
           style: const TextStyle(fontWeight: FontWeight.w800))),
       body: ListView(padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
         children: [
-          Text('Play Adhan automatically at prayer times',
+          Text(premiumAdhanLabel(lang, 'intro'),
             style: TextStyle(fontSize: 13,
               color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: 16),
@@ -1281,9 +1283,9 @@ class _NotificationPageState extends State<NotificationPage> {
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Automatic Adhan', style: TextStyle(
+                Text(premiumAdhanLabel(lang, 'auto'), style: const TextStyle(
                   fontSize: 18, fontWeight: FontWeight.w900)),
-                Text('Play the Adhan at prayer times.',
+                Text(premiumAdhanLabel(lang, 'autoHint'),
                   style: TextStyle(fontSize: 12,
                     color: Theme.of(context).colorScheme.onSurfaceVariant)),
               ])),
@@ -1293,8 +1295,8 @@ class _NotificationPageState extends State<NotificationPage> {
           ])),
           const SizedBox(height: 14),
           panel(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            heading(Icons.event_available, 'Prayer Adhan',
-              'Choose which prayers will play the Adhan.'),
+            heading(Icons.event_available, premiumAdhanLabel(lang, 'prayers'),
+              premiumAdhanLabel(lang, 'prayersHint')),
             const SizedBox(height: 16),
             Row(children: List.generate(5, (i) => Expanded(
               child: Padding(padding: EdgeInsets.only(right: i == 4 ? 0 : 4),
@@ -1331,8 +1333,8 @@ class _NotificationPageState extends State<NotificationPage> {
           if (adhanReady) ...[
             panel(Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                heading(Icons.music_note, 'Adhan Duration',
-                  'Select the length of the Adhan.'),
+                heading(Icons.music_note, premiumAdhanLabel(lang, 'duration'),
+                  premiumAdhanLabel(lang, 'durationHint')),
                 const SizedBox(height: 16),
                 SizedBox(width: double.infinity,
                   child: SegmentedButton<AdhanLength>(
@@ -1395,7 +1397,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         Text(atx(lang, 'previewAdhan'),
                           style: const TextStyle(color: Colors.white,
                             fontSize: 20, fontWeight: FontWeight.w900)),
-                        const Text('Listen to the Adhan',
+                        Text(premiumAdhanLabel(lang, 'listen'),
                           style: TextStyle(color: Colors.white70)),
                       ])),
                     const Icon(Icons.graphic_eq, color: Colors.white70, size: 34),
@@ -1409,10 +1411,11 @@ class _NotificationPageState extends State<NotificationPage> {
                   catch (e) { if (mounted) ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('$e'))); }
                 }, icon: const Icon(Icons.nights_stay_outlined),
-                label: Text(atx(lang, 'previewFajr')))),
+                label: FittedBox(fit: BoxFit.scaleDown, child: Text(atx(lang, 'previewFajr'))))),
               const SizedBox(width: 8),
-              OutlinedButton.icon(onPressed: () async { await adhanAudio.stop(); },
-                icon: const Icon(Icons.stop), label: Text(atx(lang, 'stopAdhan'))),
+              Expanded(child: OutlinedButton.icon(onPressed: () async { await adhanAudio.stop(); },
+                icon: const Icon(Icons.stop), label: FittedBox(fit: BoxFit.scaleDown,
+                  child: Text(atx(lang, 'stopAdhan'))))),
             ]),
             const SizedBox(height: 14),
           ],
@@ -1422,8 +1425,8 @@ class _NotificationPageState extends State<NotificationPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(19))),
               icon: const Icon(Icons.check, size: 26),
-              label: const Text('Save Settings', style: TextStyle(
-                fontSize: 19, fontWeight: FontWeight.w800)))),
+              label: FittedBox(fit: BoxFit.scaleDown, child: Text(premiumAdhanLabel(lang, 'save'), style: const TextStyle(
+                fontSize: 19, fontWeight: FontWeight.w800))))),
           const SizedBox(height: 10),
           TextButton.icon(onPressed: () async {
             try {
