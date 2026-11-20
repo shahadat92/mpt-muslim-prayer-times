@@ -28,7 +28,7 @@ const _entryLocalization = <String, List<String>>{
   'Morning remembrance': ['সকালের যিকির', '아침의 기억', 'ذكر الصباح', 'আসবাহনা ওয়া আসবাহাল মুলকু লিল্লাহ', '아스바흐나 와 아스바할 물쿠 릴라'],
   'Evening remembrance': ['সন্ধ্যার যিকির', '저녁의 기억', 'ذكر المساء', 'আমসাইনা ওয়া আমসাল মুলকু লিল্লাহ', '암사이나 와 암살 물쿠 릴라'],
   'Seeking refuge': ['আশ্রয় প্রার্থনা', '보호를 구하는 두아', 'دعاء الاستعاذة', 'আউযু বিকালিমাতিল্লাহিত তাম্মাতি মিন শাররি মা খালাক', '아우주 비칼리마틸라힛 탐마티 민 샤르리 마 할라끄'],
-  'Protection in Allah’s name': ['আল্লাহর নামে সুরক্ষার দোয়া', '알라의 이름으로 보호를 구하는 두아', 'دعاء الحفظ باسم الله', '', ''],
+  'Protection in Allah’s name': ['আল্লাহর নামে সুরক্ষার দোয়া', '알라의 이름으로 보호를 구하는 두아', 'دعاء الحفظ باسم الله', 'বিসমিল্লাহিল্লাযী লা ইয়াদুররু মা‘আসমিহী শাইউন ফিল আরদি ওয়া লা ফিস সামা-ই, ওয়া হুওয়াস সামী‘উল ‘আলীম।', '비스밀라힐라지 라 야두르루 마아스미히 샤이운 필 아르디 와 라 피스 사마이, 와 후와스 사미울 알림.'],
   '1. Kalima Tayyibah': ['১. কালিমা তাইয়্যিবা', '1. 칼리마 타이이바', '١. الكلمة الطيبة', '', ''],
   '2. Kalima Shahadah': ['২. কালিমা শাহাদাত', '2. 칼리마 샤하다', '٢. كلمة الشهادة', '', ''],
   '3. Kalima Tamjid': ['৩. কালিমা তামজীদ', '3. 칼리마 탐지드', '٣. كلمة التمجيد', '', ''],
@@ -124,6 +124,13 @@ String _localizedEntryPron(_Entry d, String lang) {
   final v = _entryLocalization[d.title];
   if (v != null && lang == 'bn' && v[3].isNotEmpty) return v[3];
   if (v != null && lang == 'ko' && v[4].isNotEmpty) return v[4];
+  // Never silently display English romanization in Bengali/Korean mode.
+  if (lang == 'bn' || lang == 'ko') {
+    assert(false, 'Missing $lang pronunciation for ${d.title}');
+    return lang == 'bn'
+        ? 'এই দোয়ার বাংলা উচ্চারণ যাচাই করা হয়নি। আরবি পাঠ দেখুন।'
+        : '이 두아의 한국어 발음 표기가 확인되지 않았습니다. 아랍어 원문을 참고하세요.';
+  }
   return lang == 'ar' ? d.arabic : d.roman;
 }
 
