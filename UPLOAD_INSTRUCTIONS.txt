@@ -1,0 +1,25 @@
+MPT UI UPDATE — INSTALLATION
+============================
+Upload these THREE files to your existing GitHub repository, replacing the first two:
+1. lib/main.dart                  -> replace lib/main.dart
+2. lib/mpt_learning.dart          -> replace lib/mpt_learning.dart
+3. assets/images/mpt_banner_c.png -> upload new image
+
+Keep all other repository files unchanged.
+
+Your existing pubspec.yaml already includes assets/images/ and shared_preferences,
+so NO pubspec.yaml change is needed.
+
+Included:
+- Exact approved C banner image (same SHA256 as original crop)
+- Hijri date on Home page
+- Bengali bottom navigation shorter label
+- Calendar weekday layout improvement
+- Adhan settings labels in eight languages and narrow-button adjustments
+- Quran surah search, bookmarks, bookmark filter, and last-read persistence
+
+TEST STATUS:
+Static source checks: PASS (12 checks)
+Image byte-for-byte equality: PASS
+Flutter analyze / APK build / device tests: NOT RUN (Flutter SDK unavailable).
+Run Codemagic Debug workflow after all three files are uploaded.

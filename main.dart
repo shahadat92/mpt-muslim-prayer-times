@@ -1,7 +1,11 @@
+import 'mpt_allah_names.dart';
+import 'mpt_extra_languages.dart';
+import 'mpt_extra_pronunciations.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'adhan_audio.dart';
+import 'mpt_learning.dart';
 import 'package:flutter/services.dart';
 
 import 'package:adhan/adhan.dart';
@@ -101,8 +105,21 @@ const translations = <String, Map<String, String>>{
   'bn': {'home':'হোম','qibla':'কিবলা','calendar':'ক্যালেন্ডার','settings':'সেটিংস','next':'পরবর্তী নামাজ','today':'আজকের নামাজের সময়','remaining':'বাকি সময়','location':'আমার অবস্থান','alerts':'নামাজের নোটিফিকেশন চালু','calculation':'গণনার পদ্ধতি','asr':'আসরের পদ্ধতি','language':'ভাষা','appearance':'থিম','light':'লাইট','dark':'ডার্ক','hijri':'হিজরি ক্যালেন্ডার','sehri':'সেহরি শেষ (ফজর)','iftar':'ইফতার (মাগরিব)','notice':'হিজরি তারিখ আনুমানিক; স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','prayer':'যেখানেই থাকুন, নামাজের সাথে','sound':'নোটিফিকেশনের শব্দ','soundHint':'ফোনের অ্যালার্ট টোন; পূর্ণ আজান নয়','refreshHint':'পরবর্তী নামাজের অ্যালার্ট নবায়ন করতে অ্যাপ খুলুন।','compassHelp':'ফোন সমতল রাখুন ও চুম্বক থেকে দূরে রাখুন।','compassUnavailable':'কম্পাস সেন্সর নেই; নিচের দিকনির্দেশনা দেখুন।','selectCity':'শহর নির্বাচন','gps':'জিপিএস অবস্থান','about':'নামাজের সময় গণনাভিত্তিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notificationSuccess':'পরবর্তী ১০ দিনের নামাজের অ্যালার্ট নির্ধারিত হয়েছে।','permission':'লোকেশন অনুমতি প্রয়োজন।','method':'মুসলিম ওয়ার্ল্ড লীগ (MWL)','duaTab':'দোয়া','ramadan':'রমজান','tasbih':'তাসবিহ','prayerAlerts':'নামাজের নোটিফিকেশন','manageAlerts':'প্রতিটি ওয়াক্তের অ্যালার্ট নিয়ন্ত্রণ','saveAlerts':'সংরক্ষণ ও অ্যালার্ট চালু','testAlert':'১০ সেকেন্ডের টেস্ট নোটিফিকেশন','testSuccess':'১০ সেকেন্ড পর পরীক্ষামূলক নোটিফিকেশন আসার কথা।','hijriAdjust':'হিজরি তারিখ সমন্বয়','hijriHint':'স্থানীয় মসজিদের চাঁদ দেখার হিসাবে ±২ দিন ঠিক করুন।','reset':'রিসেট','tasbihCounter':'তাসবিহ কাউন্টার','dailyDua':'প্রতিদিনের দোয়া ও তাসবিহ','ramadanHere':'রমজান চলছে','ramadanStarts':'আনুমানিক রমজান শুরু হতে বাকি','days':'দিন','ramadanNotice':'রমজানের তারিখ আনুমানিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notifyHint':'ফোনের নোটিফিকেশন টোন ব্যবহার করে। অ্যান্ড্রয়েডে অ্যালার্ট দেরি হতে পারে।','adSpace':'বিজ্ঞাপনের স্থান · AdMob চালু হয়নি'},
   'ko': {'home':'홈','qibla':'키블라','calendar':'달력','settings':'설정','next':'다음 기도','today':'오늘의 기도 시간','remaining':'남은 시간','location':'현재 위치','alerts':'기도 알림 켜기','calculation':'계산 방식','asr':'아스르 계산','language':'언어','appearance':'테마','light':'라이트','dark':'다크','hijri':'히즈리 달력','sehri':'수후르 종료 (파즈르)','iftar':'이프타르 (마그리브)','notice':'히즈리 날짜는 근사치입니다. 현지 모스크에 확인하세요.','prayer':'어디서나 기도를','sound':'알림 소리','soundHint':'기본 알림음 (전체 아잔 녹음 아님)','refreshHint':'알림을 갱신하려면 앱을 다시 여세요.','compassHelp':'휴대전화를 수평으로 두고 자석에서 멀리하세요.','compassUnavailable':'나침반 센서를 사용할 수 없습니다. 아래 각도를 참고하세요.','selectCity':'도시 선택','gps':'GPS 위치','about':'기도 시간은 계산된 추정치입니다. 현지 모스크에 확인하세요.','notificationSuccess':'향후 10일간의 기도 알림이 예약되었습니다.','permission':'위치 권한이 필요합니다.','method':'세계무슬림연맹 (MWL)','duaTab':'두아','ramadan':'라마단','tasbih':'타스비흐','prayerAlerts':'기도 알림','manageAlerts':'기도별 알림 설정','saveAlerts':'알림 저장 및 예약','testAlert':'10초 후 테스트 알림','testSuccess':'10초 후 테스트 알림이 예약되었습니다.','hijriAdjust':'히즈리 날짜 조정','hijriHint':'현지 모스크 기준 ±2일 조정','reset':'초기화','tasbihCounter':'타스비흐 카운터','dailyDua':'매일 두아와 타스비흐','ramadanHere':'라마단 기간','ramadanStarts':'라마단 예상 시작까지','days':'일','ramadanNotice':'라마단 날짜는 추정치입니다. 현지 모스크에서 확인하세요.','notifyHint':'기본 알림음을 사용합니다. Android에서 지연될 수 있습니다.','adSpace':'광고 공간 · AdMob 미설정'},
   'ar': {'home':'الرئيسية','qibla':'القبلة','calendar':'التقويم','settings':'الإعدادات','next':'الصلاة القادمة','today':'مواقيت الصلاة اليوم','remaining':'الوقت المتبقي','location':'موقعي','alerts':'تفعيل تنبيهات الصلاة','calculation':'طريقة الحساب','asr':'حساب العصر','language':'اللغة','appearance':'المظهر','light':'فاتح','dark':'داكن','hijri':'التقويم الهجري','sehri':'نهاية السحور (الفجر)','iftar':'الإفطار (المغرب)','notice':'التاريخ الهجري تقريبي؛ يرجى التأكد من المسجد المحلي.','prayer':'الصلاة أينما كنت','sound':'صوت التنبيه','soundHint':'نغمة الهاتف الافتراضية وليست أذاناً كاملاً','refreshHint':'افتح التطبيق لتجديد التنبيهات القادمة.','compassHelp':'أبق الهاتف مستوياً وبعيداً عن المغناطيس.','compassUnavailable':'مستشعر البوصلة غير متاح. استخدم الزاوية أدناه.','selectCity':'اختر مدينة','gps':'موقع GPS','about':'مواقيت الصلاة تقديرية بالحساب؛ تحقق من المسجد المحلي.','notificationSuccess':'تم جدولة تنبيهات الصلاة لعشرة أيام.','permission':'يلزم إذن الموقع.','method':'رابطة العالم الإسلامي (MWL)','duaTab':'الدعاء','ramadan':'رمضان','tasbih':'التسبيح','prayerAlerts':'تنبيهات الصلاة','manageAlerts':'إدارة تنبيهات الصلوات','saveAlerts':'حفظ وجدولة التنبيهات','testAlert':'اختبار التنبيه بعد 10 ثوانٍ','testSuccess':'تمت جدولة تنبيه تجريبي بعد 10 ثوانٍ.','hijriAdjust':'ضبط التاريخ الهجري','hijriHint':'اضبط ±يومين حسب رؤية الهلال المحلية','reset':'إعادة تعيين','tasbihCounter':'عداد التسبيح','dailyDua':'دعاء وتسبيح يومي','ramadanHere':'رمضان مبارك','ramadanStarts':'بداية رمضان المتوقعة بعد','days':'أيام','ramadanNotice':'مواعيد رمضان تقديرية؛ تحقق من المسجد المحلي.','notifyHint':'يستخدم صوت تنبيه الهاتف وقد يتأخر على أندرويد.','adSpace':'مساحة إعلان · AdMob غير مفعّل'},
+  'ur': {'home':'ہوم','qibla':'قبلہ','calendar':'کیلنڈر','settings':'ترتیبات','next':'اگلی نماز','today':'آج کی نمازوں کے اوقات','remaining':'باقی وقت','location':'میرا مقام استعمال کریں','alerts':'نماز کی اطلاعات فعال کریں','calculation':'حساب کا طریقہ','asr':'عصر کا حساب','language':'زبان','appearance':'ظاہری شکل','light':'روشن','dark':'تاریک','hijri':'ہجری کیلنڈر','sehri':'سحری ختم (فجر)','iftar':'افطار (مغرب)','notice':'ہجری تاریخ تخمینی ہے؛ مقامی مسجد سے تصدیق کریں۔','prayer':'آپ جہاں بھی ہوں، نماز','sound':'اطلاع کی آواز','soundHint':'فون کی اطلاع کی آواز (مکمل اذان نہیں)','refreshHint':'آئندہ اطلاعات تازہ کرنے کے لیے ایپ دوبارہ کھولیں۔','compassHelp':'فون سیدھا رکھیں اور مقناطیس سے دور رکھیں۔','compassUnavailable':'کمپاس دستیاب نہیں؛ نیچے درج زاویہ دیکھیں۔','selectCity':'شہر منتخب کریں','gps':'جی پی ایس مقام','about':'نماز کے اوقات حسابی اندازے ہیں؛ مقامی مسجد سے تصدیق کریں۔','notificationSuccess':'اگلے ۱۰ دن کی نماز کی اطلاعات مقرر ہو گئیں۔','permission':'مقام کی اجازت درکار ہے۔','method':'مسلم ورلڈ لیگ (MWL)','duaTab':'دعا','ramadan':'رمضان','tasbih':'تسبیح','prayerAlerts':'نماز کی اطلاعات','manageAlerts':'ہر نماز کی اطلاع کا انتظام','saveAlerts':'محفوظ کریں اور اطلاعات مقرر کریں','testAlert':'آزمائشی اطلاع (۱۰ سیکنڈ)','testSuccess':'آزمائشی اطلاع مقرر ہو گئی۔','hijriAdjust':'ہجری تاریخ کی درستی','hijriHint':'مقامی رویتِ ہلال کے مطابق ±۲ دن درست کریں۔','reset':'دوبارہ ترتیب دیں','tasbihCounter':'تسبیح کاؤنٹر','dailyDua':'روزانہ دعائیں اور تسبیح','ramadanHere':'رمضان جاری ہے','ramadanStarts':'رمضان شروع ہونے میں متوقع دن','days':'دن','ramadanNotice':'رمضان کی تاریخ تخمینی ہے؛ مقامی مسجد سے تصدیق کریں۔','notifyHint':'فون کی اطلاع کی آواز استعمال ہوتی ہے۔','adSpace':'اشتہار کی جگہ · AdMob فعال نہیں'},
+  'uz': {'home':'Bosh sahifa','qibla':'Qibla','calendar':'Taqvim','settings':'Sozlamalar','next':'KEYINGI NAMOZ','today':'Bugungi namoz vaqtlari','remaining':'Qolgan vaqt','location':'Joylashuvimdan foydalanish','alerts':'Namoz bildirishnomalarini yoqish','calculation':'Hisoblash usuli','asr':'Asr hisobi','language':'Til','appearance':'Ko‘rinish','light':'Yorug‘','dark':'Qorong‘i','hijri':'Hijriy taqvim','sehri':'Saharlik tugashi (Bomdod)','iftar':'Iftor (Shom)','notice':'Hijriy sana taxminiy; mahalliy masjiddan tekshiring.','prayer':'Qayerda bo‘lsangiz ham, namoz','sound':'Bildirishnoma ovozi','soundHint':'Telefon ogohlantirish ovozi (to‘liq azon emas)','refreshHint':'Bildirishnomalarni yangilash uchun ilovani qayta oching.','compassHelp':'Telefonni tekis tuting va magnitlardan uzoqroq saqlang.','compassUnavailable':'Kompas mavjud emas. Quyidagi yo‘nalishga qarang.','selectCity':'Shaharni tanlang','gps':'GPS joylashuvi','about':'Namoz vaqtlari hisoblangan taxminiy qiymatlar; masjiddan tekshiring.','notificationSuccess':'Keyingi 10 kun uchun eslatmalar belgilandi.','permission':'Joylashuv ruxsati kerak.','method':'Musulmonlar jahon ligasi (MWL)','duaTab':'Duo','ramadan':'Ramazon','tasbih':'Tasbeh','prayerAlerts':'Namoz eslatmalari','manageAlerts':'Har bir namoz eslatmasini boshqarish','saveAlerts':'Saqlash va rejalashtirish','testAlert':'Sinov bildirishnomasi (10 soniya)','testSuccess':'Sinov bildirishnomasi belgilandi.','hijriAdjust':'Hijriy sanani tuzatish','hijriHint':'Mahalliy hilol kuzatuviga ko‘ra ±2 kun.','reset':'Qayta o‘rnatish','tasbihCounter':'Tasbeh hisoblagichi','dailyDua':'Kundalik duo va tasbeh','ramadanHere':'Ramazon boshlandi','ramadanStarts':'Ramazongacha taxminan','days':'kun','ramadanNotice':'Ramazon sanalari taxminiy; masjiddan tekshiring.','notifyHint':'Telefonning bildirishnoma ovozi ishlatiladi.','adSpace':'Reklama joyi · AdMob sozlanmagan'},
+  'id': {'home':'Beranda','qibla':'Kiblat','calendar':'Kalender','settings':'Pengaturan','next':'SALAT BERIKUTNYA','today':'Jadwal salat hari ini','remaining':'Sisa waktu','location':'Gunakan lokasi saya','alerts':'Aktifkan notifikasi salat','calculation':'Metode perhitungan','asr':'Perhitungan Asar','language':'Bahasa','appearance':'Tampilan','light':'Terang','dark':'Gelap','hijri':'Kalender Hijriah','sehri':'Akhir sahur (Subuh)','iftar':'Buka puasa (Magrib)','notice':'Tanggal Hijriah adalah perkiraan; periksa dengan masjid setempat.','prayer':'Salat di mana pun Anda berada','sound':'Suara notifikasi','soundHint':'Suara notifikasi perangkat (bukan azan lengkap)','refreshHint':'Buka kembali aplikasi untuk memperbarui pengingat.','compassHelp':'Pegang ponsel mendatar dan jauhkan dari magnet.','compassUnavailable':'Sensor kompas tidak tersedia. Gunakan arah di bawah.','selectCity':'Pilih kota','gps':'Lokasi GPS','about':'Waktu salat adalah hasil perhitungan; konfirmasikan dengan masjid setempat.','notificationSuccess':'Pengingat salat untuk 10 hari ke depan telah dijadwalkan.','permission':'Izin lokasi diperlukan.','method':'Liga Muslim Dunia (MWL)','duaTab':'Doa','ramadan':'Ramadan','tasbih':'Tasbih','prayerAlerts':'Notifikasi salat','manageAlerts':'Atur pengingat setiap salat','saveAlerts':'Simpan dan jadwalkan','testAlert':'Uji notifikasi (10 detik)','testSuccess':'Notifikasi uji telah dijadwalkan.','hijriAdjust':'Penyesuaian tanggal Hijriah','hijriHint':'Sesuaikan ±2 hari dengan rukyat setempat.','reset':'Atur ulang','tasbihCounter':'Penghitung tasbih','dailyDua':'Doa harian dan tasbih','ramadanHere':'Ramadan telah tiba','ramadanStarts':'Perkiraan Ramadan dimulai dalam','days':'hari','ramadanNotice':'Tanggal Ramadan adalah perkiraan; konfirmasikan dengan masjid setempat.','notifyHint':'Menggunakan suara notifikasi perangkat.','adSpace':'Ruang iklan · AdMob belum dikonfigurasi'},
+  'hi': {'home':'होम','qibla':'क़िबला','calendar':'कैलेंडर','settings':'सेटिंग्स','next':'अगली नमाज़','today':'आज की नमाज़ के समय','remaining':'शेष समय','location':'मेरी लोकेशन इस्तेमाल करें','alerts':'नमाज़ की सूचनाएँ चालू करें','calculation':'गणना विधि','asr':'अस्र की गणना','language':'भाषा','appearance':'दिखावट','light':'लाइट','dark':'डार्क','hijri':'हिजरी कैलेंडर','sehri':'सहरी समाप्त (फ़ज्र)','iftar':'इफ़्तार (मग़रिब)','notice':'हिजरी तारीख़ अनुमानित है; स्थानीय मस्जिद से पुष्टि करें।','prayer':'आप जहाँ भी हों, नमाज़','sound':'सूचना की ध्वनि','soundHint':'फ़ोन की सूचना ध्वनि (पूरी अज़ान नहीं)','refreshHint':'आगामी सूचनाएँ अपडेट करने के लिए ऐप फिर खोलें।','compassHelp':'फ़ोन सीधा रखें और चुंबक से दूर रखें।','compassUnavailable':'कंपास उपलब्ध नहीं है; नीचे दिशा देखें।','selectCity':'शहर चुनें','gps':'GPS लोकेशन','about':'नमाज़ के समय गणना आधारित अनुमान हैं; स्थानीय मस्जिद से पुष्टि करें।','notificationSuccess':'अगले 10 दिनों की नमाज़ की सूचनाएँ निर्धारित हैं।','permission':'लोकेशन की अनुमति आवश्यक है।','method':'मुस्लिम वर्ल्ड लीग (MWL)','duaTab':'दुआ','ramadan':'रमज़ान','tasbih':'तस्बीह','prayerAlerts':'नमाज़ की सूचनाएँ','manageAlerts':'हर नमाज़ की सूचना प्रबंधित करें','saveAlerts':'सहेजें और निर्धारित करें','testAlert':'टेस्ट सूचना (10 सेकंड)','testSuccess':'टेस्ट सूचना निर्धारित की गई।','hijriAdjust':'हिजरी तारीख़ समायोजन','hijriHint':'स्थानीय चाँद देखने के अनुसार ±2 दिन समायोजित करें।','reset':'रीसेट','tasbihCounter':'तस्बीह काउंटर','dailyDua':'रोज़ाना दुआ और तस्बीह','ramadanHere':'रमज़ान शुरू हो गया','ramadanStarts':'रमज़ान शुरू होने में अनुमानित','days':'दिन','ramadanNotice':'रमज़ान की तारीख़ अनुमानित है; स्थानीय मस्जिद से पुष्टि करें।','notifyHint':'फ़ोन की सूचना ध्वनि इस्तेमाल होती है।','adSpace':'विज्ञापन स्थान · AdMob सेट नहीं है'},
 };
 String tr(String lang, String key) => translations[lang]?[key] ?? translations['en']?[key] ?? key;
+
+const uiExtras = <String, Map<String, String>>{
+  'en': {'gpsSuccess': 'Using GPS coordinates and device timezone.', 'duaNumber': 'Dua', 'adhanSuccess': 'Prayer alerts and automatic Adhan scheduled.', 'alertError': 'Could not schedule alerts'},
+  'bn': {'gpsSuccess': 'জিপিএস অবস্থান ও ফোনের সময় অঞ্চল ব্যবহার করা হচ্ছে।', 'duaNumber': 'দোয়া', 'adhanSuccess': 'নামাজের অ্যালার্ট ও স্বয়ংক্রিয় আজান নির্ধারিত হয়েছে।', 'alertError': 'অ্যালার্ট নির্ধারণ করা যায়নি'},
+  'ko': {'gpsSuccess': 'GPS 좌표와 휴대전화 시간대를 사용합니다.', 'duaNumber': '두아', 'adhanSuccess': '기도 알림과 자동 아잔이 예약되었습니다.', 'alertError': '알림을 예약할 수 없습니다'},
+  'ar': {'gpsSuccess': 'يتم استخدام إحداثيات GPS والمنطقة الزمنية للجهاز.', 'duaNumber': 'دعاء', 'adhanSuccess': 'تمت جدولة تنبيهات الصلاة والأذان التلقائي.', 'alertError': 'تعذرت جدولة التنبيهات'},
+};
+String uix(String lang, String key) => mptExtraTranslations[lang]?[key] ?? uiExtras[lang]?[key] ?? uiExtras['en']?[key] ?? key;
+
 
 // Extra strings introduced in v1.3.1, without disturbing existing translations.
 const extraTranslations = <String, Map<String, String>>{
@@ -111,13 +128,78 @@ const extraTranslations = <String, Map<String, String>>{
   'ko': {'northBearing':'북쪽 기준','testTitle':'MPT · 테스트 알림','testBody':'기도 알림 테스트가 완료되었습니다.'},
   'ar': {'northBearing':'من الشمال','testTitle':'MPT · إشعار تجريبي','testBody':'نجح اختبار إشعار الصلاة.'},
 };
-String tx(String lang, String key) => extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
+String tx(String lang, String key) => mptExtraTranslations[lang]?[key] ?? extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
+
+// Additional localized Adhan controls for the next release.
+const adhanTranslations = <String, Map<String, String>>{
+  'en': {
+    'preciseAdhan': 'Allow precise Adhan alarms',
+    'adhanSettings': 'Adhan settings',
+    'fullAdhan': 'Full Adhan',
+    'shortAdhan': 'Short Adhan',
+    'specialFajr': 'Special Fajr Adhan',
+    'specialFajrHint': 'Use a special Adhan for Fajr',
+    'previewAdhan': 'Preview Adhan',
+    'previewFajr': 'Preview Fajr',
+    'stopAdhan': 'Stop',
+    'adhanHelp': 'Preview plays inside the app. Save & Schedule Alerts also schedules Android Adhan audio. Allow precise alarms in Settings; Android battery restrictions may delay playback.',
+    'adhanScheduled': 'Automatic Adhan scheduled.',
+    'audioError': 'Audio error',
+  },
+  'bn': {
+    'preciseAdhan': 'সঠিক সময়ে আজানের অনুমতি দিন',
+    'adhanSettings': 'আজান সেটিংস',
+    'fullAdhan': 'পূর্ণ আজান',
+    'shortAdhan': 'সংক্ষিপ্ত আজান',
+    'specialFajr': 'ফজরের বিশেষ আজান',
+    'specialFajrHint': 'ফজরের জন্য বিশেষ আজান ব্যবহার করুন',
+    'previewAdhan': 'আজান শুনুন',
+    'previewFajr': 'ফজরের আজান শুনুন',
+    'stopAdhan': 'বন্ধ করুন',
+    'adhanHelp': 'প্রিভিউ অ্যাপের ভেতরে বাজে। অ্যালার্ট সংরক্ষণ করলে Android-এ আজানও নির্ধারিত হয়। সেটিংসে সঠিক সময়ের অ্যালার্ম অনুমতি দিন; ব্যাটারি সীমাবদ্ধতায় আজান দেরি হতে পারে।',
+    'adhanScheduled': 'স্বয়ংক্রিয় আজান নির্ধারিত হয়েছে।',
+    'audioError': 'অডিও সমস্যা',
+  },
+  'ko': {
+    'preciseAdhan': '정확한 아잔 알람 허용',
+    'adhanSettings': '아잔 설정',
+    'fullAdhan': '전체 아잔',
+    'shortAdhan': '짧은 아잔',
+    'specialFajr': '파즈르 특별 아잔',
+    'specialFajrHint': '파즈르 기도에 특별 아잔 사용',
+    'previewAdhan': '아잔 미리 듣기',
+    'previewFajr': '파즈르 아잔 미리 듣기',
+    'stopAdhan': '중지',
+    'adhanHelp': '미리 듣기는 앱 안에서 재생됩니다. 알림을 저장하면 Android 아잔도 예약됩니다. 설정에서 정확한 알람을 허용하세요. 배터리 제한으로 재생이 지연될 수 있습니다.',
+    'adhanScheduled': '자동 아잔이 예약되었습니다.',
+    'audioError': '오디오 오류',
+  },
+  'ar': {
+    'preciseAdhan': 'السماح بتنبيهات الأذان الدقيقة',
+    'adhanSettings': 'إعدادات الأذان',
+    'fullAdhan': 'الأذان الكامل',
+    'shortAdhan': 'الأذان المختصر',
+    'specialFajr': 'أذان الفجر الخاص',
+    'specialFajrHint': 'استخدام أذان خاص لصلاة الفجر',
+    'previewAdhan': 'استمع إلى الأذان',
+    'previewFajr': 'استمع إلى أذان الفجر',
+    'stopAdhan': 'إيقاف',
+    'adhanHelp': 'تعمل المعاينة داخل التطبيق. عند حفظ التنبيهات، تتم جدولة الأذان على أندرويد أيضًا. اسمح بالمنبهات الدقيقة في الإعدادات؛ قد تؤخر قيود البطارية التشغيل.',
+    'adhanScheduled': 'تمت جدولة الأذان تلقائيًا.',
+    'audioError': 'خطأ صوتي',
+  },
+};
+String atx(String lang, String key) => mptExtraTranslations[lang]?[key] ?? adhanTranslations[lang]?[key] ?? adhanTranslations['en']?[key] ?? key;
 
 const calendarDayLabels = <String, List<String>>{
   'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
+  'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহ', 'শুক্র', 'শনি'],
   'ko': ['일', '월', '화', '수', '목', '금', '토'],
   'ar': ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
+  'ur': ['اتوار','پیر','منگل','بدھ','جمعرات','جمعہ','ہفتہ'],
+  'uz': ['Yak','Dush','Sesh','Chor','Pay','Jum','Shan'],
+  'id': ['Min','Sen','Sel','Rab','Kam','Jum','Sab'],
+  'hi': ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'],
 };
 List<String> calendarWeekdays(String language) =>
     calendarDayLabels[language] ?? calendarDayLabels['en']!;
@@ -181,12 +263,20 @@ const prayerNames = <String, List<String>>{
   'bn':['ফজর','যোহর','আসর','মাগরিব','এশা'],
   'ko':['파즈르','두흐르','아스르','마그리브','이샤'],
   'ar':['الفجر','الظهر','العصر','المغرب','العشاء'],
+  'ur': ['فجر','ظہر','عصر','مغرب','عشاء'],
+  'uz': ['Bomdod','Peshin','Asr','Shom','Xufton'],
+  'id': ['Subuh','Zuhur','Asar','Magrib','Isya'],
+  'hi': ['फ़ज्र','ज़ुहर','अस्र','मग़रिब','इशा'],
 };
 const hijriMonths = <String, List<String>>{
   'en':['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Akhirah','Rajab','Sha’ban','Ramadan','Shawwal','Dhu al-Qadah','Dhu al-Hijjah'],
   'bn':['মুহাররম','সফর','রবিউল আউয়াল','রবিউস সানি','জমাদিউল আউয়াল','জমাদিউস সানি','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'],
   'ko':['무하람','사파르','라비 알아우왈','라비 알타니','주마다 알아울라','주마다 알아키라','라자브','샤반','라마단','샤왈','둘카다','둘히자'],
   'ar':['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'],
+  'ur': ['محرم','صفر','ربیع الاول','ربیع الثانی','جمادی الاول','جمادی الثانی','رجب','شعبان','رمضان','شوال','ذوالقعدہ','ذوالحجہ'],
+  'uz': ['Muharram','Safar','Rabiul avval','Rabiul oxir','Jumodul avval','Jumodul oxir','Rajab','Sha’bon','Ramazon','Shavvol','Zulqa’da','Zulhijja'],
+  'id': ['Muharam','Safar','Rabiulawal','Rabiulakhir','Jumadilawal','Jumadilakhir','Rajab','Syakban','Ramadan','Syawal','Zulkaidah','Zulhijah'],
+  'hi': ['मुहर्रम','सफ़र','रबीउल अव्वल','रबीउल आख़िर','जमादिउल अव्वल','जमादिउल आख़िर','रजब','शाबान','रमज़ान','शव्वाल','ज़ुलक़ादा','ज़ुलहिज्जा'],
 };
 
 int julianDay(DateTime d) {
@@ -324,6 +414,10 @@ class _MuslimPrayerTimesAppState extends State<MuslimPrayerTimesApp> {
   @override Widget build(BuildContext context) => MaterialApp(
     title: 'MUSLIM PRAYER TIMES', debugShowCheckedModeBanner: false,
     locale: Locale(language),
+    builder: (context, child) => Directionality(
+      textDirection: (language == 'ur' || language == 'ar') ? ui.TextDirection.rtl : ui.TextDirection.ltr,
+      child: child ?? const SizedBox.shrink(),
+    ),
     themeMode: dark ? ThemeMode.dark : ThemeMode.light,
     theme: ThemeData(useMaterial3: true, scaffoldBackgroundColor: cream,
       colorScheme: ColorScheme.fromSeed(seedColor: emerald, surface: const Color(0xFFF6F8F4)),
@@ -390,7 +484,7 @@ class _MainShellState extends State<MainShell> {
       await prefs.setDouble('gps_lat', pos.latitude);
       await prefs.setDouble('gps_lon', pos.longitude);
       await prefs.setString('gps_zone', tz.local.name);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Using GPS coordinates and device timezone.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(uix(widget.language, 'gpsSuccess'))));
     } catch (error) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
     }
@@ -404,8 +498,9 @@ class _MainShellState extends State<MainShell> {
           SharedPreferences.getInstance().then((p) => p.setString('city', value.name));
         }, onUseLocation: useLocation),
       QiblaPage(city: city, language: lang),
+      SurahLibraryPage(language: lang),
       CalendarPage(city: city, hanafi: hanafi, language: lang),
-      DuaPage(language: lang),
+      LearningDuaPage(language: lang, onOpenQuranicDuas: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang)))),
       SettingsPage(city: city, hanafi: hanafi, language: lang, dark: widget.dark,
         sound: sound, onLanguageChanged: widget.onLanguageChanged,
         onDarkChanged: widget.onDarkChanged,
@@ -420,12 +515,15 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: SafeArea(child: IndexedStack(index: tab, children: pages)),
       bottomNavigationBar: NavigationBar(
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        height: 66,
         selectedIndex: tab,
         onDestinationSelected: (value) => setState(() => tab = value),
         destinations: [
           NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: tr(lang, 'home')),
           NavigationDestination(icon: const Icon(Icons.explore_outlined), selectedIcon: const Icon(Icons.explore), label: tr(lang, 'qibla')),
-          NavigationDestination(icon: const Icon(Icons.calendar_month_outlined), label: tr(lang, 'calendar')),
+          NavigationDestination(icon: const Icon(Icons.menu_book_outlined), label: learningLabel(lang, 'surah')),
+          NavigationDestination(icon: const Icon(Icons.calendar_month_outlined), label: lang == 'bn' ? 'দিনপঞ্জি' : tr(lang, 'calendar')),
           NavigationDestination(icon: const Icon(Icons.volunteer_activism_outlined), label: tr(lang, 'duaTab')),
           NavigationDestination(icon: const Icon(Icons.tune), label: tr(lang, 'settings')),
         ],
@@ -459,103 +557,250 @@ class _PrayerHomeState extends State<PrayerHome> {
   Timer? ticker;
   @override void initState() {
     super.initState();
-    ticker = Timer.periodic(const Duration(seconds: 1), (_) { if (mounted) setState(() {}); });
+    ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
   }
   @override void dispose() { ticker?.cancel(); super.dispose(); }
+
   @override Widget build(BuildContext context) {
     final lang = widget.language;
     final now = cityNow(widget.city);
     final entries = prayersFor(widget.city, widget.hanafi, now);
+    final homeHijri = adjustedHijri(now);
     final next = entries.where((p) => p.localTime.isAfter(now)).firstOrNull;
-    final nextItem = next ?? prayersFor(widget.city, widget.hanafi, now.add(const Duration(days: 1))).first;
-    final remaining = localToInstant(nextItem.localTime, widget.city).difference(DateTime.now());
+    final nextItem = next ?? prayersFor(widget.city, widget.hanafi,
+        now.add(const Duration(days: 1))).first;
+    final remaining = localToInstant(nextItem.localTime, widget.city)
+        .difference(DateTime.now());
     final duration = remaining.isNegative ? Duration.zero : remaining;
-    final countdown = '${duration.inHours.toString().padLeft(2, '0')}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final foreground = theme.colorScheme.onSurface;
+    final countdown = '${duration.inHours.toString().padLeft(2, '0')}:'
+        '${(duration.inMinutes % 60).toString().padLeft(2, '0')}:'
+        '${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final surface = dark ? Theme.of(context).colorScheme.surface : Colors.white;
+    final textColor = dark ? Colors.white : deepGreen;
     final secondary = dark ? Colors.white70 : muted;
-    return ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 28), children: [
-      Row(children: [
-        const MptLogo(size: 56), const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('MUSLIM PRAYER TIMES', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: foreground)),
-          Text(tr(lang, 'prayer'), style: TextStyle(fontSize: 12, color: secondary)),
-        ])),
-        IconButton(onPressed: widget.onUseLocation, icon: const Icon(Icons.my_location, color: emerald)),
-      ]),
-      const IslamicHeroBanner(),
-      const SizedBox(height: 14),
-      Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(
-        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [emerald, deepGreen]),
-        borderRadius: BorderRadius.circular(27),
-      ), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    final foreground = textColor;
+    final theme = Theme.of(context);
+    final progress = (1.0 - duration.inSeconds / (6 * 3600)).clamp(0.0, 1.0);
+
+    return ColoredBox(
+      color: dark ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFD9EDDF),
+      child: ListView(padding: const EdgeInsets.fromLTRB(14, 14, 14, 26), children: [
+        // Approved C banner, unchanged image artwork.
+        ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: AspectRatio(aspectRatio: 1296 / 275, child: Image.asset('assets/images/mpt_banner_c.png',
+            width: double.infinity, fit: BoxFit.contain,
+            errorBuilder: (context, error, stack) => Container(
+              height: 142, alignment: Alignment.center,
+              decoration: BoxDecoration(color: const Color(0xFFE2F3E9),
+                borderRadius: BorderRadius.circular(24)),
+              child: const Row(mainAxisAlignment: MainAxisAlignment.center,
+                children: [MptLogo(size: 58), SizedBox(width: 12),
+                  Text('MPT', style: TextStyle(fontSize: 36,
+                    fontWeight: FontWeight.w900, color: deepGreen))]),
+            ),
+          )),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+          decoration: BoxDecoration(color: surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .09),
+              blurRadius: 10, offset: const Offset(0, 4))]),
+          child: Row(children: [
+            const Icon(Icons.location_on, color: emerald, size: 20),
+            const SizedBox(width: 4),
+            Expanded(child: DropdownButtonHideUnderline(
+              child: DropdownButton<PrayerCity>(
+                isExpanded: true,
+                value: cities.contains(widget.city) ? widget.city : null,
+                hint: Text(localizedCity(widget.city, lang), maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: textColor, fontSize: 12,
+                    fontWeight: FontWeight.w700)),
+                items: cities.map((city) => DropdownMenuItem(
+                  value: city, child: Text(localizedCity(city, lang),
+                    overflow: TextOverflow.ellipsis))).toList(),
+                onChanged: (value) { if (value != null) widget.onCityChanged(value); },
+              ),
+            )),
+            IconButton(onPressed: widget.onUseLocation,
+              icon: const Icon(Icons.gps_fixed, color: emerald, size: 19),
+              tooltip: tr(lang, 'location')),
+            Container(height: 31, width: 1, color: gold),
+            const SizedBox(width: 8),
+            const Icon(Icons.calendar_month, color: emerald, size: 19),
+            const SizedBox(width: 5),
+            Flexible(child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text(DateFormat('d MMM yyyy').format(now),
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: textColor, fontSize: 11,
+                  fontWeight: FontWeight.w700)),
+              Text('${homeHijri.day} ${hijriMonths[lang]![homeHijri.month - 1]} ${homeHijri.year} AH',
+                maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: emerald, fontSize: 9,
+                  fontWeight: FontWeight.w600)),
+            ])),
+          ]),
+        ),
+        const SizedBox(height: 15),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(colors: [emerald, deepGreen]),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .17),
+              blurRadius: 16, offset: const Offset(0, 7))],
+          ),
+          child: Row(children: [
+            const Icon(Icons.nights_stay, color: gold, size: 36),
+            const SizedBox(width: 11),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(color: gold,
+                    borderRadius: BorderRadius.circular(18)),
+                  child: Text(tr(lang, 'next'),
+                    style: const TextStyle(color: deepGreen, fontSize: 11,
+                      fontWeight: FontWeight.w900))),
+                const SizedBox(height: 12),
+                Text(prayerNames[lang]![nextItem.index],
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 27,
+                    fontWeight: FontWeight.w900)),
+                const SizedBox(height: 6),
+                Text(DateFormat('h:mm a').format(nextItem.localTime),
+                  style: const TextStyle(color: Colors.white, fontSize: 17,
+                    fontWeight: FontWeight.w800)),
+              ],
+            )),
+            const SizedBox(width: 8),
+            SizedBox(width: 127, height: 127,
+              child: Stack(alignment: Alignment.center, children: [
+                SizedBox(width: 124, height: 124,
+                  child: CircularProgressIndicator(value: progress,
+                    strokeWidth: 7, backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6CF3A3)))),
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(tr(lang, 'remaining'), textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                  const SizedBox(height: 5),
+                  FittedBox(child: Text(countdown,
+                    style: const TextStyle(color: Colors.white, fontSize: 19,
+                      fontWeight: FontWeight.w900))),
+                  const Icon(Icons.hourglass_bottom, color: gold, size: 18),
+                ]),
+              ]),
+            ),
+          ]),
+        ),
+        const SizedBox(height: 20),
         Row(children: [
-          const Icon(Icons.location_on_outlined, color: gold, size: 21), const SizedBox(width: 8),
-          Expanded(child: DropdownButtonHideUnderline(child: DropdownButton<PrayerCity>(
-            isExpanded: true, value: cities.contains(widget.city) ? widget.city : null,
-            hint: Text(localizedCity(widget.city, widget.language), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-            dropdownColor: deepGreen, iconEnabledColor: gold,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15),
-            items: cities.map((city) => DropdownMenuItem(value: city, child: Text(localizedCity(city, widget.language), overflow: TextOverflow.ellipsis))).toList(),
-            onChanged: (value) { if (value != null) widget.onCityChanged(value); },
-          ))),
-          IconButton(onPressed: widget.onUseLocation, icon: const Icon(Icons.gps_fixed, color: Colors.white)),
+          const Icon(Icons.mosque, color: emerald, size: 24),
+          const SizedBox(width: 7),
+          Expanded(child: Text(tr(lang, 'today'),
+            style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900,
+              color: textColor))),
+          Container(padding: const EdgeInsets.symmetric(
+              horizontal: 9, vertical: 7),
+            decoration: BoxDecoration(color: surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: gold)),
+            child: Text('MWL · ${widget.hanafi ? 'Hanafi' : 'Shafi'}',
+              style: TextStyle(color: textColor, fontSize: 11,
+                fontWeight: FontWeight.w800))),
         ]),
-        const SizedBox(height: 23),
-        Text(localizedDate(now, widget.language), style: const TextStyle(color: Colors.white70, fontSize: 13)),
-        const SizedBox(height: 21),
-        Text(tr(lang, 'next'), style: const TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
-        const SizedBox(height: 8),
-        Text(prayerNames[lang]![nextItem.index], style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 7),
-        Text(DateFormat('h:mm a').format(nextItem.localTime), style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
-        Text('${tr(lang, 'remaining')}  $countdown', style: const TextStyle(color: Colors.white70, fontSize: 14)),
-      ])),
-      const SizedBox(height: 26),
-      Row(children: [
-        Expanded(child: Text(tr(lang, 'today'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: foreground))),
-        Text('MWL · ${widget.hanafi ? 'Hanafi' : 'Shafi'}', style: TextStyle(color: dark ? gold : emerald, fontSize: 12, fontWeight: FontWeight.w700)),
-      ]),
-      const SizedBox(height: 13),
-      ...entries.map((p) => Container(
-        margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor.withValues(alpha: .25))),
-        child: Row(children: [
-          Container(width: 44, height: 44, decoration: BoxDecoration(color: dark ? deepGreen : const Color(0xFFEAF4EF), borderRadius: BorderRadius.circular(14)), child: Icon(p.icon, color: dark ? gold : emerald)),
-          const SizedBox(width: 13),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(prayerNames[lang]![p.index], style: TextStyle(fontWeight: FontWeight.w800, color: foreground)),
-            if (lang != 'en') Text(prayerNames['en']![p.index], style: TextStyle(color: secondary, fontSize: 12)),
-          ])),
-          Text(DateFormat('h:mm a').format(p.localTime), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: foreground)),
-        ]),
-      )),
-      const SizedBox(height: 8),
+        ...entries.map((p) => Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+          decoration: BoxDecoration(color: surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .08),
+              blurRadius: 8, offset: const Offset(0, 3))]),
+          child: Row(children: [
+            Container(width: 42, height: 42,
+              decoration: BoxDecoration(color: dark ? deepGreen
+                : const Color(0xFFE2F5E8),
+                borderRadius: BorderRadius.circular(14)),
+              child: Icon(p.icon, color: p.index == 1 || p.index == 2 || p.index == 3
+                ? const Color(0xFFDCA12B) : emerald)),
+            const SizedBox(width: 14),
+            Expanded(child: Text(prayerNames[lang]![p.index],
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800,
+                color: textColor))),
+            Text(DateFormat('h:mm a').format(p.localTime),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900,
+                color: textColor)),
+          ]),
+        )),
+        const SizedBox(height: 14),
+        // Preserve existing Ramadan, Dua, Tasbih, and 99 Names destinations.
       Row(children: [
         Expanded(child: _FeatureButton(icon: Icons.calendar_month, title: tr(lang, 'ramadan'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RamadanPage(city: widget.city, hanafi: widget.hanafi, language: lang))))),
         const SizedBox(width: 8),
-        Expanded(child: _FeatureButton(icon: Icons.menu_book, title: tr(lang, 'duaTab'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))))),
+        Expanded(child: _FeatureButton(icon: Icons.menu_book, title: tr(lang, 'duaTab'), onTap: () { Navigator.push(context, MaterialPageRoute(builder: (_) => LearningDuaPage(language: lang, onOpenQuranicDuas: () { Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))); }))); })),
         const SizedBox(width: 8),
         Expanded(child: _FeatureButton(icon: Icons.touch_app_outlined, title: tr(lang, 'tasbih'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DuaPage(language: lang))))),
       ]),
-      const SizedBox(height: 16),
-      Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
-      const SizedBox(height: 20),
-      const AdPlaceholder(),
-    ]);
+      const SizedBox(height: 12),
+      InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => Navigator.push(context, MaterialPageRoute(
+          builder: (_) => MptAllahNamesPage(language: lang))),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: gold.withValues(alpha: .55)),
+          ),
+          child: Row(children: [
+            Container(width: 52, height: 52,
+              decoration: BoxDecoration(color: deepGreen, borderRadius: BorderRadius.circular(15)),
+              child: const Icon(Icons.auto_awesome, color: gold, size: 26)),
+            const SizedBox(width: 13),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(const <String,String>{
+                'en':'99 Names of Allah','bn':'আল্লাহর ৯৯টি নাম',
+                'ko':'알라의 99가지 이름','ar':'أسماء الله الحسنى',
+                'ur':'اللہ کے ۹۹ نام','hi':'अल्लाह के 99 नाम',
+                'id':'99 Nama Allah','uz':'Allohning 99 ismi',
+              }[lang] ?? '99 Names of Allah',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: foreground)),
+              const SizedBox(height: 3),
+              Text('أَسْمَاءُ اللَّهِ الْحُسْنَى',
+                style: TextStyle(fontSize: 14, color: secondary)),
+            ])),
+            Icon(Icons.chevron_right, color: secondary),
+          ]),
+        ),
+      ),
+
+        const SizedBox(height: 16),
+        Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
+        const SizedBox(height: 20),
+        AdPlaceholder(language: lang),
+      ]),
+    );
   }
 }
 
 class AdPlaceholder extends StatelessWidget {
-  const AdPlaceholder({super.key});
+  final String language;
+  const AdPlaceholder({super.key, required this.language});
   @override Widget build(BuildContext context) => Container(
     height: 60, alignment: Alignment.center,
     decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: .5), borderRadius: BorderRadius.circular(15)),
-    child: const Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(Icons.campaign_outlined, size: 17), SizedBox(width: 8),
-      Flexible(child: Text('Ad space · AdMob not configured', style: TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
+    child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Icon(Icons.campaign_outlined, size: 17), const SizedBox(width: 8),
+      Flexible(child: Text(tr(language, 'adSpace'), style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
     ])),
   );
 }
@@ -596,9 +841,9 @@ class QiblaPage extends StatelessWidget {
         )));
       }),
       const SizedBox(height: 25),
-      Center(child: Text('${b.toStringAsFixed(0)}° ${tx(language, 'northBearing')}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: color))),
+      Center(child: Text('${b.toStringAsFixed(0)}° ${tx(language, 'northBearing')}', textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: color))),
       const SizedBox(height: 12), Text(tr(language, 'compassHelp'), textAlign: TextAlign.center, style: const TextStyle(color: muted, height: 1.5)),
-      const SizedBox(height: 35), const AdPlaceholder(),
+      const SizedBox(height: 35), AdPlaceholder(language: language),
     ]);
   }
 }
@@ -618,9 +863,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final monthIndex = (h.year - 1) * 12 + (h.month - 1) + offset;
     final shownYear = monthIndex ~/ 12 + 1;
     final shownMonth = monthIndex % 12 + 1;
-    final first = DateTime(today.year, today.month, today.day).add(
-      Duration(days: islamicStart(shownYear, shownMonth) - julianDay(today) - hijriAdjustment));
-    final monthStart = first.weekday % 7;
+    // Julian day 0 is Monday; calendar headings start on Sunday.
+    final monthStart = (islamicStart(shownYear, shownMonth) + 1) % 7;
     final monthLength = islamicStart(shownYear + (shownMonth == 12 ? 1 : 0),
       shownMonth == 12 ? 1 : shownMonth + 1) - islamicStart(shownYear, shownMonth);
     final prayers = prayersFor(widget.city, widget.hanafi, today);
@@ -633,7 +877,7 @@ class _CalendarPageState extends State<CalendarPage> {
         Expanded(child: Text('${hijriMonths[widget.language]![shownMonth - 1]} $shownYear AH', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17))),
         IconButton(onPressed: () => setState(() => offset++), icon: const Icon(Icons.chevron_right))]),
       const SizedBox(height: 10),
-      Row(children: calendarWeekdays(widget.language).map((d) => Expanded(child: Center(child: Text(d, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12))))).toList()),
+      Row(children: calendarWeekdays(widget.language).map((d) => Expanded(child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Text(d, maxLines: 1, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)))))).toList()),
       const SizedBox(height: 8),
       GridView.builder(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: monthStart + monthLength,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, childAspectRatio: 1.05, mainAxisSpacing: 5, crossAxisSpacing: 5),
@@ -692,6 +936,10 @@ class SettingsPage extends StatelessWidget {
         DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
         DropdownMenuItem(value: 'ko', child: Text('한국어')),
         DropdownMenuItem(value: 'ar', child: Text('العربية')),
+        DropdownMenuItem(value: 'ur', child: Text('اردو')),
+        DropdownMenuItem(value: 'uz', child: Text('O‘zbekcha')),
+        DropdownMenuItem(value: 'id', child: Text('Bahasa Indonesia')),
+        DropdownMenuItem(value: 'hi', child: Text('हिन्दी')),
       ], onChanged: (value) { if (value != null) onLanguageChanged(value); }),
       const SizedBox(height: 20),
       SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(tr(language, 'appearance'), style: const TextStyle(fontWeight: FontWeight.w800)),
@@ -704,8 +952,6 @@ class SettingsPage extends StatelessWidget {
       const SizedBox(height: 25),
       Text('${tr(language, 'calculation')}: ${tr(language, 'method')}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
       const SizedBox(height: 22),
-      SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(tr(language, 'sound'), style: const TextStyle(fontWeight: FontWeight.w800)),
-        subtitle: Text(tr(language, 'soundHint')), value: sound, onChanged: onSoundChanged),
       ListTile(leading: const Icon(Icons.notifications_active, color: emerald), title: Text(tr(language, 'prayerAlerts')), subtitle: Text(tr(language, 'manageAlerts')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NotificationPage(city: city, hanafi: hanafi, language: language)))),
       const SizedBox(height: 24),
       FilledButton.icon(style: FilledButton.styleFrom(backgroundColor: emerald, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 17)),
@@ -716,7 +962,7 @@ class SettingsPage extends StatelessWidget {
             await schedulePrayerAlerts(city, hanafi, sound: sound, enabled: selected);
             if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr(language, 'notificationSuccess'))));
           } catch (error) {
-            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not schedule alerts: $error')));
+            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${uix(language, 'alertError')}: $error')));
           }
         }, icon: const Icon(Icons.notifications_active_outlined), label: Text(tr(language, 'alerts'))),
       if (defaultTargetPlatform == TargetPlatform.android)
@@ -729,10 +975,10 @@ class SettingsPage extends StatelessWidget {
             }
           },
           icon: const Icon(Icons.alarm),
-          label: const Text('Allow precise Adhan alarms · সঠিক সময়ে আজান'),
+          label: Text(atx(language, 'preciseAdhan')),
         ),
       const SizedBox(height: 15), Text(tr(language, 'refreshHint'), style: const TextStyle(fontSize: 12, color: muted)),
-      const SizedBox(height: 28), const Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: TextStyle(color: muted, fontSize: 12))),
+      const SizedBox(height: 28), Center(child: Text('MPT · MUSLIM PRAYER TIMES · v$versionLabel', style: const TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 }
@@ -749,7 +995,7 @@ class IslamicHeroBanner extends StatelessWidget {
   @override Widget build(BuildContext context) => Container(height: compact ? 120 : 145, decoration: BoxDecoration(gradient: const LinearGradient(colors: [deepGreen, emerald, deepGreen]), borderRadius: BorderRadius.circular(22), border: Border.all(color: gold, width: 2)), child: Stack(children: [
     const Positioned(top: 12, left: 18, child: Icon(Icons.auto_awesome, color: gold, size: 25)),
     const Positioned(top: 12, right: 18, child: Icon(Icons.auto_awesome, color: gold, size: 25)),
-    Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.mosque, color: gold, size: compact ? 45 : 62), const SizedBox(height: 5), Text('MUSLIM PRAYER TIMES', style: TextStyle(color: Colors.white, fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900)), const Text('MPT  •  Prayer wherever you are', style: TextStyle(color: gold, fontSize: 11))])),
+    Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [MptLogo(size: compact ? 46 : 56), const SizedBox(height: 7), Text('MUSLIM PRAYER TIMES', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900)), const Text('MPT  •  Prayer wherever you are', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: gold, fontSize: 11))])),
   ]));
 }
 class _FeatureButton extends StatelessWidget {
@@ -757,7 +1003,7 @@ class _FeatureButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   const _FeatureButton({required this.icon, required this.title, required this.onTap});
-  @override Widget build(BuildContext context) => InkWell(onTap: onTap, borderRadius: BorderRadius.circular(14), child: _GoldCard(child: Column(children: [Icon(icon, color: emerald, size: 27), const SizedBox(height: 5), Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12))])));
+  @override Widget build(BuildContext context) => InkWell(onTap: onTap, borderRadius: BorderRadius.circular(14), child: _GoldCard(child: Column(children: [Icon(icon, color: emerald, size: 27), const SizedBox(height: 5), Text(title, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12))])));
 }
 class RamadanPage extends StatelessWidget {
   final PrayerCity city;
@@ -792,28 +1038,131 @@ class _DuaPageState extends State<DuaPage> {
     ['رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ', 'Our Lord, grant us good in this world and good in the Hereafter, and protect us from the Fire. (Quran 2:201)'],
     ['رَبِّ زِدْنِي عِلْمًا', 'My Lord, increase me in knowledge. (Quran 20:114)'],
     ['رَبَّنَا ظَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ', 'Our Lord, we have wronged ourselves. If You do not forgive us and have mercy on us, we will be among the losers. (Quran 7:23)'],
+    ['رَبِّ اشْرَحْ لِي صَدْرِي', 'My Lord, expand my chest for me. (Quran 20:25)'],
+    ['وَيَسِّرْ لِي أَمْرِي', 'And make my task easy for me. (Quran 20:26)'],
+    ['رَبِّ هَبْ لِي مِنَ الصَّالِحِينَ', 'My Lord, grant me righteous offspring. (Quran 37:100)'],
+    ['رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنْتَ السَّمِيعُ الْعَلِيمُ', 'Our Lord, accept this from us. You are the All-Hearing, All-Knowing. (Quran 2:127)'],
+    ['رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ', 'Our Lord, forgive me, my parents and the believers on the Day of Reckoning. (Quran 14:41)'],
+    ['رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِنْ لَدُنْكَ رَحْمَةً إِنَّكَ أَنْتَ الْوَهَّابُ', 'Our Lord, do not let our hearts deviate after You have guided us; grant us mercy from Yourself. You are the Bestower. (Quran 3:8)'],
+    ['رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنْتَ خَيْرُ الْوَارِثِينَ', 'My Lord, do not leave me childless; You are the best of inheritors. (Quran 21:89)'],
+    ['رَبِّ أَعُوذُ بِكَ مِنْ هَمَزَاتِ الشَّيَاطِينِ', 'My Lord, I seek refuge in You from the temptations of the devils. (Quran 23:97)'],
+    ['رَبِّ أَنْزِلْنِي مُنْزَلًا مُبَارَكًا وَأَنْتَ خَيْرُ الْمُنْزِلِينَ', 'My Lord, grant me a blessed landing, for You are the best of those who grant lodging. (Quran 23:29)'],
+    ['رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَتَوَفَّنَا مُسْلِمِينَ', 'Our Lord, pour patience upon us and let us die as Muslims. (Quran 7:126)'],
   ];
+  // Phonetic reading guides; Arabic is already displayed above.
+  static const duaPronunciations = <String, List<String>>{
+    'en': [
+      'Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar.',
+      'Rabbi zidni ilma.',
+      'Rabbana zalamna anfusana wa illam taghfir lana wa tarhamna lanakunanna minal-khasirin.',
+      'Rabbi ishrah li sadri.',
+      'Wa yassir li amri.',
+      'Rabbi hab li minas-salihin.',
+      'Rabbana taqabbal minna innaka antas-samiul-alim.',
+      'Rabbanaghfir li wa liwalidayya wa lil-mu’minina yawma yaqumul-hisab.',
+      'Rabbana la tuzigh qulubana ba’da idh hadaytana wa hab lana mil-ladunka rahmatan innaka antal-wahhab.',
+      'Rabbi la tadharni fardan wa anta khayrul-warithin.',
+      'Rabbi audhu bika min hamazatish-shayatin.',
+      'Rabbi anzilni munzalan mubarakan wa anta khayrul-munzilin.',
+      'Rabbana afrigh alayna sabran wa tawaffana muslimin.',
+    ],
+    'bn': [
+      'রাব্বানা আতিনা ফিদ্দুনিয়া হাসানাতান ওয়া ফিল আখিরাতি হাসানাতান ওয়া ক্বিনা আযাবান্নার।',
+      'রাব্বি যিদনী ইলমা।',
+      'রাব্বানা যলামনা আনফুসানা ওয়া ইল্লাম তাগফির লানা ওয়া তারহামনা লানাকূনান্না মিনাল খাসিরীন।',
+      'রাব্বিশরাহ লী সদরী।',
+      'ওয়া ইয়াসসির লী আমরী।',
+      'রাব্বি হাব লী মিনাস সালিহীন।',
+      'রাব্বানা তাকাব্বাল মিন্না ইন্নাকা আনতাস সামীউল আলীম।',
+      'রাব্বানাগফির লী ওয়া লিওয়ালিদাইয়্যা ওয়া লিল মুমিনীনা ইয়াওমা ইয়াকূমুল হিসাব।',
+      'রাব্বানা লা তুযিগ কুলূবানা বা’দা ইয হাদাইতানা ওয়া হাব লানা মিল্লাদুনকা রাহমাহ, ইন্নাকা আনতাল ওয়াহহাব।',
+      'রাব্বি লা তাযারনী ফারদাওঁ ওয়া আনতা খাইরুল ওয়ারিসীন।',
+      'রাব্বি আউযু বিকা মিন হামাযাতিশ শায়াতীন।',
+      'রাব্বি আনযিলনী মুনযালাম মুবারাকাওঁ ওয়া আনতা খাইরুল মুনযিলীন।',
+      'রাব্বানা আফরিগ আলাইনা সাবরাওঁ ওয়া তাওয়াফফানা মুসলিমীন।',
+    ],
+    'ko': [
+      '랍바나 아티나 핏둔야 하사나탄 와 필 아키라티 하사나탄 와 키나 아자반나르.',
+      '랍비 지드니 일마.',
+      '랍바나 잘람나 안푸사나 와 일람 타그피르 라나 와 타르함나 라나쿠난나 미날 카시린.',
+      '랍비 이슈라흐 리 사드리.',
+      '와 얏시르 리 암리.',
+      '랍비 합 리 미낫살리힌.',
+      '랍바나 타깝발 민나 인나카 안탓사미울 알림.',
+      '랍바나그피르 리 와 리왈리다이야 와 릴무미니나 야우마 야꾸물 히삽.',
+      '랍바나 라 투지그 꿀루바나 바다 이즈 하다이타나 와 합 라나 민 라둔카 라흐마, 인나카 안탈 와합.',
+      '랍비 라 타자르니 파르단 와 안타 카이룰 와리신.',
+      '랍비 아우주 비카 민 하마자티쉬 샤야틴.',
+      '랍비 안질니 문잘란 무바라칸 와 안타 카이룰 문질린.',
+      '랍바나 아프리그 알라이나 사브란 와 타와파나 무슬리민.',
+    ],
+  };
+  String? duaPronunciation() {
+    final lang = widget.language;
+    // Arabic and Urdu use Arabic script for the original text.
+    // Hide the separate phonetic line to avoid duplicate Arabic-script text.
+    if (lang == 'ar' || lang == 'ur') return null;
+
+    final pronunciations =
+        mptExtraQuranicDuaPronunciations[lang] ??
+        duaPronunciations[lang] ??
+        duaPronunciations['en'];
+    if (pronunciations == null || selected >= pronunciations.length) {
+      return null;
+    }
+    return pronunciations[selected];
+  }
   static const duaMeanings = <String, List<String>>{
     'bn': [
       'হে আমাদের রব! আমাদের দুনিয়ায় কল্যাণ দিন, আখিরাতেও কল্যাণ দিন এবং আগুনের শাস্তি থেকে রক্ষা করুন। (কুরআন ২:২০১)',
       'হে আমার রব! আমার জ্ঞান বৃদ্ধি করে দিন। (কুরআন ২০:১১৪)',
       'হে আমাদের রব! আমরা নিজেদের প্রতি জুলুম করেছি। আপনি ক্ষমা ও দয়া না করলে আমরা ক্ষতিগ্রস্তদের অন্তর্ভুক্ত হব। (কুরআন ৭:২৩)',
+      'হে আমার রব, আমার বক্ষ প্রশস্ত করে দিন। (কুরআন 20:25)',
+      'আর আমার কাজ সহজ করে দিন। (কুরআন 20:26)',
+      'হে আমার রব, আমাকে সৎ সন্তান দান করুন। (কুরআন 37:100)',
+      'হে আমাদের রব, আমাদের পক্ষ থেকে কবুল করুন; আপনি সর্বশ্রোতা, সর্বজ্ঞ। (কুরআন 2:127)',
+      'হে আমাদের রব, হিসাবের দিনে আমাকে, আমার পিতা-মাতাকে ও মুমিনদের ক্ষমা করুন। (কুরআন 14:41)',
+      'হে আমাদের রব, হেদায়াত দেওয়ার পর আমাদের অন্তরকে বিচ্যুত করবেন না; আপনার পক্ষ থেকে রহমত দিন। (কুরআন 3:8)',
+      'হে আমার রব, আমাকে সন্তানহীন রেখে দেবেন না; আপনিই সর্বোত্তম উত্তরাধিকারী। (কুরআন ২১:৮৯)',
+      'হে আমার রব, শয়তানদের কুমন্ত্রণা থেকে আপনার আশ্রয় চাই। (কুরআন 23:97)',
+      'হে আমার রব, আমাকে বরকতময় স্থানে অবতরণ করান; আপনিই সর্বোত্তম অবতরণকারী। (কুরআন 23:29)',
+      'হে আমাদের রব, আমাদের ওপর ধৈর্য ঢেলে দিন এবং মুসলিম হিসেবে মৃত্যু দিন। (কুরআন 7:126)',
     ],
     'ko': [
       '주님, 현세와 내세에서 저희에게 선을 베푸시고 불의 형벌에서 보호해 주소서. (꾸란 2:201)',
       '주님, 저의 지식을 더하여 주소서. (꾸란 20:114)',
       '주님, 저희는 스스로에게 잘못을 저질렀습니다. 용서와 자비를 베풀지 않으시면 저희는 손실을 입을 것입니다. (꾸란 7:23)',
+      '주님, 제 가슴을 넓혀 주소서. (꾸란 20:25)',
+      '제 일을 쉽게 해 주소서. (꾸란 20:26)',
+      '주님, 제게 의로운 자손을 허락해 주소서. (꾸란 37:100)',
+      '주님, 저희에게서 받아 주소서. 주님은 모든 것을 들으시고 아십니다. (꾸란 2:127)',
+      '주님, 심판의 날에 저와 부모님과 믿는 이들을 용서해 주소서. (꾸란 14:41)',
+      '주님, 저희를 인도하신 뒤 마음이 빗나가지 않게 하시고 자비를 베풀어 주소서. (꾸란 3:8)',
+      '주님, 저를 자녀 없이 홀로 남겨 두지 마소서. 주님은 가장 훌륭한 상속자이십니다. (꾸란 21:89)',
+      '주님, 악마들의 유혹으로부터 주님께 보호를 구합니다. (꾸란 23:97)',
+      '주님, 저를 복된 곳에 머물게 하소서. 주님은 가장 훌륭하게 머물 곳을 마련해 주시는 분이십니다. (꾸란 23:29)',
+      '주님, 저희에게 인내를 내려 주시고 무슬림으로 죽게 하소서. (꾸란 7:126)',
     ],
     'ar': [
       'ربنا آتنا خير الدنيا والآخرة وقنا عذاب النار. (البقرة ٢:٢٠١)',
       'رب زدني علماً. (طه ٢٠:١١٤)',
       'ربنا ظلمنا أنفسنا، وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين. (الأعراف ٧:٢٣)',
+      'يا رب، وسّع صدري ويسّر لي تحمّل المهمة. (طه ٢٠:٢٥)',
+      'يا رب، سهّل لي أمري. (طه ٢٠:٢٦)',
+      'يا رب، ارزقني ذرية صالحة. (الصافات ٣٧:١٠٠)',
+      'ربنا تقبل منا إنك أنت السميع العليم. (القرآن 2:127)',
+      'ربنا اغفر لي ولوالدي وللمؤمنين يوم يقوم الحساب. (القرآن 14:41)',
+      'ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة إنك أنت الوهاب. (القرآن 3:8)',
+      'يا رب، لا تتركني بلا ولد، وأنت خير الوارثين. (الأنبياء ٢١:٨٩)',
+      'رب أعوذ بك من همزات الشياطين. (القرآن 23:97)',
+      'يا رب، أنزلني في مكان مبارك، وأنت خير من يُنزل عباده. (المؤمنون ٢٣:٢٩)',
+      'ربنا أفرغ علينا صبرا وتوفنا مسلمين. (القرآن 7:126)',
     ],
   };
-  String duaMeaning() => duaMeanings[widget.language]?[selected] ?? duas[selected][1];
+  String duaMeaning() => mptQuranicDuaMeanings[widget.language]?[selected] ?? duaMeanings[widget.language]?[selected] ?? duas[selected][1];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
-    const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
-    _GoldCard(child: Column(children: [Text('Dua ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
+    const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), maxLines: 2, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
+    _GoldCard(child: Column(children: [Text('${uix(widget.language, 'duaNumber')} ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), if (duaPronunciation() != null) ...[Text(duaPronunciation()!, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, height: 1.7, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)), const SizedBox(height: 12)], Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),
     const SizedBox(height: 20), _GoldCard(child: Column(children: [Text(tr(widget.language, 'tasbihCounter'), style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900)), const Icon(Icons.grain, color: emerald, size: 46), Text('$count', style: const TextStyle(fontSize: 45, fontWeight: FontWeight.w900, color: emerald)), Row(mainAxisAlignment: MainAxisAlignment.center, children: [IconButton(onPressed: () => setState(() => count = 0), icon: const Icon(Icons.restart_alt)), const SizedBox(width: 22), FilledButton(onPressed: () => setState(() => count++), child: const Icon(Icons.add))])])),
   ])));
 }
@@ -824,9 +1173,24 @@ class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key, required this.city, required this.hanafi, required this.language});
   @override State<NotificationPage> createState() => _NotificationPageState();
 }
+
+const _premiumAdhanLabels = <String, Map<String, String>>{
+  'en': {'auto':'Automatic Adhan','autoHint':'Play the Adhan at prayer times.','intro':'Play Adhan automatically at prayer times','prayers':'Prayer Adhan','prayersHint':'Choose which prayers will play the Adhan.','duration':'Adhan Duration','durationHint':'Select the length of the Adhan.','listen':'Listen to the Adhan','save':'Save Settings'},
+  'bn': {'auto':'স্বয়ংক্রিয় আজান','autoHint':'নামাজের সময় আজান বাজবে।','intro':'নামাজের সময় স্বয়ংক্রিয় আজান শুনুন','prayers':'নামাজের আজান','prayersHint':'যে ওয়াক্তে আজান বাজবে তা নির্বাচন করুন।','duration':'আজানের দৈর্ঘ্য','durationHint':'আজানের দৈর্ঘ্য নির্বাচন করুন।','listen':'আজান শুনে দেখুন','save':'সেটিংস সংরক্ষণ'},
+  'ko': {'auto':'자동 아잔','autoHint':'기도 시간에 아잔을 재생합니다.','intro':'기도 시간에 아잔 자동 재생','prayers':'기도별 아잔','prayersHint':'아잔을 재생할 기도를 선택하세요.','duration':'아잔 길이','durationHint':'아잔 길이를 선택하세요.','listen':'아잔 들어보기','save':'설정 저장'},
+  'ar': {'auto':'الأذان التلقائي','autoHint':'تشغيل الأذان في أوقات الصلاة.','intro':'تشغيل الأذان تلقائيًا عند الصلاة','prayers':'أذان الصلوات','prayersHint':'اختر الصلوات التي يُشغّل لها الأذان.','duration':'مدة الأذان','durationHint':'اختر طول الأذان.','listen':'استمع إلى الأذان','save':'حفظ الإعدادات'},
+  'ur': {'auto':'خودکار اذان','autoHint':'نماز کے وقت اذان چلائیں۔','intro':'نماز کے وقت خودکار اذان','prayers':'نماز کی اذان','prayersHint':'اذان کے لیے نمازیں منتخب کریں۔','duration':'اذان کا دورانیہ','durationHint':'اذان کی لمبائی منتخب کریں۔','listen':'اذان سنیں','save':'ترتیبات محفوظ کریں'},
+  'uz': {'auto':'Avtomatik azon','autoHint':'Namoz vaqtida azon yangraydi.','intro':'Namoz vaqtida avtomatik azon','prayers':'Namoz azoni','prayersHint':'Azon chalinadigan namozlarni tanlang.','duration':'Azon davomiyligi','durationHint':'Azon uzunligini tanlang.','listen':'Azonni tinglash','save':'Sozlamalarni saqlash'},
+  'id': {'auto':'Adzan otomatis','autoHint':'Putar adzan saat waktu salat.','intro':'Putar adzan otomatis saat salat','prayers':'Adzan salat','prayersHint':'Pilih salat yang membunyikan adzan.','duration':'Durasi adzan','durationHint':'Pilih panjang adzan.','listen':'Dengarkan adzan','save':'Simpan pengaturan'},
+  'hi': {'auto':'स्वचालित अज़ान','autoHint':'नमाज़ के समय अज़ान बजाएँ।','intro':'नमाज़ के समय अपने आप अज़ान','prayers':'नमाज़ की अज़ान','prayersHint':'अज़ान के लिए नमाज़ें चुनें।','duration':'अज़ान की अवधि','durationHint':'अज़ान की लंबाई चुनें।','listen':'अज़ान सुनें','save':'सेटिंग्स सहेजें'},
+};
+String premiumAdhanLabel(String lang, String key) =>
+    _premiumAdhanLabels[lang]?[key] ?? _premiumAdhanLabels['en']![key]!;
+
 class _NotificationPageState extends State<NotificationPage> {
   List<bool> enabled = List.filled(5, true);
   bool sound = true;
+  bool automaticAdhan = true;
   final adhanAudio = AdhanAudioService();
   bool adhanReady = false;
   @override void initState() { super.initState(); _load(); _loadAdhan(); }
@@ -834,68 +1198,251 @@ class _NotificationPageState extends State<NotificationPage> {
     await adhanAudio.load();
     if (mounted) setState(() => adhanReady = true);
   }
-  @override void dispose() {
-    adhanAudio.dispose();
-    super.dispose();
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      enabled = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true);
+      sound = prefs.getBool('sound') ?? true;
+      automaticAdhan = prefs.getBool('mpt_automatic_adhan') ?? true;
+    });
   }
-  Future<void> _load() async { final prefs = await SharedPreferences.getInstance(); if (mounted) setState(() { enabled = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true); sound = prefs.getBool('sound') ?? true; }); }
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(tr(widget.language, 'prayerAlerts'))), body: ListView(padding: const EdgeInsets.all(18), children: [
-    const IslamicHeroBanner(compact: true), const SizedBox(height: 18),
-    ...List.generate(5, (i) => _GoldCard(child: SwitchListTile(contentPadding: EdgeInsets.zero, secondary: Icon([Icons.nightlight_round, Icons.wb_sunny, Icons.sunny, Icons.wb_twilight, Icons.nights_stay][i], color: emerald), title: Text(prayerNames[widget.language]![i]), value: enabled[i], onChanged: (v) async { setState(() => enabled[i] = v); (await SharedPreferences.getInstance()).setBool('prayer_$i', v); }))),
-    if (adhanReady) ...[
-      const SizedBox(height: 16),
-      _GoldCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('Adhan settings · আজান সেটিংস', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 10),
-        RadioListTile<AdhanLength>(
-          title: const Text('Full Adhan · পূর্ণ আজান'),
-          value: AdhanLength.full,
-          groupValue: adhanAudio.length,
-          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
-        ),
-        RadioListTile<AdhanLength>(
-          title: const Text('Short Adhan · সংক্ষিপ্ত আজান'),
-          value: AdhanLength.short,
-          groupValue: adhanAudio.length,
-          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
-        ),
-        SwitchListTile(
-          title: const Text('Special Fajr Adhan'),
-          subtitle: const Text('ফজরের বিশেষ আজান চালু'),
-          value: adhanAudio.specialFajr,
-          onChanged: (v) async { await adhanAudio.setSpecialFajr(v); if (mounted) setState(() {}); },
-        ),
-        Wrap(spacing: 8, runSpacing: 8, children: [
-          OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: false); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: const Text('Preview Adhan'),
-          ),
-          OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: true); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio error: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: const Text('Preview Fajr'),
-          ),
-          OutlinedButton.icon(
-            onPressed: () async { await adhanAudio.stop(); },
-            icon: const Icon(Icons.stop), label: const Text('Stop'),
-          ),
-        ]),
-        const SizedBox(height: 8),
-        const Text('Preview plays inside the app. Save & Schedule Alerts also schedules Android Adhan audio. Allow precise alarms in Settings; Android battery restrictions may delay playback.', style: TextStyle(fontSize: 12, color: muted)),
+  @override void dispose() { adhanAudio.dispose(); super.dispose(); }
+
+  Widget panel(Widget child) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: dark ? Theme.of(context).colorScheme.surface : Colors.white,
+        borderRadius: BorderRadius.circular(23),
+        border: Border.all(color: emerald.withValues(alpha: .13)),
+        boxShadow: dark ? null : [BoxShadow(
+          color: deepGreen.withValues(alpha: .1), blurRadius: 14,
+          offset: const Offset(0, 5))],
+      ),
+      child: child,
+    );
+  }
+  Widget heading(IconData icon, String title, String subtitle) => Row(children: [
+    Container(width: 48, height: 48,
+      decoration: BoxDecoration(color: const Color(0xFFE0F3E7),
+        borderRadius: BorderRadius.circular(15)),
+      child: Icon(icon, color: emerald, size: 27)),
+    const SizedBox(width: 12),
+    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 19,
+          fontWeight: FontWeight.w900)),
+        Text(subtitle, style: TextStyle(fontSize: 12,
+          color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ])),
-    ],
-    const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
-    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${tr(widget.language, 'notificationSuccess')} Automatic Adhan scheduled.'))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
-    const SizedBox(height: 10),
-    OutlinedButton.icon(onPressed: () async {
-      try {
-        await scheduleTestNotification(language: widget.language);
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tr(widget.language, 'testSuccess'))));
-      } catch (e) {
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')));
+  ]);
+
+  Future<void> save() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('mpt_automatic_adhan', automaticAdhan);
+      // Preserve original local-notification schedule and sound preference.
+      await schedulePrayerAlerts(widget.city, widget.hanafi,
+          sound: sound, enabled: enabled);
+      if (!automaticAdhan && defaultTargetPlatform == TargetPlatform.android) {
+        // The existing scheduler also schedules native audio; disable only audio.
+        await nativeAdhanChannel.invokeMethod<void>('cancelAll');
       }
-    }, icon: const Icon(Icons.notification_add_outlined), label: Text(tr(widget.language, 'testAlert'))),
-    const SizedBox(height: 12), Text(tr(widget.language, 'notifyHint'), style: const TextStyle(fontSize: 12, color: muted)),
-  ]));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(uix(widget.language, 'adhanSuccess'))));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')));
+    }
+  }
+
+  @override Widget build(BuildContext context) {
+    final lang = widget.language;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    const prayerIcons = [Icons.nightlight_round, Icons.wb_sunny,
+      Icons.sunny, Icons.wb_twilight, Icons.nights_stay];
+    return Scaffold(
+      backgroundColor: dark ? null : const Color(0xFFE4F1E9),
+      appBar: AppBar(
+        backgroundColor: dark ? null : const Color(0xFFE4F1E9),
+        title: Text(atx(lang, 'adhanSettings'),
+          style: const TextStyle(fontWeight: FontWeight.w800))),
+      body: ListView(padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
+        children: [
+          Text(premiumAdhanLabel(lang, 'intro'),
+            style: TextStyle(fontSize: 13,
+              color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          const SizedBox(height: 16),
+          panel(Row(children: [
+            Container(width: 55, height: 55,
+              decoration: BoxDecoration(color: const Color(0xFFE0F3E7),
+                borderRadius: BorderRadius.circular(15)),
+              child: const Icon(Icons.mosque, color: emerald, size: 31)),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(premiumAdhanLabel(lang, 'auto'), style: const TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.w900)),
+                Text(premiumAdhanLabel(lang, 'autoHint'),
+                  style: TextStyle(fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              ])),
+            Switch.adaptive(value: automaticAdhan,
+              activeTrackColor: emerald,
+              onChanged: (v) => setState(() => automaticAdhan = v)),
+          ])),
+          const SizedBox(height: 14),
+          panel(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            heading(Icons.event_available, premiumAdhanLabel(lang, 'prayers'),
+              premiumAdhanLabel(lang, 'prayersHint')),
+            const SizedBox(height: 16),
+            Row(children: List.generate(5, (i) => Expanded(
+              child: Padding(padding: EdgeInsets.only(right: i == 4 ? 0 : 4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: dark ? deepGreen.withValues(alpha: .45)
+                      : const Color(0xFFF0F8F3),
+                    borderRadius: BorderRadius.circular(15)),
+                  child: Column(children: [
+                    Icon(prayerIcons[i], size: 22,
+                      color: i >= 1 && i <= 3 ? const Color(0xFFE0A025) : emerald),
+                    const SizedBox(height: 6),
+                    FittedBox(fit: BoxFit.scaleDown,
+                      child: Text(prayerNames['en']![i],
+                        style: const TextStyle(fontSize: 12,
+                          fontWeight: FontWeight.w800))),
+                    FittedBox(fit: BoxFit.scaleDown,
+                      child: Text(prayerNames[lang]![i],
+                        style: const TextStyle(fontSize: 10))),
+                    Transform.scale(scale: .69,
+                      child: Switch.adaptive(value: enabled[i],
+                        activeTrackColor: emerald,
+                        onChanged: (v) async {
+                          setState(() => enabled[i] = v);
+                          (await SharedPreferences.getInstance())
+                            .setBool('prayer_$i', v);
+                        })),
+                  ]),
+                )),
+            ))),
+          ])),
+          const SizedBox(height: 14),
+          if (adhanReady) ...[
+            panel(Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                heading(Icons.music_note, premiumAdhanLabel(lang, 'duration'),
+                  premiumAdhanLabel(lang, 'durationHint')),
+                const SizedBox(height: 16),
+                SizedBox(width: double.infinity,
+                  child: SegmentedButton<AdhanLength>(
+                    showSelectedIcon: true,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith((states) =>
+                        states.contains(WidgetState.selected)
+                          ? emerald : Colors.transparent),
+                      foregroundColor: WidgetStateProperty.resolveWith((states) =>
+                        states.contains(WidgetState.selected)
+                          ? Colors.white : Theme.of(context).colorScheme.onSurface)),
+                    segments: [
+                      ButtonSegment(value: AdhanLength.full,
+                        label: Text(atx(lang, 'fullAdhan'))),
+                      ButtonSegment(value: AdhanLength.short,
+                        label: Text(atx(lang, 'shortAdhan'))),
+                    ],
+                    selected: {adhanAudio.length},
+                    onSelectionChanged: (values) async {
+                      await adhanAudio.setLength(values.first);
+                      if (mounted) setState(() {});
+                    },
+                  )),
+              ])),
+            const SizedBox(height: 14),
+            panel(Row(children: [
+              const Icon(Icons.mosque, color: emerald, size: 29),
+              const SizedBox(width: 12),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(atx(lang, 'specialFajr'),
+                    style: const TextStyle(fontSize: 17,
+                      fontWeight: FontWeight.w800)),
+                  Text(atx(lang, 'specialFajrHint'),
+                    style: TextStyle(fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                ])),
+              Switch.adaptive(value: adhanAudio.specialFajr,
+                activeTrackColor: emerald,
+                onChanged: (v) async {
+                  await adhanAudio.setSpecialFajr(v);
+                  if (mounted) setState(() {});
+                }),
+            ])),
+            const SizedBox(height: 14),
+            Material(color: emerald, borderRadius: BorderRadius.circular(23),
+              child: InkWell(borderRadius: BorderRadius.circular(23),
+                onTap: () async {
+                  try { await adhanAudio.preview(fajr: false); }
+                  catch (e) { if (mounted) ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('$e'))); }
+                },
+                child: Padding(padding: const EdgeInsets.all(19),
+                  child: Row(children: [
+                    const CircleAvatar(radius: 26, backgroundColor: Colors.white,
+                      child: Icon(Icons.play_arrow, color: emerald, size: 32)),
+                    const SizedBox(width: 15),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(atx(lang, 'previewAdhan'),
+                          style: const TextStyle(color: Colors.white,
+                            fontSize: 20, fontWeight: FontWeight.w900)),
+                        Text(premiumAdhanLabel(lang, 'listen'),
+                          style: TextStyle(color: Colors.white70)),
+                      ])),
+                    const Icon(Icons.graphic_eq, color: Colors.white70, size: 34),
+                  ]),
+                ))),
+            const SizedBox(height: 7),
+            Row(children: [
+              Expanded(child: OutlinedButton.icon(
+                onPressed: () async {
+                  try { await adhanAudio.preview(fajr: true); }
+                  catch (e) { if (mounted) ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('$e'))); }
+                }, icon: const Icon(Icons.nights_stay_outlined),
+                label: FittedBox(fit: BoxFit.scaleDown, child: Text(atx(lang, 'previewFajr'))))),
+              const SizedBox(width: 8),
+              Expanded(child: OutlinedButton.icon(onPressed: () async { await adhanAudio.stop(); },
+                icon: const Icon(Icons.stop), label: FittedBox(fit: BoxFit.scaleDown,
+                  child: Text(atx(lang, 'stopAdhan'))))),
+            ]),
+            const SizedBox(height: 14),
+          ],
+          SizedBox(height: 56,
+            child: FilledButton.icon(onPressed: save,
+              style: FilledButton.styleFrom(backgroundColor: emerald,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(19))),
+              icon: const Icon(Icons.check, size: 26),
+              label: FittedBox(fit: BoxFit.scaleDown, child: Text(premiumAdhanLabel(lang, 'save'), style: const TextStyle(
+                fontSize: 19, fontWeight: FontWeight.w800))))),
+          const SizedBox(height: 10),
+          TextButton.icon(onPressed: () async {
+            try {
+              await scheduleTestNotification(language: lang);
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(tr(lang, 'testSuccess'))));
+            } catch (e) {
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$e')));
+            }
+          }, icon: const Icon(Icons.notification_add_outlined),
+            label: Text(tr(lang, 'testAlert'))),
+          Text(atx(lang, 'adhanHelp'), style: TextStyle(fontSize: 11,
+            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        ],
+      ),
+    );
+  }
 }
