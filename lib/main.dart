@@ -999,7 +999,7 @@ class _DuaPageState extends State<DuaPage> {
       'ربنا أفرغ علينا صبرا وتوفنا مسلمين. (القرآن 7:126)',
     ],
   };
-  String duaMeaning() => duaMeanings[widget.language]?[selected] ?? duas[selected][1];
+  String duaMeaning() => mptQuranicDuaMeanings[widget.language]?[selected] ?? duaMeanings[widget.language]?[selected] ?? duas[selected][1];
   @override Widget build(BuildContext context) => Scaffold(body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18), Text(tr(widget.language, 'dailyDua'), maxLines: 2, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)), const SizedBox(height: 14),
     _GoldCard(child: Column(children: [Text('${uix(widget.language, 'duaNumber')} ${selected + 1}/${duas.length}', style: const TextStyle(color: emerald, fontWeight: FontWeight.w800)), const SizedBox(height: 18), Text(duas[selected][0], textDirection: ui.TextDirection.rtl, textAlign: TextAlign.center, style: const TextStyle(fontSize: 25, height: 1.9)), const SizedBox(height: 16), if (duaPronunciation() != null) ...[Text(duaPronunciation()!, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, height: 1.7, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary)), const SizedBox(height: 12)], Text(duaMeaning(), textAlign: TextAlign.center), const SizedBox(height: 14), Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [IconButton(onPressed: () => setState(() => selected = (selected + duas.length - 1) % duas.length), icon: const Icon(Icons.chevron_left)), IconButton(onPressed: () => setState(() => selected = (selected + 1) % duas.length), icon: const Icon(Icons.chevron_right))])])),

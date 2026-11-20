@@ -307,7 +307,7 @@ class _Surah {
   final List<String> verses, roman;
   final String bnMeaning, enMeaning, koMeaning;
   const _Surah(this.number,this.enName,this.bnName,this.koName,this.arName,this.verses,this.roman,this.bnMeaning,this.enMeaning,this.koMeaning);
-  String title(String lang) => lang == 'bn' ? bnName : lang == 'ko' ? koName : lang == 'ar' ? arName : enName;
+  String title(String lang) => mptExtraSurahNames[lang]?[number] ?? (lang == 'bn' ? bnName : lang == 'ko' ? koName : lang == 'ar' ? arName : enName);
   String meaning(String lang) => lang == 'bn' ? bnMeaning : lang == 'ko' ? koMeaning : enMeaning;
 }
 
@@ -376,11 +376,11 @@ class _SurahReaderState extends State<_SurahReader> {
         if(showMeaning) Padding(
           padding:const EdgeInsets.only(top:8),
           child:Text(
-            (mptVerseMeanings[s.number] != null && mptVerseMeanings[s.number]!.length > i)
-                ? (mptVerseMeanings[s.number]![i][lang] ??
-                    mptVerseMeanings[s.number]![i]['en'] ??
-                    s.meaning(lang))
-                : s.meaning(lang),
+            mptExtraVerseMeanings[lang]?[s.number]?[i] ??
+                ((mptVerseMeanings[s.number] != null && mptVerseMeanings[s.number]!.length > i)
+                    ? (mptVerseMeanings[s.number]![i][lang] ??
+                        mptVerseMeanings[s.number]![i]['en'] ?? s.meaning(lang))
+                    : s.meaning(lang)),
             style:const TextStyle(fontSize:15,height:1.6),
           ),
         ),
