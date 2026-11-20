@@ -147,7 +147,7 @@ class _MptAllahNamesPageState extends State<MptAllahNamesPage> {
                   );
                 },childCount:filtered.length),
               );
-            }))),
+            })),
           SliverToBoxAdapter(child:Padding(padding:const EdgeInsets.all(18),
             child:Text(_t(l,15)+'\n'+_t(l,11),textAlign:TextAlign.center,
               style:TextStyle(fontSize:12,color:Theme.of(context).hintColor)))),
