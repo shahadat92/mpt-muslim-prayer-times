@@ -1,3 +1,4 @@
+import 'mpt_extra_languages.dart';
 import 'mpt_verse_meanings.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ String learningLabel(String lang, String key) {
     'reference': {'en':'Reference','bn':'উৎস','ko':'출처','ar':'المصدر'},
     'note': {'en':'Bengali and Korean readings are approximate learning aids; verify recitation with a qualified teacher.','bn':'বাংলা ও কোরিয়ান উচ্চারণ আনুমানিক সহায়ক; শুদ্ধ তিলাওয়াতের জন্য যোগ্য শিক্ষকের কাছে যাচাই করুন।','ko':'음역은 학습 보조 자료이며 정확한 아랍어 낭송을 대체하지 않습니다.','ar':'النقل الصوتي للتعلم ولا يغني عن التلاوة الصحيحة.'},
   };
-  return words[key]?[lang] ?? words[key]?['en'] ?? key;
+  return mptLearningLabels[lang]?[key] ?? words[key]?[lang] ?? words[key]?['en'] ?? key;
 }
 
 const _entryLocalization = <String, List<String>>{
@@ -80,10 +81,10 @@ String _localizedEntryTitle(_Entry d, String lang) {
   final v = _entryLocalization[d.title];
   if (v == null) {
     final k = _kalimaTitles[d.title];
-    if (k != null) return lang == 'bn' ? k[0] : lang == 'ko' ? k[1] : lang == 'ar' ? k[2] : d.title;
-    return d.title;
+    if (k != null) return mptDuaTitles[lang]?[d.title] ?? (lang == 'bn' ? k[0] : lang == 'ko' ? k[1] : lang == 'ar' ? k[2] : d.title);
+    return mptDuaTitles[lang]?[d.title] ?? d.title;
   }
-  return lang == 'bn' ? v[0] : lang == 'ko' ? v[1] : lang == 'ar' ? v[2] : d.title;
+  return mptDuaTitles[lang]?[d.title] ?? (lang == 'bn' ? v[0] : lang == 'ko' ? v[1] : lang == 'ar' ? v[2] : d.title);
 }
 // Complete reading guides for the six traditional Kalimas and Ayatul Kursi.
 // Approximate script aids only: recitation must be learned from Arabic/tajwid.
@@ -330,8 +331,8 @@ class SurahLibraryPage extends StatelessWidget {
 
 // Adjustable Arabic text size shared by Surah and Dua readers.
 Widget _arabicSizeControl(String language, double size, ValueChanged<double> onChanged) {
-  final label = language == 'bn' ? 'আরবি লেখার আকার' : language == 'ko'
-      ? '아랍어 글자 크기' : language == 'ar' ? 'حجم الخط العربي' : 'Arabic text size';
+  final label = mptExtraTranslations[language]?['arabicSize'] ?? (language == 'bn' ? 'আরবি লেখার আকার' : language == 'ko'
+      ? '아랍어 글자 크기' : language == 'ar' ? 'حجم الخط العربي' : 'Arabic text size');
   return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
     Row(children: [
       const Icon(Icons.format_size, size: 20, color: _green),
@@ -505,7 +506,7 @@ class _DuaCollectionState extends State<_DuaCollection> {
           Text(_localizedEntryPron(d,widget.language),style:TextStyle(fontSize:15,color:Theme.of(context).colorScheme.primary,height:1.7)),
         ],
         const SizedBox(height:10),Text(learningLabel(widget.language,'meaning'),style:const TextStyle(fontWeight:FontWeight.bold)),
-        Text(widget.language=='bn'?d.bn:widget.language=='ko'?d.ko:widget.language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en,style:const TextStyle(fontSize:15,height:1.6)),
+        Text(mptDuaMeanings[widget.language]?[d.title] ?? (widget.language=='bn'?d.bn:widget.language=='ko'?d.ko:widget.language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en),style:const TextStyle(fontSize:15,height:1.6)),
         const SizedBox(height:8),Text('${learningLabel(widget.language,'reference')}: ${d.reference}',style:const TextStyle(fontSize:11,color:Colors.grey)),
       ])));
     })),

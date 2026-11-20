@@ -1,3 +1,4 @@
+import 'mpt_extra_languages.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
@@ -102,6 +103,10 @@ const translations = <String, Map<String, String>>{
   'bn': {'home':'হোম','qibla':'কিবলা','calendar':'ক্যালেন্ডার','settings':'সেটিংস','next':'পরবর্তী নামাজ','today':'আজকের নামাজের সময়','remaining':'বাকি সময়','location':'আমার অবস্থান','alerts':'নামাজের নোটিফিকেশন চালু','calculation':'গণনার পদ্ধতি','asr':'আসরের পদ্ধতি','language':'ভাষা','appearance':'থিম','light':'লাইট','dark':'ডার্ক','hijri':'হিজরি ক্যালেন্ডার','sehri':'সেহরি শেষ (ফজর)','iftar':'ইফতার (মাগরিব)','notice':'হিজরি তারিখ আনুমানিক; স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','prayer':'যেখানেই থাকুন, নামাজের সাথে','sound':'নোটিফিকেশনের শব্দ','soundHint':'ফোনের অ্যালার্ট টোন; পূর্ণ আজান নয়','refreshHint':'পরবর্তী নামাজের অ্যালার্ট নবায়ন করতে অ্যাপ খুলুন।','compassHelp':'ফোন সমতল রাখুন ও চুম্বক থেকে দূরে রাখুন।','compassUnavailable':'কম্পাস সেন্সর নেই; নিচের দিকনির্দেশনা দেখুন।','selectCity':'শহর নির্বাচন','gps':'জিপিএস অবস্থান','about':'নামাজের সময় গণনাভিত্তিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notificationSuccess':'পরবর্তী ১০ দিনের নামাজের অ্যালার্ট নির্ধারিত হয়েছে।','permission':'লোকেশন অনুমতি প্রয়োজন।','method':'মুসলিম ওয়ার্ল্ড লীগ (MWL)','duaTab':'দোয়া','ramadan':'রমজান','tasbih':'তাসবিহ','prayerAlerts':'নামাজের নোটিফিকেশন','manageAlerts':'প্রতিটি ওয়াক্তের অ্যালার্ট নিয়ন্ত্রণ','saveAlerts':'সংরক্ষণ ও অ্যালার্ট চালু','testAlert':'১০ সেকেন্ডের টেস্ট নোটিফিকেশন','testSuccess':'১০ সেকেন্ড পর পরীক্ষামূলক নোটিফিকেশন আসার কথা।','hijriAdjust':'হিজরি তারিখ সমন্বয়','hijriHint':'স্থানীয় মসজিদের চাঁদ দেখার হিসাবে ±২ দিন ঠিক করুন।','reset':'রিসেট','tasbihCounter':'তাসবিহ কাউন্টার','dailyDua':'প্রতিদিনের দোয়া ও তাসবিহ','ramadanHere':'রমজান চলছে','ramadanStarts':'আনুমানিক রমজান শুরু হতে বাকি','days':'দিন','ramadanNotice':'রমজানের তারিখ আনুমানিক। স্থানীয় মসজিদের সঙ্গে মিলিয়ে নিন।','notifyHint':'ফোনের নোটিফিকেশন টোন ব্যবহার করে। অ্যান্ড্রয়েডে অ্যালার্ট দেরি হতে পারে।','adSpace':'বিজ্ঞাপনের স্থান · AdMob চালু হয়নি'},
   'ko': {'home':'홈','qibla':'키블라','calendar':'달력','settings':'설정','next':'다음 기도','today':'오늘의 기도 시간','remaining':'남은 시간','location':'현재 위치','alerts':'기도 알림 켜기','calculation':'계산 방식','asr':'아스르 계산','language':'언어','appearance':'테마','light':'라이트','dark':'다크','hijri':'히즈리 달력','sehri':'수후르 종료 (파즈르)','iftar':'이프타르 (마그리브)','notice':'히즈리 날짜는 근사치입니다. 현지 모스크에 확인하세요.','prayer':'어디서나 기도를','sound':'알림 소리','soundHint':'기본 알림음 (전체 아잔 녹음 아님)','refreshHint':'알림을 갱신하려면 앱을 다시 여세요.','compassHelp':'휴대전화를 수평으로 두고 자석에서 멀리하세요.','compassUnavailable':'나침반 센서를 사용할 수 없습니다. 아래 각도를 참고하세요.','selectCity':'도시 선택','gps':'GPS 위치','about':'기도 시간은 계산된 추정치입니다. 현지 모스크에 확인하세요.','notificationSuccess':'향후 10일간의 기도 알림이 예약되었습니다.','permission':'위치 권한이 필요합니다.','method':'세계무슬림연맹 (MWL)','duaTab':'두아','ramadan':'라마단','tasbih':'타스비흐','prayerAlerts':'기도 알림','manageAlerts':'기도별 알림 설정','saveAlerts':'알림 저장 및 예약','testAlert':'10초 후 테스트 알림','testSuccess':'10초 후 테스트 알림이 예약되었습니다.','hijriAdjust':'히즈리 날짜 조정','hijriHint':'현지 모스크 기준 ±2일 조정','reset':'초기화','tasbihCounter':'타스비흐 카운터','dailyDua':'매일 두아와 타스비흐','ramadanHere':'라마단 기간','ramadanStarts':'라마단 예상 시작까지','days':'일','ramadanNotice':'라마단 날짜는 추정치입니다. 현지 모스크에서 확인하세요.','notifyHint':'기본 알림음을 사용합니다. Android에서 지연될 수 있습니다.','adSpace':'광고 공간 · AdMob 미설정'},
   'ar': {'home':'الرئيسية','qibla':'القبلة','calendar':'التقويم','settings':'الإعدادات','next':'الصلاة القادمة','today':'مواقيت الصلاة اليوم','remaining':'الوقت المتبقي','location':'موقعي','alerts':'تفعيل تنبيهات الصلاة','calculation':'طريقة الحساب','asr':'حساب العصر','language':'اللغة','appearance':'المظهر','light':'فاتح','dark':'داكن','hijri':'التقويم الهجري','sehri':'نهاية السحور (الفجر)','iftar':'الإفطار (المغرب)','notice':'التاريخ الهجري تقريبي؛ يرجى التأكد من المسجد المحلي.','prayer':'الصلاة أينما كنت','sound':'صوت التنبيه','soundHint':'نغمة الهاتف الافتراضية وليست أذاناً كاملاً','refreshHint':'افتح التطبيق لتجديد التنبيهات القادمة.','compassHelp':'أبق الهاتف مستوياً وبعيداً عن المغناطيس.','compassUnavailable':'مستشعر البوصلة غير متاح. استخدم الزاوية أدناه.','selectCity':'اختر مدينة','gps':'موقع GPS','about':'مواقيت الصلاة تقديرية بالحساب؛ تحقق من المسجد المحلي.','notificationSuccess':'تم جدولة تنبيهات الصلاة لعشرة أيام.','permission':'يلزم إذن الموقع.','method':'رابطة العالم الإسلامي (MWL)','duaTab':'الدعاء','ramadan':'رمضان','tasbih':'التسبيح','prayerAlerts':'تنبيهات الصلاة','manageAlerts':'إدارة تنبيهات الصلوات','saveAlerts':'حفظ وجدولة التنبيهات','testAlert':'اختبار التنبيه بعد 10 ثوانٍ','testSuccess':'تمت جدولة تنبيه تجريبي بعد 10 ثوانٍ.','hijriAdjust':'ضبط التاريخ الهجري','hijriHint':'اضبط ±يومين حسب رؤية الهلال المحلية','reset':'إعادة تعيين','tasbihCounter':'عداد التسبيح','dailyDua':'دعاء وتسبيح يومي','ramadanHere':'رمضان مبارك','ramadanStarts':'بداية رمضان المتوقعة بعد','days':'أيام','ramadanNotice':'مواعيد رمضان تقديرية؛ تحقق من المسجد المحلي.','notifyHint':'يستخدم صوت تنبيه الهاتف وقد يتأخر على أندرويد.','adSpace':'مساحة إعلان · AdMob غير مفعّل'},
+  'ur': {'home':'ہوم','qibla':'قبلہ','calendar':'کیلنڈر','settings':'ترتیبات','next':'اگلی نماز','today':'آج کی نمازوں کے اوقات','remaining':'باقی وقت','location':'میرا مقام استعمال کریں','alerts':'نماز کی اطلاعات فعال کریں','calculation':'حساب کا طریقہ','asr':'عصر کا حساب','language':'زبان','appearance':'ظاہری شکل','light':'روشن','dark':'تاریک','hijri':'ہجری کیلنڈر','sehri':'سحری ختم (فجر)','iftar':'افطار (مغرب)','notice':'ہجری تاریخ تخمینی ہے؛ مقامی مسجد سے تصدیق کریں۔','prayer':'آپ جہاں بھی ہوں، نماز','sound':'اطلاع کی آواز','soundHint':'فون کی اطلاع کی آواز (مکمل اذان نہیں)','refreshHint':'آئندہ اطلاعات تازہ کرنے کے لیے ایپ دوبارہ کھولیں۔','compassHelp':'فون سیدھا رکھیں اور مقناطیس سے دور رکھیں۔','compassUnavailable':'کمپاس دستیاب نہیں؛ نیچے درج زاویہ دیکھیں۔','selectCity':'شہر منتخب کریں','gps':'جی پی ایس مقام','about':'نماز کے اوقات حسابی اندازے ہیں؛ مقامی مسجد سے تصدیق کریں۔','notificationSuccess':'اگلے ۱۰ دن کی نماز کی اطلاعات مقرر ہو گئیں۔','permission':'مقام کی اجازت درکار ہے۔','method':'مسلم ورلڈ لیگ (MWL)','duaTab':'دعا','ramadan':'رمضان','tasbih':'تسبیح','prayerAlerts':'نماز کی اطلاعات','manageAlerts':'ہر نماز کی اطلاع کا انتظام','saveAlerts':'محفوظ کریں اور اطلاعات مقرر کریں','testAlert':'آزمائشی اطلاع (۱۰ سیکنڈ)','testSuccess':'آزمائشی اطلاع مقرر ہو گئی۔','hijriAdjust':'ہجری تاریخ کی درستی','hijriHint':'مقامی رویتِ ہلال کے مطابق ±۲ دن درست کریں۔','reset':'دوبارہ ترتیب دیں','tasbihCounter':'تسبیح کاؤنٹر','dailyDua':'روزانہ دعائیں اور تسبیح','ramadanHere':'رمضان جاری ہے','ramadanStarts':'رمضان شروع ہونے میں متوقع دن','days':'دن','ramadanNotice':'رمضان کی تاریخ تخمینی ہے؛ مقامی مسجد سے تصدیق کریں۔','notifyHint':'فون کی اطلاع کی آواز استعمال ہوتی ہے۔','adSpace':'اشتہار کی جگہ · AdMob فعال نہیں'},
+  'uz': {'home':'Bosh sahifa','qibla':'Qibla','calendar':'Taqvim','settings':'Sozlamalar','next':'KEYINGI NAMOZ','today':'Bugungi namoz vaqtlari','remaining':'Qolgan vaqt','location':'Joylashuvimdan foydalanish','alerts':'Namoz bildirishnomalarini yoqish','calculation':'Hisoblash usuli','asr':'Asr hisobi','language':'Til','appearance':'Ko‘rinish','light':'Yorug‘','dark':'Qorong‘i','hijri':'Hijriy taqvim','sehri':'Saharlik tugashi (Bomdod)','iftar':'Iftor (Shom)','notice':'Hijriy sana taxminiy; mahalliy masjiddan tekshiring.','prayer':'Qayerda bo‘lsangiz ham, namoz','sound':'Bildirishnoma ovozi','soundHint':'Telefon ogohlantirish ovozi (to‘liq azon emas)','refreshHint':'Bildirishnomalarni yangilash uchun ilovani qayta oching.','compassHelp':'Telefonni tekis tuting va magnitlardan uzoqroq saqlang.','compassUnavailable':'Kompas mavjud emas. Quyidagi yo‘nalishga qarang.','selectCity':'Shaharni tanlang','gps':'GPS joylashuvi','about':'Namoz vaqtlari hisoblangan taxminiy qiymatlar; masjiddan tekshiring.','notificationSuccess':'Keyingi 10 kun uchun eslatmalar belgilandi.','permission':'Joylashuv ruxsati kerak.','method':'Musulmonlar jahon ligasi (MWL)','duaTab':'Duo','ramadan':'Ramazon','tasbih':'Tasbeh','prayerAlerts':'Namoz eslatmalari','manageAlerts':'Har bir namoz eslatmasini boshqarish','saveAlerts':'Saqlash va rejalashtirish','testAlert':'Sinov bildirishnomasi (10 soniya)','testSuccess':'Sinov bildirishnomasi belgilandi.','hijriAdjust':'Hijriy sanani tuzatish','hijriHint':'Mahalliy hilol kuzatuviga ko‘ra ±2 kun.','reset':'Qayta o‘rnatish','tasbihCounter':'Tasbeh hisoblagichi','dailyDua':'Kundalik duo va tasbeh','ramadanHere':'Ramazon boshlandi','ramadanStarts':'Ramazongacha taxminan','days':'kun','ramadanNotice':'Ramazon sanalari taxminiy; masjiddan tekshiring.','notifyHint':'Telefonning bildirishnoma ovozi ishlatiladi.','adSpace':'Reklama joyi · AdMob sozlanmagan'},
+  'id': {'home':'Beranda','qibla':'Kiblat','calendar':'Kalender','settings':'Pengaturan','next':'SALAT BERIKUTNYA','today':'Jadwal salat hari ini','remaining':'Sisa waktu','location':'Gunakan lokasi saya','alerts':'Aktifkan notifikasi salat','calculation':'Metode perhitungan','asr':'Perhitungan Asar','language':'Bahasa','appearance':'Tampilan','light':'Terang','dark':'Gelap','hijri':'Kalender Hijriah','sehri':'Akhir sahur (Subuh)','iftar':'Buka puasa (Magrib)','notice':'Tanggal Hijriah adalah perkiraan; periksa dengan masjid setempat.','prayer':'Salat di mana pun Anda berada','sound':'Suara notifikasi','soundHint':'Suara notifikasi perangkat (bukan azan lengkap)','refreshHint':'Buka kembali aplikasi untuk memperbarui pengingat.','compassHelp':'Pegang ponsel mendatar dan jauhkan dari magnet.','compassUnavailable':'Sensor kompas tidak tersedia. Gunakan arah di bawah.','selectCity':'Pilih kota','gps':'Lokasi GPS','about':'Waktu salat adalah hasil perhitungan; konfirmasikan dengan masjid setempat.','notificationSuccess':'Pengingat salat untuk 10 hari ke depan telah dijadwalkan.','permission':'Izin lokasi diperlukan.','method':'Liga Muslim Dunia (MWL)','duaTab':'Doa','ramadan':'Ramadan','tasbih':'Tasbih','prayerAlerts':'Notifikasi salat','manageAlerts':'Atur pengingat setiap salat','saveAlerts':'Simpan dan jadwalkan','testAlert':'Uji notifikasi (10 detik)','testSuccess':'Notifikasi uji telah dijadwalkan.','hijriAdjust':'Penyesuaian tanggal Hijriah','hijriHint':'Sesuaikan ±2 hari dengan rukyat setempat.','reset':'Atur ulang','tasbihCounter':'Penghitung tasbih','dailyDua':'Doa harian dan tasbih','ramadanHere':'Ramadan telah tiba','ramadanStarts':'Perkiraan Ramadan dimulai dalam','days':'hari','ramadanNotice':'Tanggal Ramadan adalah perkiraan; konfirmasikan dengan masjid setempat.','notifyHint':'Menggunakan suara notifikasi perangkat.','adSpace':'Ruang iklan · AdMob belum dikonfigurasi'},
+  'hi': {'home':'होम','qibla':'क़िबला','calendar':'कैलेंडर','settings':'सेटिंग्स','next':'अगली नमाज़','today':'आज की नमाज़ के समय','remaining':'शेष समय','location':'मेरी लोकेशन इस्तेमाल करें','alerts':'नमाज़ की सूचनाएँ चालू करें','calculation':'गणना विधि','asr':'अस्र की गणना','language':'भाषा','appearance':'दिखावट','light':'लाइट','dark':'डार्क','hijri':'हिजरी कैलेंडर','sehri':'सहरी समाप्त (फ़ज्र)','iftar':'इफ़्तार (मग़रिब)','notice':'हिजरी तारीख़ अनुमानित है; स्थानीय मस्जिद से पुष्टि करें।','prayer':'आप जहाँ भी हों, नमाज़','sound':'सूचना की ध्वनि','soundHint':'फ़ोन की सूचना ध्वनि (पूरी अज़ान नहीं)','refreshHint':'आगामी सूचनाएँ अपडेट करने के लिए ऐप फिर खोलें।','compassHelp':'फ़ोन सीधा रखें और चुंबक से दूर रखें।','compassUnavailable':'कंपास उपलब्ध नहीं है; नीचे दिशा देखें।','selectCity':'शहर चुनें','gps':'GPS लोकेशन','about':'नमाज़ के समय गणना आधारित अनुमान हैं; स्थानीय मस्जिद से पुष्टि करें।','notificationSuccess':'अगले 10 दिनों की नमाज़ की सूचनाएँ निर्धारित हैं।','permission':'लोकेशन की अनुमति आवश्यक है।','method':'मुस्लिम वर्ल्ड लीग (MWL)','duaTab':'दुआ','ramadan':'रमज़ान','tasbih':'तस्बीह','prayerAlerts':'नमाज़ की सूचनाएँ','manageAlerts':'हर नमाज़ की सूचना प्रबंधित करें','saveAlerts':'सहेजें और निर्धारित करें','testAlert':'टेस्ट सूचना (10 सेकंड)','testSuccess':'टेस्ट सूचना निर्धारित की गई।','hijriAdjust':'हिजरी तारीख़ समायोजन','hijriHint':'स्थानीय चाँद देखने के अनुसार ±2 दिन समायोजित करें।','reset':'रीसेट','tasbihCounter':'तस्बीह काउंटर','dailyDua':'रोज़ाना दुआ और तस्बीह','ramadanHere':'रमज़ान शुरू हो गया','ramadanStarts':'रमज़ान शुरू होने में अनुमानित','days':'दिन','ramadanNotice':'रमज़ान की तारीख़ अनुमानित है; स्थानीय मस्जिद से पुष्टि करें।','notifyHint':'फ़ोन की सूचना ध्वनि इस्तेमाल होती है।','adSpace':'विज्ञापन स्थान · AdMob सेट नहीं है'},
 };
 String tr(String lang, String key) => translations[lang]?[key] ?? translations['en']?[key] ?? key;
 
@@ -111,7 +116,7 @@ const uiExtras = <String, Map<String, String>>{
   'ko': {'gpsSuccess': 'GPS 좌표와 휴대전화 시간대를 사용합니다.', 'duaNumber': '두아', 'adhanSuccess': '기도 알림과 자동 아잔이 예약되었습니다.', 'alertError': '알림을 예약할 수 없습니다'},
   'ar': {'gpsSuccess': 'يتم استخدام إحداثيات GPS والمنطقة الزمنية للجهاز.', 'duaNumber': 'دعاء', 'adhanSuccess': 'تمت جدولة تنبيهات الصلاة والأذان التلقائي.', 'alertError': 'تعذرت جدولة التنبيهات'},
 };
-String uix(String lang, String key) => uiExtras[lang]?[key] ?? uiExtras['en']?[key] ?? key;
+String uix(String lang, String key) => mptExtraTranslations[lang]?[key] ?? uiExtras[lang]?[key] ?? uiExtras['en']?[key] ?? key;
 
 
 // Extra strings introduced in v1.3.1, without disturbing existing translations.
@@ -121,7 +126,7 @@ const extraTranslations = <String, Map<String, String>>{
   'ko': {'northBearing':'북쪽 기준','testTitle':'MPT · 테스트 알림','testBody':'기도 알림 테스트가 완료되었습니다.'},
   'ar': {'northBearing':'من الشمال','testTitle':'MPT · إشعار تجريبي','testBody':'نجح اختبار إشعار الصلاة.'},
 };
-String tx(String lang, String key) => extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
+String tx(String lang, String key) => mptExtraTranslations[lang]?[key] ?? extraTranslations[lang]?[key] ?? extraTranslations['en']?[key] ?? key;
 
 // Additional localized Adhan controls for the next release.
 const adhanTranslations = <String, Map<String, String>>{
@@ -182,13 +187,17 @@ const adhanTranslations = <String, Map<String, String>>{
     'audioError': 'خطأ صوتي',
   },
 };
-String atx(String lang, String key) => adhanTranslations[lang]?[key] ?? adhanTranslations['en']?[key] ?? key;
+String atx(String lang, String key) => mptExtraTranslations[lang]?[key] ?? adhanTranslations[lang]?[key] ?? adhanTranslations['en']?[key] ?? key;
 
 const calendarDayLabels = <String, List<String>>{
   'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
   'bn': ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহস্পতি', 'শুক্র', 'শনি'],
   'ko': ['일', '월', '화', '수', '목', '금', '토'],
   'ar': ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'],
+  'ur': ['اتوار','پیر','منگل','بدھ','جمعرات','جمعہ','ہفتہ'],
+  'uz': ['Yak','Dush','Sesh','Chor','Pay','Jum','Shan'],
+  'id': ['Min','Sen','Sel','Rab','Kam','Jum','Sab'],
+  'hi': ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'],
 };
 List<String> calendarWeekdays(String language) =>
     calendarDayLabels[language] ?? calendarDayLabels['en']!;
@@ -252,12 +261,20 @@ const prayerNames = <String, List<String>>{
   'bn':['ফজর','যোহর','আসর','মাগরিব','এশা'],
   'ko':['파즈르','두흐르','아스르','마그리브','이샤'],
   'ar':['الفجر','الظهر','العصر','المغرب','العشاء'],
+  'ur': ['فجر','ظہر','عصر','مغرب','عشاء'],
+  'uz': ['Bomdod','Peshin','Asr','Shom','Xufton'],
+  'id': ['Subuh','Zuhur','Asar','Magrib','Isya'],
+  'hi': ['फ़ज्र','ज़ुहर','अस्र','मग़रिब','इशा'],
 };
 const hijriMonths = <String, List<String>>{
   'en':['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Akhirah','Rajab','Sha’ban','Ramadan','Shawwal','Dhu al-Qadah','Dhu al-Hijjah'],
   'bn':['মুহাররম','সফর','রবিউল আউয়াল','রবিউস সানি','জমাদিউল আউয়াল','জমাদিউস সানি','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'],
   'ko':['무하람','사파르','라비 알아우왈','라비 알타니','주마다 알아울라','주마다 알아키라','라자브','샤반','라마단','샤왈','둘카다','둘히자'],
   'ar':['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'],
+  'ur': ['محرم','صفر','ربیع الاول','ربیع الثانی','جمادی الاول','جمادی الثانی','رجب','شعبان','رمضان','شوال','ذوالقعدہ','ذوالحجہ'],
+  'uz': ['Muharram','Safar','Rabiul avval','Rabiul oxir','Jumodul avval','Jumodul oxir','Rajab','Sha’bon','Ramazon','Shavvol','Zulqa’da','Zulhijja'],
+  'id': ['Muharam','Safar','Rabiulawal','Rabiulakhir','Jumadilawal','Jumadilakhir','Rajab','Syakban','Ramadan','Syawal','Zulkaidah','Zulhijah'],
+  'hi': ['मुहर्रम','सफ़र','रबीउल अव्वल','रबीउल आख़िर','जमादिउल अव्वल','जमादिउल आख़िर','रजब','शाबान','रमज़ान','शव्वाल','ज़ुलक़ादा','ज़ुलहिज्जा'],
 };
 
 int julianDay(DateTime d) {
@@ -395,6 +412,10 @@ class _MuslimPrayerTimesAppState extends State<MuslimPrayerTimesApp> {
   @override Widget build(BuildContext context) => MaterialApp(
     title: 'MUSLIM PRAYER TIMES', debugShowCheckedModeBanner: false,
     locale: Locale(language),
+    builder: (context, child) => Directionality(
+      textDirection: (language == 'ur' || language == 'ar') ? ui.TextDirection.rtl : ui.TextDirection.ltr,
+      child: child ?? const SizedBox.shrink(),
+    ),
     themeMode: dark ? ThemeMode.dark : ThemeMode.light,
     theme: ThemeData(useMaterial3: true, scaffoldBackgroundColor: cream,
       colorScheme: ColorScheme.fromSeed(seedColor: emerald, surface: const Color(0xFFF6F8F4)),
@@ -767,6 +788,10 @@ class SettingsPage extends StatelessWidget {
         DropdownMenuItem(value: 'bn', child: Text('বাংলা')),
         DropdownMenuItem(value: 'ko', child: Text('한국어')),
         DropdownMenuItem(value: 'ar', child: Text('العربية')),
+        DropdownMenuItem(value: 'ur', child: Text('اردو')),
+        DropdownMenuItem(value: 'uz', child: Text('O‘zbekcha')),
+        DropdownMenuItem(value: 'id', child: Text('Bahasa Indonesia')),
+        DropdownMenuItem(value: 'hi', child: Text('हिन्दी')),
       ], onChanged: (value) { if (value != null) onLanguageChanged(value); }),
       const SizedBox(height: 20),
       SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(tr(language, 'appearance'), style: const TextStyle(fontWeight: FontWeight.w800)),
