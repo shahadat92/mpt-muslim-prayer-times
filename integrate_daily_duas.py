@@ -24,7 +24,9 @@ final _dailyDuas = <_Entry>[
   for (final d in mptDailyDuaAdditions)
     _Entry(d.titles['en']!, d.arabic, d.pronunciations['en']!,
         d.meanings['bn']!, d.meanings['en']!, d.meanings['ko']!, d.reference),''')
-change("if (widget.language != 'ar' && widget.language != 'ur') ...[", "if (widget.language != 'ar' && (widget.language != 'ur' || _mptAddedDuasByTitle.containsKey(d.title))) ...[")
+# Preserve the existing Arabic/Urdu display rule: avoid duplicated Arabic-script pronunciation.
+# Other six languages retain their original pronunciation display behavior.
+# No change is needed to the Surah reader or the global RTL layout.
 change("Text(mptDuaMeanings[widget.language]?[d.title] ?? (widget.language=='bn'?d.bn:widget.language=='ko'?d.ko:widget.language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en)", "Text(_mptAddedDuasByTitle[d.title]?.meanings[widget.language] ?? mptDuaMeanings[widget.language]?[d.title] ?? (widget.language=='bn'?d.bn:widget.language=='ko'?d.ko:widget.language=='ar'?(_arabicEntryMeanings[d.title] ?? d.en):d.en)")
 # Fail closed if any expected anchor is absent. Existing files are otherwise untouched.
 p.write_text(s,encoding='utf-8')
