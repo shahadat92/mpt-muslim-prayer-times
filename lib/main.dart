@@ -557,74 +557,203 @@ class _PrayerHomeState extends State<PrayerHome> {
   Timer? ticker;
   @override void initState() {
     super.initState();
-    ticker = Timer.periodic(const Duration(seconds: 1), (_) { if (mounted) setState(() {}); });
+    ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
   }
   @override void dispose() { ticker?.cancel(); super.dispose(); }
+
   @override Widget build(BuildContext context) {
     final lang = widget.language;
     final now = cityNow(widget.city);
     final entries = prayersFor(widget.city, widget.hanafi, now);
     final next = entries.where((p) => p.localTime.isAfter(now)).firstOrNull;
-    final nextItem = next ?? prayersFor(widget.city, widget.hanafi, now.add(const Duration(days: 1))).first;
-    final remaining = localToInstant(nextItem.localTime, widget.city).difference(DateTime.now());
+    final nextItem = next ?? prayersFor(widget.city, widget.hanafi,
+        now.add(const Duration(days: 1))).first;
+    final remaining = localToInstant(nextItem.localTime, widget.city)
+        .difference(DateTime.now());
     final duration = remaining.isNegative ? Duration.zero : remaining;
-    final countdown = '${duration.inHours.toString().padLeft(2, '0')}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final foreground = theme.colorScheme.onSurface;
+    final countdown = '${duration.inHours.toString().padLeft(2, '0')}:'
+        '${(duration.inMinutes % 60).toString().padLeft(2, '0')}:'
+        '${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final surface = dark ? Theme.of(context).colorScheme.surface : Colors.white;
+    final textColor = dark ? Colors.white : deepGreen;
     final secondary = dark ? Colors.white70 : muted;
+    final foreground = textColor;
+    final theme = Theme.of(context);
+    final progress = (1.0 - duration.inSeconds / (6 * 3600)).clamp(0.0, 1.0);
+
     return ColoredBox(
-      color: dark ? theme.scaffoldBackgroundColor : const Color(0xFFE4F1E9),
-      child: ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 28), children: [
-      const IslamicHeroBanner(),
-      const SizedBox(height: 14),
-      Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(
-        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [emerald, deepGreen]),
-        borderRadius: BorderRadius.circular(27),
-      ), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      color: dark ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFD9EDDF),
+      child: ListView(padding: const EdgeInsets.fromLTRB(14, 14, 14, 26), children: [
+        // Home-only premium hero; other screens keep their existing banner.
+        Container(
+          height: 142,
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(colors: [Color(0xFFE9F8ED),
+              Color(0xFFB9E5CB), Color(0xFF75C6A2)]),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: gold.withValues(alpha: .8)),
+          ),
+          child: Stack(children: [
+            Positioned(right: -14, bottom: -10,
+              child: Icon(Icons.mosque, color: emerald.withValues(alpha: .22), size: 145)),
+            Row(children: [
+              const MptLogo(size: 72),
+              const SizedBox(width: 13),
+              Expanded(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('MPT', style: TextStyle(fontSize: 38,
+                      fontWeight: FontWeight.w900, color: deepGreen, height: 1)),
+                  const SizedBox(height: 4),
+                  const Text('Muslim Prayer Times', maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800,
+                      color: deepGreen)),
+                  const SizedBox(height: 5),
+                  Text(tr(lang, 'prayer'), maxLines: 2,
+                    style: const TextStyle(color: Color(0xFF805B1F), fontSize: 12)),
+                ],
+              )),
+            ]),
+          ]),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+          decoration: BoxDecoration(color: surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .09),
+              blurRadius: 10, offset: const Offset(0, 4))]),
+          child: Row(children: [
+            const Icon(Icons.location_on, color: emerald, size: 20),
+            const SizedBox(width: 4),
+            Expanded(child: DropdownButtonHideUnderline(
+              child: DropdownButton<PrayerCity>(
+                isExpanded: true,
+                value: cities.contains(widget.city) ? widget.city : null,
+                hint: Text(localizedCity(widget.city, lang), maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: textColor, fontSize: 12,
+                    fontWeight: FontWeight.w700)),
+                items: cities.map((city) => DropdownMenuItem(
+                  value: city, child: Text(localizedCity(city, lang),
+                    overflow: TextOverflow.ellipsis))).toList(),
+                onChanged: (value) { if (value != null) widget.onCityChanged(value); },
+              ),
+            )),
+            IconButton(onPressed: widget.onUseLocation,
+              icon: const Icon(Icons.gps_fixed, color: emerald, size: 19),
+              tooltip: tr(lang, 'location')),
+            Container(height: 31, width: 1, color: gold),
+            const SizedBox(width: 8),
+            const Icon(Icons.calendar_month, color: emerald, size: 19),
+            const SizedBox(width: 5),
+            Flexible(child: Text(DateFormat('d MMM yyyy').format(now),
+              maxLines: 2, textAlign: TextAlign.center,
+              style: TextStyle(color: textColor, fontSize: 11,
+                fontWeight: FontWeight.w700))),
+          ]),
+        ),
+        const SizedBox(height: 15),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(colors: [emerald, deepGreen]),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .17),
+              blurRadius: 16, offset: const Offset(0, 7))],
+          ),
+          child: Row(children: [
+            const Icon(Icons.nights_stay, color: gold, size: 36),
+            const SizedBox(width: 11),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(color: gold,
+                    borderRadius: BorderRadius.circular(18)),
+                  child: Text(tr(lang, 'next'),
+                    style: const TextStyle(color: deepGreen, fontSize: 11,
+                      fontWeight: FontWeight.w900))),
+                const SizedBox(height: 12),
+                Text(prayerNames[lang]![nextItem.index],
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 27,
+                    fontWeight: FontWeight.w900)),
+                const SizedBox(height: 6),
+                Text(DateFormat('h:mm a').format(nextItem.localTime),
+                  style: const TextStyle(color: Colors.white, fontSize: 17,
+                    fontWeight: FontWeight.w800)),
+              ],
+            )),
+            const SizedBox(width: 8),
+            SizedBox(width: 127, height: 127,
+              child: Stack(alignment: Alignment.center, children: [
+                SizedBox(width: 124, height: 124,
+                  child: CircularProgressIndicator(value: progress,
+                    strokeWidth: 7, backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF6CF3A3)))),
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(tr(lang, 'remaining'), textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                  const SizedBox(height: 5),
+                  FittedBox(child: Text(countdown,
+                    style: const TextStyle(color: Colors.white, fontSize: 19,
+                      fontWeight: FontWeight.w900))),
+                  const Icon(Icons.hourglass_bottom, color: gold, size: 18),
+                ]),
+              ]),
+            ),
+          ]),
+        ),
+        const SizedBox(height: 20),
         Row(children: [
-          const Icon(Icons.location_on_outlined, color: gold, size: 21), const SizedBox(width: 8),
-          Expanded(child: DropdownButtonHideUnderline(child: DropdownButton<PrayerCity>(
-            isExpanded: true, value: cities.contains(widget.city) ? widget.city : null,
-            hint: Text(localizedCity(widget.city, widget.language), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-            dropdownColor: deepGreen, iconEnabledColor: gold,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15),
-            items: cities.map((city) => DropdownMenuItem(value: city, child: Text(localizedCity(city, widget.language), overflow: TextOverflow.ellipsis))).toList(),
-            onChanged: (value) { if (value != null) widget.onCityChanged(value); },
-          ))),
-          IconButton(onPressed: widget.onUseLocation, icon: const Icon(Icons.gps_fixed, color: Colors.white)),
+          const Icon(Icons.mosque, color: emerald, size: 24),
+          const SizedBox(width: 7),
+          Expanded(child: Text(tr(lang, 'today'),
+            style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900,
+              color: textColor))),
+          Container(padding: const EdgeInsets.symmetric(
+              horizontal: 9, vertical: 7),
+            decoration: BoxDecoration(color: surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: gold)),
+            child: Text('MWL · ${widget.hanafi ? 'Hanafi' : 'Shafi'}',
+              style: TextStyle(color: textColor, fontSize: 11,
+                fontWeight: FontWeight.w800))),
         ]),
-        const SizedBox(height: 23),
-        Text(localizedDate(now, widget.language), style: const TextStyle(color: Colors.white70, fontSize: 13)),
-        const SizedBox(height: 21),
-        Text(tr(lang, 'next'), style: const TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
-        const SizedBox(height: 8),
-        Text(prayerNames[lang]![nextItem.index], style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 7),
-        Text(DateFormat('h:mm a').format(nextItem.localTime), style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
-        FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text('${tr(lang, 'remaining')}  $countdown', style: const TextStyle(color: Colors.white70, fontSize: 14))),
-      ])),
-      const SizedBox(height: 26),
-      Row(children: [
-        Expanded(child: Text(tr(lang, 'today'), maxLines: 2, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: foreground))),
-        Text('MWL · ${widget.hanafi ? 'Hanafi' : 'Shafi'}', style: TextStyle(color: dark ? gold : emerald, fontSize: 12, fontWeight: FontWeight.w700)),
-      ]),
-      const SizedBox(height: 13),
-      ...entries.map((p) => Container(
-        margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor.withValues(alpha: .25))),
-        child: Row(children: [
-          Container(width: 44, height: 44, decoration: BoxDecoration(color: dark ? deepGreen : const Color(0xFFEAF4EF), borderRadius: BorderRadius.circular(14)), child: Icon(p.icon, color: dark ? gold : emerald)),
-          const SizedBox(width: 13),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(prayerNames[lang]![p.index], style: TextStyle(fontWeight: FontWeight.w800, color: foreground)),
-            if (lang != 'en') Text(prayerNames['en']![p.index], style: TextStyle(color: secondary, fontSize: 12)),
-          ])),
-          FittedBox(fit: BoxFit.scaleDown, child: Text(DateFormat('h:mm a').format(p.localTime), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: foreground))),
-        ]),
-      )),
-      const SizedBox(height: 8),
+        ...entries.map((p) => Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+          decoration: BoxDecoration(color: surface,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .08),
+              blurRadius: 8, offset: const Offset(0, 3))]),
+          child: Row(children: [
+            Container(width: 42, height: 42,
+              decoration: BoxDecoration(color: dark ? deepGreen
+                : const Color(0xFFE2F5E8),
+                borderRadius: BorderRadius.circular(14)),
+              child: Icon(p.icon, color: p.index == 1 || p.index == 2 || p.index == 3
+                ? const Color(0xFFDCA12B) : emerald)),
+            const SizedBox(width: 14),
+            Expanded(child: Text(prayerNames[lang]![p.index],
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800,
+                color: textColor))),
+            Text(DateFormat('h:mm a').format(p.localTime),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900,
+                color: textColor)),
+          ]),
+        )),
+        const SizedBox(height: 14),
+        // Preserve existing Ramadan, Dua, Tasbih, and 99 Names destinations.
       Row(children: [
         Expanded(child: _FeatureButton(icon: Icons.calendar_month, title: tr(lang, 'ramadan'), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RamadanPage(city: widget.city, hanafi: widget.hanafi, language: lang))))),
         const SizedBox(width: 8),
@@ -665,11 +794,13 @@ class _PrayerHomeState extends State<PrayerHome> {
           ]),
         ),
       ),
-      const SizedBox(height: 16),
-      Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
-      const SizedBox(height: 20),
-      AdPlaceholder(language: lang),
-    ]));
+
+        const SizedBox(height: 16),
+        Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
+        const SizedBox(height: 20),
+        AdPlaceholder(language: lang),
+      ]),
+    );
   }
 }
 
@@ -1057,6 +1188,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   List<bool> enabled = List.filled(5, true);
   bool sound = true;
+  bool automaticAdhan = true;
   final adhanAudio = AdhanAudioService();
   bool adhanReady = false;
   @override void initState() { super.initState(); _load(); _loadAdhan(); }
@@ -1064,105 +1196,250 @@ class _NotificationPageState extends State<NotificationPage> {
     await adhanAudio.load();
     if (mounted) setState(() => adhanReady = true);
   }
-  @override void dispose() {
-    adhanAudio.dispose();
-    super.dispose();
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      enabled = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true);
+      sound = prefs.getBool('sound') ?? true;
+      automaticAdhan = prefs.getBool('mpt_automatic_adhan') ?? true;
+    });
   }
-  Future<void> _load() async { final prefs = await SharedPreferences.getInstance(); if (mounted) setState(() { enabled = List.generate(5, (i) => prefs.getBool('prayer_$i') ?? true); sound = prefs.getBool('sound') ?? true; }); }
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(tr(widget.language, 'prayerAlerts'))), body: ListView(padding: const EdgeInsets.all(18), children: [
-    const IslamicHeroBanner(compact: true), const SizedBox(height: 18),
-    ...List.generate(5, (i) => _GoldCard(child: SwitchListTile(contentPadding: EdgeInsets.zero, secondary: Icon([Icons.nightlight_round, Icons.wb_sunny, Icons.sunny, Icons.wb_twilight, Icons.nights_stay][i], color: emerald), title: Text(prayerNames[widget.language]![i]), value: enabled[i], onChanged: (v) async { setState(() => enabled[i] = v); (await SharedPreferences.getInstance()).setBool('prayer_$i', v); }))),
-    if (adhanReady) ...[
-      const SizedBox(height: 14),
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: gold.withValues(alpha: .55)),
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Container(padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(color: deepGreen, borderRadius: BorderRadius.circular(12)),
-              child: const Icon(Icons.graphic_eq, color: gold, size: 22)),
-            const SizedBox(width: 11),
-            Expanded(child: Text(atx(widget.language, 'adhanSettings'),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
-          ]),
-          const SizedBox(height: 14),
-          SegmentedButton<AdhanLength>(
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(value: AdhanLength.full, label: Text(atx(widget.language, 'fullAdhan')),
-                icon: const Icon(Icons.volume_up_outlined)),
-              ButtonSegment(value: AdhanLength.short, label: Text(atx(widget.language, 'shortAdhan')),
-                icon: const Icon(Icons.volume_down_outlined)),
-            ],
-            selected: {adhanAudio.length},
-            onSelectionChanged: (values) async {
-              await adhanAudio.setLength(values.first);
-              if (mounted) setState(() {});
-            },
-          ),
-          const SizedBox(height: 10),
-          SwitchListTile.adaptive(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: Text(atx(widget.language, 'specialFajr'),
-              style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: Text(atx(widget.language, 'specialFajrHint'),
-              style: const TextStyle(fontSize: 12)),
-            value: adhanAudio.specialFajr,
-            onChanged: (value) async {
-              await adhanAudio.setSpecialFajr(value);
-              if (mounted) setState(() {});
-            },
-          ),
-          const Divider(height: 18),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            OutlinedButton.icon(
-              onPressed: () async {
-                try { await adhanAudio.preview(fajr: false); }
-                catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); }
-              },
-              icon: const Icon(Icons.play_arrow, size: 19),
-              label: Text(atx(widget.language, 'previewAdhan')),
-            ),
-            OutlinedButton.icon(
-              onPressed: () async {
-                try { await adhanAudio.preview(fajr: true); }
-                catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); }
-              },
-              icon: const Icon(Icons.nights_stay_outlined, size: 19),
-              label: Text(atx(widget.language, 'previewFajr')),
-            ),
-            OutlinedButton.icon(
-              onPressed: () async { await adhanAudio.stop(); },
-              icon: const Icon(Icons.stop_circle_outlined, size: 19),
-              label: Text(atx(widget.language, 'stopAdhan')),
-            ),
-          ]),
-          const SizedBox(height: 8),
-          Text(atx(widget.language, 'adhanHelp'),
-            style: const TextStyle(fontSize: 12, color: muted)),
-        ]),
+  @override void dispose() { adhanAudio.dispose(); super.dispose(); }
+
+  Widget panel(Widget child) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: dark ? Theme.of(context).colorScheme.surface : Colors.white,
+        borderRadius: BorderRadius.circular(23),
+        border: Border.all(color: emerald.withValues(alpha: .13)),
+        boxShadow: dark ? null : [BoxShadow(
+          color: deepGreen.withValues(alpha: .1), blurRadius: 14,
+          offset: const Offset(0, 5))],
       ),
-    ],
-    const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(uix(widget.language, 'adhanSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
-    const SizedBox(height: 10),
-    OutlinedButton.icon(onPressed: () async {
-      try {
-        await scheduleTestNotification(language: widget.language);
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(tr(widget.language, 'testSuccess'))));
-      } catch (e) {
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')));
+      child: child,
+    );
+  }
+  Widget heading(IconData icon, String title, String subtitle) => Row(children: [
+    Container(width: 48, height: 48,
+      decoration: BoxDecoration(color: const Color(0xFFE0F3E7),
+        borderRadius: BorderRadius.circular(15)),
+      child: Icon(icon, color: emerald, size: 27)),
+    const SizedBox(width: 12),
+    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 19,
+          fontWeight: FontWeight.w900)),
+        Text(subtitle, style: TextStyle(fontSize: 12,
+          color: Theme.of(context).colorScheme.onSurfaceVariant)),
+      ])),
+  ]);
+
+  Future<void> save() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('mpt_automatic_adhan', automaticAdhan);
+      // Preserve original local-notification schedule and sound preference.
+      await schedulePrayerAlerts(widget.city, widget.hanafi,
+          sound: sound, enabled: enabled);
+      if (!automaticAdhan && defaultTargetPlatform == TargetPlatform.android) {
+        // The existing scheduler also schedules native audio; disable only audio.
+        await nativeAdhanChannel.invokeMethod<void>('cancelAll');
       }
-    }, icon: const Icon(Icons.notification_add_outlined), label: Text(tr(widget.language, 'testAlert'))),
-    const SizedBox(height: 12), Text(tr(widget.language, 'notifyHint'), style: const TextStyle(fontSize: 12, color: muted)),
-  ]));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(uix(widget.language, 'adhanSuccess'))));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$e')));
+    }
+  }
+
+  @override Widget build(BuildContext context) {
+    final lang = widget.language;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    const prayerIcons = [Icons.nightlight_round, Icons.wb_sunny,
+      Icons.sunny, Icons.wb_twilight, Icons.nights_stay];
+    return Scaffold(
+      backgroundColor: dark ? null : const Color(0xFFE4F1E9),
+      appBar: AppBar(
+        backgroundColor: dark ? null : const Color(0xFFE4F1E9),
+        title: Text(atx(lang, 'adhanSettings'),
+          style: const TextStyle(fontWeight: FontWeight.w800))),
+      body: ListView(padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
+        children: [
+          Text('Play Adhan automatically at prayer times',
+            style: TextStyle(fontSize: 13,
+              color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          const SizedBox(height: 16),
+          panel(Row(children: [
+            Container(width: 55, height: 55,
+              decoration: BoxDecoration(color: const Color(0xFFE0F3E7),
+                borderRadius: BorderRadius.circular(15)),
+              child: const Icon(Icons.mosque, color: emerald, size: 31)),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Automatic Adhan', style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.w900)),
+                Text('Play the Adhan at prayer times.',
+                  style: TextStyle(fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              ])),
+            Switch.adaptive(value: automaticAdhan,
+              activeTrackColor: emerald,
+              onChanged: (v) => setState(() => automaticAdhan = v)),
+          ])),
+          const SizedBox(height: 14),
+          panel(Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            heading(Icons.event_available, 'Prayer Adhan',
+              'Choose which prayers will play the Adhan.'),
+            const SizedBox(height: 16),
+            Row(children: List.generate(5, (i) => Expanded(
+              child: Padding(padding: EdgeInsets.only(right: i == 4 ? 0 : 4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: dark ? deepGreen.withValues(alpha: .45)
+                      : const Color(0xFFF0F8F3),
+                    borderRadius: BorderRadius.circular(15)),
+                  child: Column(children: [
+                    Icon(prayerIcons[i], size: 22,
+                      color: i >= 1 && i <= 3 ? const Color(0xFFE0A025) : emerald),
+                    const SizedBox(height: 6),
+                    FittedBox(fit: BoxFit.scaleDown,
+                      child: Text(prayerNames['en']![i],
+                        style: const TextStyle(fontSize: 12,
+                          fontWeight: FontWeight.w800))),
+                    FittedBox(fit: BoxFit.scaleDown,
+                      child: Text(prayerNames[lang]![i],
+                        style: const TextStyle(fontSize: 10))),
+                    Transform.scale(scale: .69,
+                      child: Switch.adaptive(value: enabled[i],
+                        activeTrackColor: emerald,
+                        onChanged: (v) async {
+                          setState(() => enabled[i] = v);
+                          (await SharedPreferences.getInstance())
+                            .setBool('prayer_$i', v);
+                        })),
+                  ]),
+                )),
+            ))),
+          ])),
+          const SizedBox(height: 14),
+          if (adhanReady) ...[
+            panel(Column(crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                heading(Icons.music_note, 'Adhan Duration',
+                  'Select the length of the Adhan.'),
+                const SizedBox(height: 16),
+                SizedBox(width: double.infinity,
+                  child: SegmentedButton<AdhanLength>(
+                    showSelectedIcon: true,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith((states) =>
+                        states.contains(WidgetState.selected)
+                          ? emerald : Colors.transparent),
+                      foregroundColor: WidgetStateProperty.resolveWith((states) =>
+                        states.contains(WidgetState.selected)
+                          ? Colors.white : Theme.of(context).colorScheme.onSurface)),
+                    segments: [
+                      ButtonSegment(value: AdhanLength.full,
+                        label: Text(atx(lang, 'fullAdhan'))),
+                      ButtonSegment(value: AdhanLength.short,
+                        label: Text(atx(lang, 'shortAdhan'))),
+                    ],
+                    selected: {adhanAudio.length},
+                    onSelectionChanged: (values) async {
+                      await adhanAudio.setLength(values.first);
+                      if (mounted) setState(() {});
+                    },
+                  )),
+              ])),
+            const SizedBox(height: 14),
+            panel(Row(children: [
+              const Icon(Icons.mosque, color: emerald, size: 29),
+              const SizedBox(width: 12),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(atx(lang, 'specialFajr'),
+                    style: const TextStyle(fontSize: 17,
+                      fontWeight: FontWeight.w800)),
+                  Text(atx(lang, 'specialFajrHint'),
+                    style: TextStyle(fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                ])),
+              Switch.adaptive(value: adhanAudio.specialFajr,
+                activeTrackColor: emerald,
+                onChanged: (v) async {
+                  await adhanAudio.setSpecialFajr(v);
+                  if (mounted) setState(() {});
+                }),
+            ])),
+            const SizedBox(height: 14),
+            Material(color: emerald, borderRadius: BorderRadius.circular(23),
+              child: InkWell(borderRadius: BorderRadius.circular(23),
+                onTap: () async {
+                  try { await adhanAudio.preview(fajr: false); }
+                  catch (e) { if (mounted) ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('$e'))); }
+                },
+                child: Padding(padding: const EdgeInsets.all(19),
+                  child: Row(children: [
+                    const CircleAvatar(radius: 26, backgroundColor: Colors.white,
+                      child: Icon(Icons.play_arrow, color: emerald, size: 32)),
+                    const SizedBox(width: 15),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(atx(lang, 'previewAdhan'),
+                          style: const TextStyle(color: Colors.white,
+                            fontSize: 20, fontWeight: FontWeight.w900)),
+                        const Text('Listen to the Adhan',
+                          style: TextStyle(color: Colors.white70)),
+                      ])),
+                    const Icon(Icons.graphic_eq, color: Colors.white70, size: 34),
+                  ]),
+                ))),
+            const SizedBox(height: 7),
+            Row(children: [
+              Expanded(child: OutlinedButton.icon(
+                onPressed: () async {
+                  try { await adhanAudio.preview(fajr: true); }
+                  catch (e) { if (mounted) ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('$e'))); }
+                }, icon: const Icon(Icons.nights_stay_outlined),
+                label: Text(atx(lang, 'previewFajr')))),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(onPressed: () async { await adhanAudio.stop(); },
+                icon: const Icon(Icons.stop), label: Text(atx(lang, 'stopAdhan'))),
+            ]),
+            const SizedBox(height: 14),
+          ],
+          SizedBox(height: 56,
+            child: FilledButton.icon(onPressed: save,
+              style: FilledButton.styleFrom(backgroundColor: emerald,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(19))),
+              icon: const Icon(Icons.check, size: 26),
+              label: const Text('Save Settings', style: TextStyle(
+                fontSize: 19, fontWeight: FontWeight.w800)))),
+          const SizedBox(height: 10),
+          TextButton.icon(onPressed: () async {
+            try {
+              await scheduleTestNotification(language: lang);
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(tr(lang, 'testSuccess'))));
+            } catch (e) {
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$e')));
+            }
+          }, icon: const Icon(Icons.notification_add_outlined),
+            label: Text(tr(lang, 'testAlert'))),
+          Text(atx(lang, 'adhanHelp'), style: TextStyle(fontSize: 11,
+            color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        ],
+      ),
+    );
+  }
 }
