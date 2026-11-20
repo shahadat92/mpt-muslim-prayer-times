@@ -573,15 +573,9 @@ class _PrayerHomeState extends State<PrayerHome> {
     final dark = theme.brightness == Brightness.dark;
     final foreground = theme.colorScheme.onSurface;
     final secondary = dark ? Colors.white70 : muted;
-    return ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 28), children: [
-      Row(children: [
-        const MptLogo(size: 56), const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('MUSLIM PRAYER TIMES', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: foreground)),
-          Text(tr(lang, 'prayer'), style: TextStyle(fontSize: 12, color: secondary)),
-        ])),
-        IconButton(onPressed: widget.onUseLocation, icon: const Icon(Icons.my_location, color: emerald)),
-      ]),
+    return ColoredBox(
+      color: dark ? theme.scaffoldBackgroundColor : const Color(0xFFE4F1E9),
+      child: ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 28), children: [
       const IslamicHeroBanner(),
       const SizedBox(height: 14),
       Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(
@@ -675,7 +669,7 @@ class _PrayerHomeState extends State<PrayerHome> {
       Text(tr(lang, 'about'), style: TextStyle(color: secondary, fontSize: 12)),
       const SizedBox(height: 20),
       AdPlaceholder(language: lang),
-    ]);
+    ]));
   }
 }
 
@@ -884,7 +878,7 @@ class IslamicHeroBanner extends StatelessWidget {
   @override Widget build(BuildContext context) => Container(height: compact ? 120 : 145, decoration: BoxDecoration(gradient: const LinearGradient(colors: [deepGreen, emerald, deepGreen]), borderRadius: BorderRadius.circular(22), border: Border.all(color: gold, width: 2)), child: Stack(children: [
     const Positioned(top: 12, left: 18, child: Icon(Icons.auto_awesome, color: gold, size: 25)),
     const Positioned(top: 12, right: 18, child: Icon(Icons.auto_awesome, color: gold, size: 25)),
-    Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.mosque, color: gold, size: compact ? 45 : 62), const SizedBox(height: 5), Text('MUSLIM PRAYER TIMES', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900)), const Text('MPT  •  Prayer wherever you are', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: gold, fontSize: 11))])),
+    Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [MptLogo(size: compact ? 46 : 56), const SizedBox(height: 7), Text('MUSLIM PRAYER TIMES', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontSize: compact ? 15 : 18, fontWeight: FontWeight.w900)), const Text('MPT  •  Prayer wherever you are', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: gold, fontSize: 11))])),
   ]));
 }
 class _FeatureButton extends StatelessWidget {
@@ -1081,45 +1075,83 @@ class _NotificationPageState extends State<NotificationPage> {
     const IslamicHeroBanner(compact: true), const SizedBox(height: 18),
     ...List.generate(5, (i) => _GoldCard(child: SwitchListTile(contentPadding: EdgeInsets.zero, secondary: Icon([Icons.nightlight_round, Icons.wb_sunny, Icons.sunny, Icons.wb_twilight, Icons.nights_stay][i], color: emerald), title: Text(prayerNames[widget.language]![i]), value: enabled[i], onChanged: (v) async { setState(() => enabled[i] = v); (await SharedPreferences.getInstance()).setBool('prayer_$i', v); }))),
     if (adhanReady) ...[
-      const SizedBox(height: 16),
-      _GoldCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(atx(widget.language, 'adhanSettings'), style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 10),
-        RadioListTile<AdhanLength>(
-          title: Text(atx(widget.language, 'fullAdhan')),
-          value: AdhanLength.full,
-          groupValue: adhanAudio.length,
-          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
+      const SizedBox(height: 14),
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: gold.withValues(alpha: .55)),
         ),
-        RadioListTile<AdhanLength>(
-          title: Text(atx(widget.language, 'shortAdhan')),
-          value: AdhanLength.short,
-          groupValue: adhanAudio.length,
-          onChanged: (v) async { if (v == null) return; await adhanAudio.setLength(v); if (mounted) setState(() {}); },
-        ),
-        SwitchListTile(
-          title: Text(atx(widget.language, 'specialFajr')),
-          subtitle: Text(atx(widget.language, 'specialFajrHint')),
-          value: adhanAudio.specialFajr,
-          onChanged: (v) async { await adhanAudio.setSpecialFajr(v); if (mounted) setState(() {}); },
-        ),
-        Wrap(spacing: 8, runSpacing: 8, children: [
-          OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: false); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: Text(atx(widget.language, 'previewAdhan')),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Container(padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(color: deepGreen, borderRadius: BorderRadius.circular(12)),
+              child: const Icon(Icons.graphic_eq, color: gold, size: 22)),
+            const SizedBox(width: 11),
+            Expanded(child: Text(atx(widget.language, 'adhanSettings'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
+          ]),
+          const SizedBox(height: 14),
+          SegmentedButton<AdhanLength>(
+            showSelectedIcon: false,
+            segments: [
+              ButtonSegment(value: AdhanLength.full, label: Text(atx(widget.language, 'fullAdhan')),
+                icon: const Icon(Icons.volume_up_outlined)),
+              ButtonSegment(value: AdhanLength.short, label: Text(atx(widget.language, 'shortAdhan')),
+                icon: const Icon(Icons.volume_down_outlined)),
+            ],
+            selected: {adhanAudio.length},
+            onSelectionChanged: (values) async {
+              await adhanAudio.setLength(values.first);
+              if (mounted) setState(() {});
+            },
           ),
-          OutlinedButton.icon(
-            onPressed: () async { try { await adhanAudio.preview(fajr: true); } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); } },
-            icon: const Icon(Icons.play_arrow), label: Text(atx(widget.language, 'previewFajr')),
+          const SizedBox(height: 10),
+          SwitchListTile.adaptive(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            title: Text(atx(widget.language, 'specialFajr'),
+              style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: Text(atx(widget.language, 'specialFajrHint'),
+              style: const TextStyle(fontSize: 12)),
+            value: adhanAudio.specialFajr,
+            onChanged: (value) async {
+              await adhanAudio.setSpecialFajr(value);
+              if (mounted) setState(() {});
+            },
           ),
-          OutlinedButton.icon(
-            onPressed: () async { await adhanAudio.stop(); },
-            icon: const Icon(Icons.stop), label: Text(atx(widget.language, 'stopAdhan')),
-          ),
+          const Divider(height: 18),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            OutlinedButton.icon(
+              onPressed: () async {
+                try { await adhanAudio.preview(fajr: false); }
+                catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); }
+              },
+              icon: const Icon(Icons.play_arrow, size: 19),
+              label: Text(atx(widget.language, 'previewAdhan')),
+            ),
+            OutlinedButton.icon(
+              onPressed: () async {
+                try { await adhanAudio.preview(fajr: true); }
+                catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${atx(widget.language, 'audioError')}: $e'))); }
+              },
+              icon: const Icon(Icons.nights_stay_outlined, size: 19),
+              label: Text(atx(widget.language, 'previewFajr')),
+            ),
+            OutlinedButton.icon(
+              onPressed: () async { await adhanAudio.stop(); },
+              icon: const Icon(Icons.stop_circle_outlined, size: 19),
+              label: Text(atx(widget.language, 'stopAdhan')),
+            ),
+          ]),
+          const SizedBox(height: 8),
+          Text(atx(widget.language, 'adhanHelp'),
+            style: const TextStyle(fontSize: 12, color: muted)),
         ]),
-        const SizedBox(height: 8),
-        Text(atx(widget.language, 'adhanHelp'), style: TextStyle(fontSize: 12, color: muted)),
-      ])),
+      ),
     ],
     const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
     const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(uix(widget.language, 'adhanSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
