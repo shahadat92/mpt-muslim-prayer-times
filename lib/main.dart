@@ -833,8 +833,6 @@ class SettingsPage extends StatelessWidget {
       const SizedBox(height: 25),
       Text('${tr(language, 'calculation')}: ${tr(language, 'method')}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
       const SizedBox(height: 22),
-      SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(tr(language, 'sound'), style: const TextStyle(fontWeight: FontWeight.w800)),
-        subtitle: Text(tr(language, 'soundHint')), value: sound, onChanged: onSoundChanged),
       ListTile(leading: const Icon(Icons.notifications_active, color: emerald), title: Text(tr(language, 'prayerAlerts')), subtitle: Text(tr(language, 'manageAlerts')), trailing: const Icon(Icons.chevron_right), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NotificationPage(city: city, hanafi: hanafi, language: language)))),
       const SizedBox(height: 24),
       FilledButton.icon(style: FilledButton.styleFrom(backgroundColor: emerald, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 17)),
@@ -1153,7 +1151,6 @@ class _NotificationPageState extends State<NotificationPage> {
         ]),
       ),
     ],
-    const SizedBox(height: 12), _GoldCard(child: SwitchListTile(title: Text(tr(widget.language, 'sound')), value: sound, onChanged: (v) async { setState(() => sound = v); (await SharedPreferences.getInstance()).setBool('sound', v); })),
     const SizedBox(height: 14), FilledButton.icon(onPressed: () async { try { await schedulePrayerAlerts(widget.city, widget.hanafi, sound: sound, enabled: enabled); if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(uix(widget.language, 'adhanSuccess')))); } catch(e) { if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'))); } }, icon: const Icon(Icons.notifications_active), label: Text(tr(widget.language, 'saveAlerts'))),
     const SizedBox(height: 10),
     OutlinedButton.icon(onPressed: () async {
