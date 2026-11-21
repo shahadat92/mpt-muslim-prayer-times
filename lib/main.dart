@@ -15,6 +15,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -805,47 +806,404 @@ class AdPlaceholder extends StatelessWidget {
   );
 }
 
-class QiblaPage extends StatelessWidget {
+// Premium Qibla page. Existing bearing formula and compass stream are retained.
+class QiblaPage extends StatefulWidget {
   final PrayerCity city;
   final String language;
   const QiblaPage({super.key, required this.city, required this.language});
-  double bearing() {
+  @override State<QiblaPage> createState() => _QiblaPageState();
+}
+
+class _QiblaPageState extends State<QiblaPage> {
+  double? gpsLat;
+  double? gpsLon;
+  bool locating = false;
+  String? locationError;
+
+  String label(String bn, String en, {String? ko, String? ar}) {
+    switch (widget.language) {
+      case 'bn': return bn;
+      case 'ko': return ko ?? en;
+      case 'ar': return ar ?? en;
+      default: return en;
+    }
+  }
+
+  double bearing(double latitude, double longitude) {
     const rad = math.pi / 180;
-    final lat = city.lat * rad;
-    final delta = (39.8262 - city.lon) * rad;
+    final lat = latitude * rad;
+    final delta = (39.8262 - longitude) * rad;
     final y = math.sin(delta);
-    final x = math.cos(lat) * math.tan(21.4225 * rad) - math.sin(lat) * math.cos(delta);
+    final x = math.cos(lat) * math.tan(21.4225 * rad) -
+        math.sin(lat) * math.cos(delta);
     return (math.atan2(y, x) / rad + 360) % 360;
   }
+
+  Future<void> refreshLocation() async {
+    if (locating) return;
+    setState(() { locating = true; locationError = null; });
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        throw Exception(label('ফোনের Location চালু করুন', 'Enable device location'));
+      }
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        throw Exception(label('Location অনুমতি প্রয়োজন', 'Location permission required'));
+      }
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      ).timeout(const Duration(seconds: 18));
+      if (!mounted) return;
+      setState(() { gpsLat = pos.latitude; gpsLon = pos.longitude; });
+    } catch (e) {
+      if (mounted) setState(() => locationError = e.toString().replaceFirst('Exception: ', ''));
+    } finally {
+      if (mounted) setState(() => locating = false);
+    }
+  }
+
+  Future<void> showMap() async {
+    // Google Maps directions to the Kaaba; opening is an explicit user action.
+    final uri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': '21.4225,39.8262',
+    });
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(label('মানচিত্র খোলা যায়নি', 'Could not open the map')),
+      ));
+    }
+  }
+
+  void showCalibration() {
+    showModalBottomSheet<void>(context: context, showDragHandle: true,
+      builder: (sheetContext) => SafeArea(child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 30),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label('কম্পাস নির্ভুলতা', 'Compass accuracy'),
+            style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 14),
+          Text(label('ফোন সমতল রাখুন। ধাতব বস্তু, চুম্বক ও ইলেকট্রনিক যন্ত্র থেকে দূরে থাকুন। প্রয়োজন হলে ফোনটি ৮ আকৃতিতে কয়েকবার ঘোরান।',
+            'Keep the phone flat and away from magnets or metal. Move it in a figure-eight pattern to recalibrate.'),
+            style: const TextStyle(height: 1.6)),
+          const SizedBox(height: 12),
+          Text(label('এটি সেন্সরের পরিমাপ করা নির্ভুলতার শতাংশ নয়।',
+            'No unverified sensor accuracy percentage is shown.'),
+            style: const TextStyle(fontSize: 12, color: muted)),
+        ]),
+      )));
+  }
+
+  void showQiblaInfo(double b) {
+    showModalBottomSheet<void>(context: context, showDragHandle: true,
+      builder: (sheetContext) => SafeArea(child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 30),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label('কিবলা সম্পর্কে', 'About Qibla'),
+            style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 12),
+          Text(label('মক্কার কাবার অবস্থান: 21.4225° N, 39.8262° E।',
+            'Kaaba coordinates: 21.4225° N, 39.8262° E.')),
+          const SizedBox(height: 10),
+          Text('${label('উত্তর থেকে কিবলার দিক', 'Bearing clockwise from north')}: ${b.toStringAsFixed(1)}°'),
+          const SizedBox(height: 10),
+          Text(label('কিবলার কোণটি অবস্থান থেকে গণনা করা হয়। ফোনের কম্পাস সেন্সর ব্যবহার করে স্ক্রিনে দিক দেখানো হয়।',
+            'The bearing is calculated from your location; the compass sensor is used to orient the on-screen direction.'),
+            style: const TextStyle(height: 1.5)),
+        ]),
+      )));
+  }
+
+  Widget actionTile(IconData icon, String title, VoidCallback action) {
+    return Expanded(child: Material(color: Colors.transparent, child: InkWell(
+      onTap: action, borderRadius: BorderRadius.circular(18),
+      child: Ink(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 3),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [Color(0xFFFFFEF6), Color(0xFFF5F5E8)]),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: gold.withValues(alpha: .38)),
+          boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .09), blurRadius: 7, offset: const Offset(0, 3))],
+        ),
+        child: Column(children: [
+          Icon(icon, color: emerald, size: 28),
+          const SizedBox(height: 8),
+          Text(title, textAlign: TextAlign.center, maxLines: 2,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ink)),
+        ]),
+      ),
+    )));
+  }
+
   @override Widget build(BuildContext context) {
-    final b = bearing();
-    final color = Theme.of(context).colorScheme.onSurface;
-    return ListView(padding: const EdgeInsets.fromLTRB(24, 32, 24, 28), children: [
-      Text(tr(language, 'qibla'), style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: color)),
-      const SizedBox(height: 8), Text(localizedCity(city, language), style: const TextStyle(color: muted, fontSize: 16)),
+    final lat = gpsLat ?? widget.city.lat;
+    final lon = gpsLon ?? widget.city.lon;
+    final b = bearing(lat, lon);
+    return ListView(padding: const EdgeInsets.fromLTRB(17, 15, 17, 28), children: [
       const IslamicHeroBanner(compact: true),
-      const SizedBox(height: 24),
-      StreamBuilder<CompassEvent?>(stream: FlutterCompass.events, builder: (context, snapshot) {
-        final heading = snapshot.data?.heading;
-        if (heading == null) return Column(children: [
-          const Icon(Icons.explore_outlined, size: 100, color: emerald),
-          const SizedBox(height: 16), Text(tr(language, 'compassUnavailable'), textAlign: TextAlign.center),
-        ]);
-        return Center(child: AspectRatio(aspectRatio: 1, child: Container(
-          decoration: BoxDecoration(shape: BoxShape.circle, gradient: const RadialGradient(colors: [emerald, deepGreen]), border: Border.all(color: gold, width: 6), boxShadow: [BoxShadow(color: gold.withValues(alpha: .25), blurRadius: 15)]),
-          child: Stack(alignment: Alignment.center, children: [
-            const Positioned(top: 22, child: Text('N', style: TextStyle(fontWeight: FontWeight.w900, color: muted))),
-            Transform.rotate(angle: (b - heading) * math.pi / 180, child: const Icon(Icons.navigation, size: 150, color: gold)),
-            Container(width: 13, height: 13, decoration: const BoxDecoration(color: gold, shape: BoxShape.circle)),
-          ]),
-        )));
-      }),
-      const SizedBox(height: 25),
-      Center(child: Text('${b.toStringAsFixed(0)}° ${tx(language, 'northBearing')}', textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: color))),
-      const SizedBox(height: 12), Text(tr(language, 'compassHelp'), textAlign: TextAlign.center, style: const TextStyle(color: muted, height: 1.5)),
-      const SizedBox(height: 35), AdPlaceholder(language: language),
+      const SizedBox(height: 17),
+      Row(children: [
+        const Icon(Icons.mosque_rounded, color: emerald, size: 27),
+        const SizedBox(width: 9),
+        Expanded(child: Text(label('কিবলা কম্পাস', 'Qibla compass',
+          ko: '키블라 나침반', ar: 'بوصلة القبلة'),
+          style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900, color: ink))),
+        IconButton(onPressed: refreshLocation,
+          tooltip: label('অবস্থান রিফ্রেশ', 'Refresh location'),
+          icon: const Icon(Icons.my_location, color: emerald)),
+      ]),
+      const SizedBox(height: 10),
+      Container(
+        padding: const EdgeInsets.fromLTRB(12, 19, 12, 20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF126D55), Color(0xFF064234), Color(0xFF052F28)]),
+          borderRadius: BorderRadius.circular(29),
+          border: Border.all(color: gold.withValues(alpha: .68), width: 1.5),
+          boxShadow: [BoxShadow(color: emerald.withValues(alpha: .15), blurRadius: 18,
+            offset: const Offset(0, 9))],
+        ),
+        child: Column(children: [
+          Text(label('পবিত্র কাবার দিকে', 'Towards the Holy Kaaba',
+            ko: '카바 방향', ar: 'نحو الكعبة المشرفة'),
+            style: const TextStyle(color: Color(0xFFECD49C),
+              fontSize: 17, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 12),
+          StreamBuilder<CompassEvent?>(
+            stream: FlutterCompass.events,
+            builder: (context, snapshot) {
+              final heading = snapshot.data?.heading;
+              return LayoutBuilder(builder: (context, constraints) {
+                final diameter = math.min(constraints.maxWidth, 320.0);
+                return SizedBox(width: diameter, height: diameter,
+                  child: Stack(alignment: Alignment.center, children: [
+                    Container(decoration: BoxDecoration(shape: BoxShape.circle,
+                      gradient: const RadialGradient(colors: [Color(0xFF125D47), Color(0xFF04372F)]),
+                      border: Border.all(color: gold, width: 5),
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .27),
+                        blurRadius: 13, offset: const Offset(0, 6))])),
+                    Positioned.fill(child: Transform.rotate(
+                      angle: -(heading ?? 0) * math.pi / 180,
+                      child: CustomPaint(painter: _QiblaDialPainter()),
+                    )),
+                    if (heading != null)
+                      Transform.rotate(angle: (b - heading) * math.pi / 180,
+                        child: const _QiblaNeedle())
+                    else
+                      const Icon(Icons.explore_outlined, size: 90, color: gold),
+                    const _QiblaKaabaMedallion(),
+                  ]),
+                );
+              });
+            },
+          ),
+          const SizedBox(height: 13),
+          Text(tr(widget.language, 'compassHelp'),
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Color(0xFFE1E9E1), fontSize: 12)),
+        ]),
+      ),
+      const SizedBox(height: 13),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [Color(0xFF087054), Color(0xFF034735)]),
+          borderRadius: BorderRadius.circular(19),
+          boxShadow: [BoxShadow(color: deepGreen.withValues(alpha: .17),
+            blurRadius: 9, offset: const Offset(0, 5))]),
+        child: Row(children: [
+          const _QiblaKaabaMedallion(small: true),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label('কিবলার দিক', 'Qibla direction', ko: '키블라 방향', ar: 'اتجاه القبلة'),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+            Text('${b.toStringAsFixed(1)}°  ·  ${label('উত্তর থেকে', 'from north', ko: '북쪽 기준', ar: 'من الشمال')}',
+              style: const TextStyle(color: Color(0xFFFFE8B0),
+                fontSize: 19, fontWeight: FontWeight.w900)),
+          ])),
+          IconButton(onPressed: () => showQiblaInfo(b),
+            icon: const Icon(Icons.info_outline, color: Colors.white)),
+        ]),
+      ),
+      const SizedBox(height: 13),
+      Container(padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(color: const Color(0xFFFFFEF6),
+          borderRadius: BorderRadius.circular(19),
+          border: Border.all(color: gold.withValues(alpha: .4))),
+        child: Row(children: [
+          const Icon(Icons.location_on_rounded, color: emerald, size: 29),
+          const SizedBox(width: 11),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label('আপনার অবস্থান', 'Your location', ko: '현재 위치', ar: 'موقعك'),
+              style: const TextStyle(fontSize: 12, color: muted)),
+            Text(gpsLat == null ? localizedCity(widget.city, widget.language)
+              : '${lat.toStringAsFixed(4)}, ${lon.toStringAsFixed(4)}',
+              maxLines: 2, overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: ink, fontWeight: FontWeight.w800)),
+            if (locationError != null)
+              Text(locationError!, style: const TextStyle(color: Colors.red, fontSize: 11)),
+          ])),
+          IconButton(onPressed: locating ? null : refreshLocation,
+            tooltip: label('GPS রিফ্রেশ', 'Refresh GPS'),
+            icon: locating
+              ? const SizedBox(width: 20, height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2))
+              : const Icon(Icons.refresh_rounded, color: emerald, size: 28)),
+        ])),
+      const SizedBox(height: 13),
+      Row(children: [
+        actionTile(Icons.map_outlined,
+          label('মানচিত্রে দেখুন', 'View map', ko: '지도 보기', ar: 'عرض الخريطة'), showMap),
+        const SizedBox(width: 8),
+        actionTile(Icons.gps_fixed,
+          label('নির্ভুলতা', 'Accuracy', ko: '정확도', ar: 'الدقة'), showCalibration),
+        const SizedBox(width: 8),
+        actionTile(Icons.info_outline_rounded,
+          label('কিবলা তথ্য', 'Qibla info', ko: '키블라 정보', ar: 'معلومات القبلة'),
+          () => showQiblaInfo(b)),
+      ]),
+      const SizedBox(height: 15),
+      SizedBox(height: 76, width: double.infinity,
+        child: CustomPaint(painter: _QiblaMosquePainter())),
+      const SizedBox(height: 9),
+      AdPlaceholder(language: widget.language),
     ]);
   }
+
+}
+
+// Compass rose, degree ticks and cardinal points are painted in Flutter.
+// The dial rotates with the live sensor heading, the Qibla arrow separately.
+class _QiblaDialPainter extends CustomPainter {
+  @override void paint(Canvas canvas, Size size) {
+    final c = Offset(size.width / 2, size.height / 2);
+    final r = size.width / 2;
+    final goldPaint = Paint()..color = const Color(0xFFE2BB6B)..style = PaintingStyle.stroke;
+    goldPaint.strokeWidth = 1.1;
+    canvas.drawCircle(c, r - 15, goldPaint);
+    canvas.drawCircle(c, r - 36, goldPaint..color = const Color(0x7778C6A4));
+    for (var i = 0; i < 72; i++) {
+      final a = i * math.pi / 36 - math.pi / 2;
+      final major = i % 6 == 0;
+      final outer = r - 18;
+      final inner = outer - (major ? 12 : 5);
+      canvas.drawLine(c + Offset(math.cos(a) * inner, math.sin(a) * inner),
+        c + Offset(math.cos(a) * outer, math.sin(a) * outer),
+        Paint()..color = const Color(0xFFDEBF79)..strokeWidth = major ? 1.7 : 0.7);
+    }
+    for (var i = 0; i < 8; i++) {
+      final a = i * math.pi / 4 - math.pi / 2;
+      final tip = c + Offset(math.cos(a) * (r * .61), math.sin(a) * (r * .61));
+      final left = c + Offset(math.cos(a + .39) * (r * .22), math.sin(a + .39) * (r * .22));
+      final right = c + Offset(math.cos(a - .39) * (r * .22), math.sin(a - .39) * (r * .22));
+      final path = Path()..moveTo(tip.dx, tip.dy)..lineTo(left.dx, left.dy)
+        ..lineTo(right.dx, right.dy)..close();
+      canvas.drawPath(path, Paint()..color = i.isEven
+        ? const Color(0xAA2EA87A) : const Color(0x663CC695));
+    }
+    const cardinal = ['N', 'E', 'S', 'W'];
+    for (var i = 0; i < 4; i++) {
+      final a = i * math.pi / 2 - math.pi / 2;
+      final p = c + Offset(math.cos(a) * (r - 53), math.sin(a) * (r - 53));
+      final tp = TextPainter(text: TextSpan(text: cardinal[i],
+        style: TextStyle(color: i == 0 ? const Color(0xFFFF705A) : Colors.white,
+          fontSize: 17, fontWeight: FontWeight.w900)),
+        textDirection: ui.TextDirection.ltr)..layout();
+      tp.paint(canvas, p - Offset(tp.width / 2, tp.height / 2));
+    }
+  }
+  @override bool shouldRepaint(covariant _QiblaDialPainter oldDelegate) => false;
+}
+
+class _QiblaNeedle extends StatelessWidget {
+  const _QiblaNeedle();
+  @override Widget build(BuildContext context) => SizedBox(
+    width: 118, height: 160,
+    child: CustomPaint(painter: _QiblaNeedlePainter()));
+}
+
+class _QiblaNeedlePainter extends CustomPainter {
+  @override void paint(Canvas canvas, Size size) {
+    final c = Offset(size.width / 2, size.height / 2);
+    final front = Path()..moveTo(c.dx, c.dy - 74)
+      ..lineTo(c.dx + 17, c.dy + 10)..lineTo(c.dx, c.dy - 2)..close();
+    final back = Path()..moveTo(c.dx, c.dy - 74)
+      ..lineTo(c.dx - 17, c.dy + 10)..lineTo(c.dx, c.dy - 2)..close();
+    canvas.drawPath(front, Paint()..color = const Color(0xFFF8F8EF));
+    canvas.drawPath(back, Paint()..color = const Color(0xFFD7A747));
+    final tail = Path()..moveTo(c.dx, c.dy + 74)
+      ..lineTo(c.dx + 11, c.dy - 1)..lineTo(c.dx - 11, c.dy - 1)..close();
+    canvas.drawPath(tail, Paint()..color = const Color(0x9958BB93));
+  }
+  @override bool shouldRepaint(covariant _QiblaNeedlePainter oldDelegate) => false;
+}
+
+class _QiblaKaabaMedallion extends StatelessWidget {
+  final bool small;
+  const _QiblaKaabaMedallion({this.small = false});
+  @override Widget build(BuildContext context) => Container(
+    width: small ? 47 : 57, height: small ? 47 : 57,
+    decoration: BoxDecoration(shape: BoxShape.circle,
+      color: const Color(0xFFF7E3A2), border: Border.all(color: gold, width: 3),
+      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .22), blurRadius: 5)]),
+    child: Center(child: CustomPaint(size: Size(small ? 29 : 36, small ? 29 : 36),
+      painter: _QiblaKaabaPainter())));
+}
+
+class _QiblaKaabaPainter extends CustomPainter {
+  @override void paint(Canvas canvas, Size s) {
+    final p = Paint();
+    final front = Path()..moveTo(s.width*.17,s.height*.35)
+      ..lineTo(s.width*.70,s.height*.35)..lineTo(s.width*.70,s.height*.85)
+      ..lineTo(s.width*.17,s.height*.85)..close();
+    canvas.drawPath(front, p..color = const Color(0xFF111916));
+    final side = Path()..moveTo(s.width*.70,s.height*.35)
+      ..lineTo(s.width*.88,s.height*.24)..lineTo(s.width*.88,s.height*.74)
+      ..lineTo(s.width*.70,s.height*.85)..close();
+    canvas.drawPath(side, p..color = const Color(0xFF29362B));
+    final top = Path()..moveTo(s.width*.17,s.height*.35)
+      ..lineTo(s.width*.34,s.height*.24)..lineTo(s.width*.88,s.height*.24)
+      ..lineTo(s.width*.70,s.height*.35)..close();
+    canvas.drawPath(top, p..color = const Color(0xFF3A4133));
+    canvas.drawRect(Rect.fromLTRB(s.width*.17,s.height*.45,s.width*.70,s.height*.53),
+      p..color = const Color(0xFFE8B84C));
+    canvas.drawRect(Rect.fromLTRB(s.width*.70,s.height*.45,s.width*.88,s.height*.53),
+      p..color = const Color(0xFFC8973C));
+    canvas.drawRect(Rect.fromLTRB(s.width*.36,s.height*.65,s.width*.48,s.height*.85),
+      p..color = const Color(0xFFD6AB4C));
+  }
+  @override bool shouldRepaint(covariant _QiblaKaabaPainter oldDelegate) => false;
+}
+
+class _QiblaMosquePainter extends CustomPainter {
+  @override void paint(Canvas canvas, Size s) {
+    final paint = Paint()..color = const Color(0xFF7AC6A1);
+    final base = s.height*.86;
+    canvas.drawRect(Rect.fromLTWH(0,base,s.width,s.height-base), paint);
+    for (var i=0; i<7; i++) {
+      final x = s.width * (i+.4)/7;
+      final h = i==3 ? 48.0 : (i.isEven ? 31.0 : 23.0);
+      final w = i==3 ? 63.0 : 38.0;
+      canvas.drawRect(Rect.fromLTWH(x-w/2,base-h*.65,w,h*.65),paint);
+      final dome = Path()..moveTo(x-w/2,base-h*.65)
+        ..quadraticBezierTo(x,base-h*1.45,x+w/2,base-h*.65)..close();
+      canvas.drawPath(dome,paint);
+      canvas.drawLine(Offset(x,base-h*1.05),Offset(x,base-h*1.22),
+        Paint()..color = const Color(0xFF7AC6A1)..strokeWidth=2);
+    }
+    for (final x in [s.width*.08,s.width*.22,s.width*.78,s.width*.92]) {
+      canvas.drawRect(Rect.fromLTWH(x-4,base-49,8,49),paint);
+      canvas.drawRect(Rect.fromLTWH(x-8,base-44,16,4),paint);
+      canvas.drawCircle(Offset(x,base-52),5,paint);
+    }
+  }
+  @override bool shouldRepaint(covariant _QiblaMosquePainter oldDelegate) => false;
 }
 
 class CalendarPage extends StatefulWidget {
