@@ -979,28 +979,45 @@ class _QiblaPageState extends State<QiblaPage> {
             stream: FlutterCompass.events,
             builder: (context, snapshot) {
               final heading = snapshot.data?.heading;
-              return LayoutBuilder(builder: (context, constraints) {
-                final diameter = math.min(constraints.maxWidth, 320.0);
-                return SizedBox(width: diameter, height: diameter,
-                  child: Stack(alignment: Alignment.center, children: [
-                    Container(decoration: BoxDecoration(shape: BoxShape.circle,
-                      gradient: const RadialGradient(colors: [Color(0xFF125D47), Color(0xFF04372F)]),
-                      border: Border.all(color: gold, width: 5),
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .27),
-                        blurRadius: 13, offset: const Offset(0, 6))])),
-                    Positioned.fill(child: Transform.rotate(
-                      angle: -(heading ?? 0) * math.pi / 180,
-                      child: CustomPaint(painter: _QiblaDialPainter()),
-                    )),
-                    if (heading != null)
-                      Transform.rotate(angle: (b - heading) * math.pi / 180,
-                        child: const _QiblaNeedle())
-                    else
-                      const Icon(Icons.explore_outlined, size: 90, color: gold),
-                    const _QiblaKaabaMedallion(),
-                  ]),
-                );
-              });
+              final aligned = heading != null &&
+                  _qiblaAngularDistance(b, heading) <= 5.0;
+              return Column(mainAxisSize: MainAxisSize.min, children: [
+                LayoutBuilder(builder: (context, constraints) {
+                  final diameter = math.min(constraints.maxWidth, 320.0);
+                  return _SmoothQiblaCompass(
+                    heading: heading, bearing: b, diameter: diameter,
+                    aligned: aligned,
+                  );
+                }),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: aligned
+                      ? Container(
+                          key: const ValueKey('qibla-aligned'),
+                          margin: const EdgeInsets.only(top: 14),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 9),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDBFBE7),
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(color: const Color(0xFF70E9A1)),
+                          ),
+                          child: Row(mainAxisSize: MainAxisSize.min, children: [
+                            const Icon(Icons.check_circle,
+                                color: Color(0xFF08794B), size: 20),
+                            const SizedBox(width: 7),
+                            Flexible(child: Text(
+                              label('✓ কিবলার দিক সঠিক', '✓ Aligned with Qibla',
+                                  ko: '✓ 키블라 방향 일치', ar: '✓ اتجاه القبلة صحيح'),
+                              style: const TextStyle(
+                                  color: Color(0xFF075A3B),
+                                  fontWeight: FontWeight.w800),
+                            )),
+                          ]),
+                        )
+                      : const SizedBox.shrink(key: ValueKey('not-aligned')),
+                ),
+              ]);
             },
           ),
           const SizedBox(height: 13),
@@ -1078,6 +1095,110 @@ class _QiblaPageState extends State<QiblaPage> {
 
 }
 
+// Smallest angular separation, handling the 359° -> 0° wraparound.
+double _qiblaAngularDistance(double a, double b) {
+  return ((a - b + 540) % 360 - 180).abs();
+}
+
+// Animates compass movement along the shortest angular path.
+// The dial is north-oriented; the gold/white arrow always points to Qibla.
+class _SmoothQiblaCompass extends StatefulWidget {
+  final double? heading;
+  final double bearing;
+  final double diameter;
+  final bool aligned;
+  const _SmoothQiblaCompass({
+    required this.heading,
+    required this.bearing,
+    required this.diameter,
+    required this.aligned,
+  });
+  @override State<_SmoothQiblaCompass> createState() =>
+      _SmoothQiblaCompassState();
+}
+
+class _SmoothQiblaCompassState extends State<_SmoothQiblaCompass> {
+  double? _lastRawHeading;
+  double _continuousHeading = 0;
+  double _previousAnimatedHeading = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.heading != null) {
+      _lastRawHeading = widget.heading;
+      _continuousHeading = widget.heading!;
+      _previousAnimatedHeading = widget.heading!;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _SmoothQiblaCompass oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final h = widget.heading;
+    if (h == null || !h.isFinite) return;
+    if (_lastRawHeading == null) {
+      _continuousHeading = h;
+      _previousAnimatedHeading = h;
+    } else {
+      final delta = ((h - _lastRawHeading! + 540) % 360) - 180;
+      _continuousHeading += delta;
+    }
+    _lastRawHeading = h;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.diameter;
+    final begin = _previousAnimatedHeading;
+    final end = _continuousHeading;
+    _previousAnimatedHeading = end;
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: begin, end: end),
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+      builder: (context, smoothHeading, child) {
+        return SizedBox(width: d, height: d,
+          child: Stack(alignment: Alignment.center, children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 280),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const RadialGradient(
+                    colors: [Color(0xFF125D47), Color(0xFF04372F)]),
+                border: Border.all(
+                    color: widget.aligned
+                        ? const Color(0xFF77F4A6) : gold,
+                    width: widget.aligned ? 7 : 5),
+                boxShadow: [BoxShadow(
+                  color: widget.aligned
+                      ? const Color(0xAA73F5A2)
+                      : Colors.black.withValues(alpha: .27),
+                  blurRadius: widget.aligned ? 24 : 13,
+                  spreadRadius: widget.aligned ? 5 : 0,
+                  offset: const Offset(0, 5),
+                )],
+              ),
+            ),
+            Positioned.fill(child: Transform.rotate(
+              angle: -smoothHeading * math.pi / 180,
+              child: CustomPaint(painter: _QiblaDialPainter()),
+            )),
+            if (widget.heading != null)
+              Transform.rotate(
+                angle: (widget.bearing - smoothHeading) * math.pi / 180,
+                child: const _QiblaNeedle(),
+              )
+            else
+              const Icon(Icons.explore_outlined, size: 90, color: gold),
+            const _QiblaKaabaMedallion(),
+          ]),
+        );
+      },
+    );
+  }
+}
+
 // Compass rose, degree ticks and cardinal points are painted in Flutter.
 // The dial rotates with the live sensor heading, the Qibla arrow separately.
 class _QiblaDialPainter extends CustomPainter {
@@ -1135,8 +1256,8 @@ class _QiblaNeedlePainter extends CustomPainter {
       ..lineTo(c.dx + 17, c.dy + 10)..lineTo(c.dx, c.dy - 2)..close();
     final back = Path()..moveTo(c.dx, c.dy - 74)
       ..lineTo(c.dx - 17, c.dy + 10)..lineTo(c.dx, c.dy - 2)..close();
-    canvas.drawPath(front, Paint()..color = const Color(0xFFF8F8EF));
-    canvas.drawPath(back, Paint()..color = const Color(0xFFD7A747));
+    canvas.drawPath(front, Paint()..color = const Color(0xFFFFD46B));
+    canvas.drawPath(back, Paint()..color = const Color(0xFFFFF5D9));
     final tail = Path()..moveTo(c.dx, c.dy + 74)
       ..lineTo(c.dx + 11, c.dy - 1)..lineTo(c.dx - 11, c.dy - 1)..close();
     canvas.drawPath(tail, Paint()..color = const Color(0x9958BB93));
